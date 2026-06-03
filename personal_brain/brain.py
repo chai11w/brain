@@ -7,6 +7,7 @@ from .extractor import IngestResult, MemoryExtractor
 from .llm import LLMClient
 from .router import MemoryRouterBuilder, RouterBuildResult
 from .schema import BrainSchema, SchemaInitResult
+from .vault import SecureItemSecret, SecureItemSummary, SecureVault
 
 
 class PersonalBrain:
@@ -14,6 +15,7 @@ class PersonalBrain:
         self.config = config or load_config()
         self.schema = BrainSchema(self.config.database_path)
         self.chat_model = LLMClient(self.config.chat_model)
+        self.vault = SecureVault(self.schema)
 
     @classmethod
     def from_config_file(cls, path: str | Path = "config.json") -> "PersonalBrain":
@@ -83,3 +85,27 @@ class PersonalBrain:
         if not counts:
             return "database has no Personal Brain tables yet"
         return "\n".join(f"{table}: {count}" for table, count in counts.items())
+
+    def secure_add(
+        self,
+        label: str,
+        secret_type: str,
+        secret: str,
+        master_password: str,
+        username: str | None = None,
+        note: str | None = None,
+    ) -> int:
+        return self.vault.add_item(
+            label=label,
+            secret_type=secret_type,
+            secret=secret,
+            master_password=master_password,
+            username=username,
+            note=note,
+        )
+
+    def secure_list(self) -> list[SecureItemSummary]:
+        return self.vault.list_items()
+
+    def secure_get(self, label: str, master_password: str) -> SecureItemSecret:
+        return self.vault.get_item(label, master_password)
