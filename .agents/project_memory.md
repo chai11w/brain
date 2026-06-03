@@ -209,3 +209,16 @@ text message
 `scripts/webhook_server.py` exposes this as a local HTTP bridge. Real wxauto,
 Wechaty, or other WeChat integrations should call this boundary instead of
 duplicating memory logic.
+
+## Handoff Before Next Chat
+
+Current stable state:
+
+- Unified message entry is done: `PersonalBrain.handle_message(text, sender, source)` now calls `ingest`.
+- Local HTTP bridge exists: `scripts/webhook_server.py` exposes `POST /message`.
+- WeChat adapter example exists: `scripts/wechat_adapter_example.py`.
+- Future WeChat shell must only handle message receive/send and call `handle_message`; it must not duplicate memory extraction logic.
+- Recommended next step: choose and integrate a real WeChat shell, likely `wxauto` first because the user is on Windows.
+- Local latest commit: `e93e44a Wire message adapter to ingestion`.
+- GitHub repo: `chai11w/brain`.
+- Remote latest commit observed: `24f03c321e7cf2a9787ba9eb24a7ee3565b032e3`.
