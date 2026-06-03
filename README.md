@@ -92,6 +92,16 @@ This command:
 This still does not generate embeddings or perform RAG retrieval. It is the
 first AI memory formation layer.
 
+Review extracted memories:
+
+```powershell
+python brain.py memory-list
+python brain.py memory-show 1
+```
+
+Use these before building embeddings. They let you check whether the AI
+understood the original input, split it correctly, and avoided changing meaning.
+
 ## Stats
 
 ```powershell
