@@ -102,6 +102,40 @@ python brain.py memory-show 1
 Use these before building embeddings. They let you check whether the AI
 understood the original input, split it correctly, and avoided changing meaning.
 
+## Message Adapter Entry
+
+`PersonalBrain.handle_message(text, sender, source)` is the unified entry for
+future WeChat adapters.
+
+Current behavior:
+
+```text
+text message
+-> ingest
+-> raw_messages / memories / topics / entities
+-> rebuild router
+-> reply "已记住。"
+```
+
+For a local HTTP bridge:
+
+```powershell
+python scripts/webhook_server.py --port 8765
+```
+
+POST JSON to `/message`:
+
+```json
+{
+  "text": "我今天想到一个新产品原则。",
+  "sender": "me",
+  "source": "wechat"
+}
+```
+
+This is not the final WeChat client integration yet. It is the stable adapter
+boundary that wxauto, Wechaty, or another bridge can call.
+
 ## Stats
 
 ```powershell

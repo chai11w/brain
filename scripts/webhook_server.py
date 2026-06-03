@@ -26,7 +26,11 @@ class BrainWebhookHandler(BaseHTTPRequestHandler):
         text = str(payload.get("text", "")).strip()
         sender = str(payload.get("sender", "me"))
         source = str(payload.get("source", "wechat"))
-        reply = self.brain.handle_message(text, sender=sender, source=source)
+        try:
+            reply = self.brain.handle_message(text, sender=sender, source=source)
+        except Exception as exc:
+            self._send_json({"error": str(exc)}, status=500)
+            return
         self._send_json({"reply": reply})
 
     def log_message(self, format: str, *args: object) -> None:
@@ -57,4 +61,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
