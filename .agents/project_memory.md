@@ -131,3 +131,29 @@ incoming text
 Do not jump to WeChat, frontend, weekly automation, or retrieval before the AI
 memory extraction foundation is designed and implemented.
 
+## Update: AI Memory Extraction V1
+
+`personal_brain/extractor.py` now implements first-pass AI memory extraction.
+
+Available command:
+
+```powershell
+python brain.py ingest "..."
+```
+
+It stores raw input in `raw_messages`, asks the configured chat model for
+structured JSON, records the run in `memory_extraction_runs`, writes atomic
+memories to `memories`, links dynamic topics/entities, and rebuilds the Memory
+Router.
+
+This is not retrieval yet. It does not create embeddings and does not answer
+questions.
+
+Next correct foundation step:
+
+```text
+memories
+-> embedding model
+-> memory_embeddings
+-> semantic recall foundation
+```
