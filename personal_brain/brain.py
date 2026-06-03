@@ -5,6 +5,7 @@ from pathlib import Path
 from .config import BrainConfig, load_config
 from .extractor import IngestResult, MemoryExtractor
 from .llm import LLMClient
+from .memory_view import MemoryDetail, MemorySummary, MemoryView
 from .router import MemoryRouterBuilder, RouterBuildResult
 from .schema import BrainSchema, SchemaInitResult
 from .vault import SecureItemSecret, SecureItemSummary, SecureVault
@@ -16,6 +17,7 @@ class PersonalBrain:
         self.schema = BrainSchema(self.config.database_path)
         self.chat_model = LLMClient(self.config.chat_model)
         self.vault = SecureVault(self.schema)
+        self.memory_view = MemoryView(self.schema)
 
     @classmethod
     def from_config_file(cls, path: str | Path = "config.json") -> "PersonalBrain":
@@ -109,3 +111,9 @@ class PersonalBrain:
 
     def secure_get(self, label: str, master_password: str) -> SecureItemSecret:
         return self.vault.get_item(label, master_password)
+
+    def memory_list(self, limit: int = 20) -> list[MemorySummary]:
+        return self.memory_view.list_memories(limit=limit)
+
+    def memory_show(self, memory_id: int) -> MemoryDetail:
+        return self.memory_view.show_memory(memory_id)
