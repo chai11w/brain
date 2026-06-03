@@ -24,7 +24,18 @@ class PersonalBrain:
         return cls(load_config(path))
 
     def handle_message(self, text: str, sender: str = "me", source: str = "wechat") -> str:
-        return "Memory ingestion is not implemented yet. Run init-db to prepare the foundation."
+        message = text.strip()
+        if not message:
+            return "我在。"
+        try:
+            result = self.ingest(message, source=source, sender=sender)
+        except Exception as exc:
+            return f"暂时没记住：{exc}"
+        if result.warning:
+            return f"已收到，但没有写入长期记忆：{result.warning}"
+        if result.memory_ids:
+            return "已记住。"
+        return "已收到。"
 
     def init_db(self) -> SchemaInitResult:
         return self.schema.initialize()
