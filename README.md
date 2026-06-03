@@ -72,6 +72,26 @@ brain_index.json
 The router is a navigation layer. It is not RAG and does not perform semantic
 retrieval.
 
+## Ingest A Memory
+
+After configuring the chat model, ingest one raw thought:
+
+```powershell
+python brain.py ingest "我希望 Personal Brain 是 AI-native 的，而不是普通关键词搜索。"
+```
+
+This command:
+
+1. stores the exact input in `raw_messages`
+2. asks the chat model to extract structured atomic memories
+3. records the model output in `memory_extraction_runs`
+4. stores AI-rewritten memories in `memories`
+5. creates dynamic `topics` and `entities`
+6. rebuilds the Memory Router
+
+This still does not generate embeddings or perform RAG retrieval. It is the
+first AI memory formation layer.
+
 ## Stats
 
 ```powershell
@@ -106,8 +126,8 @@ This only verifies the model channel. It does not ingest memory yet.
 - No hard-coded classification.
 - No keyword/fuzzy search.
 - No GraphRAG, Neo4j, or visualization.
-- No message ingestion pipeline yet.
-- No model calls yet.
+- No embedding/RAG retrieval yet.
+- No WeChat adapter yet.
 
 The next correct step is AI memory extraction:
 

@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from .config import BrainConfig, load_config
+from .extractor import IngestResult, MemoryExtractor
 from .llm import LLMClient
 from .router import MemoryRouterBuilder, RouterBuildResult
 from .schema import BrainSchema, SchemaInitResult
@@ -23,6 +24,33 @@ class PersonalBrain:
 
     def init_db(self) -> SchemaInitResult:
         return self.schema.initialize()
+
+    def ingest(
+        self,
+        text: str,
+        source: str = "cli",
+        sender: str = "me",
+        rebuild_router: bool = True,
+    ) -> IngestResult:
+        extractor = MemoryExtractor(
+            schema=self.schema,
+            chat_model=self.chat_model,
+            chat_config=self.config.chat_model,
+        )
+        result = extractor.ingest(text=text, source=source, sender=sender)
+        if rebuild_router:
+            self.build_router()
+            return IngestResult(
+                raw_message_id=result.raw_message_id,
+                extraction_run_id=result.extraction_run_id,
+                memory_ids=result.memory_ids,
+                topic_ids=result.topic_ids,
+                entity_ids=result.entity_ids,
+                should_remember=result.should_remember,
+                router_rebuilt=True,
+                warning=result.warning,
+            )
+        return result
 
     def build_router(self) -> RouterBuildResult:
         builder = MemoryRouterBuilder(

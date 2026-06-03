@@ -14,6 +14,17 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("init-db", help="initialize the AI-native database foundation")
     subparsers.add_parser("build-router", help="build brain_index.json and router manifests")
     subparsers.add_parser("stats", help="show local store stats")
+
+    ingest_parser = subparsers.add_parser("ingest", help="extract AI atomic memories from input text")
+    ingest_parser.add_argument("text", help="raw user input")
+    ingest_parser.add_argument("--source", default="cli", help="message source")
+    ingest_parser.add_argument("--sender", default="me", help="message sender")
+    ingest_parser.add_argument(
+        "--no-router",
+        action="store_true",
+        help="do not rebuild Memory Router after ingest",
+    )
+
     test_chat_parser = subparsers.add_parser("test-chat", help="test configured chat model")
     test_chat_parser.add_argument(
         "prompt",
@@ -46,6 +57,24 @@ def main(argv: list[str] | None = None) -> int:
         print(f"manifest: {result.manifest_path} ({result.memory_count})")
         for warning in result.warnings:
             print(f"warning: {warning}")
+        return 0
+
+    if args.command == "ingest":
+        result = brain.ingest(
+            args.text,
+            source=args.source,
+            sender=args.sender,
+            rebuild_router=not args.no_router,
+        )
+        print(f"raw_message_id: {result.raw_message_id}")
+        print(f"extraction_run_id: {result.extraction_run_id}")
+        print(f"should_remember: {result.should_remember}")
+        print(f"memories: {result.memory_ids}")
+        print(f"topics: {result.topic_ids}")
+        print(f"entities: {result.entity_ids}")
+        print(f"router_rebuilt: {result.router_rebuilt}")
+        if result.warning:
+            print(f"warning: {result.warning}")
         return 0
 
     if args.command == "stats":
