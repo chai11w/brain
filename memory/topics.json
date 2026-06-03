@@ -1,0 +1,14 @@
+[
+  {
+    "topic_id": "legacy_unprocessed",
+    "name": "Legacy unprocessed memories",
+    "summary": "Records imported from the old prototype. They are raw or lightly stored text, not AI-extracted atomic memories.",
+    "keywords": [],
+    "memory_count": 2,
+    "manifest_refs": [
+      "legacy:2",
+      "legacy:1"
+    ],
+    "ai_generated": false
+  }
+]

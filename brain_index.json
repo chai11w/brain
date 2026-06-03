@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "updated_at": "2026-06-03T16:15:11",
+  "product": "AI-native Personal Brain",
+  "purpose": "Lightweight routing index for Codex and other AI callers.",
+  "entrypoints": {
+    "topics": "memory/topics.json",
+    "memory_manifest": "memory/memory_manifest.json",
+    "sqlite": "data/personal_brain.sqlite3"
+  },
+  "stats": {
+    "topics": 1,
+    "manifest_memories": 2
+  },
+  "routing_protocol": [
+    "Read brain_index.json first.",
+    "Read topics.json to identify likely topic areas.",
+    "Read memory_manifest.json to select candidate memory ids.",
+    "Read SQLite only for exact evidence or raw message recovery.",
+    "Do not treat this router as RAG; embeddings and reranking are separate layers."
+  ],
+  "architecture_constraints": [
+    "Do not full-read SQLite unless explicitly requested.",
+    "Do not infer facts without evidence records.",
+    "Do not treat legacy_unprocessed entries as AI-extracted memories."
+  ],
+  "warnings": [
+    "legacy_memories exists. These rows are retained as evidence only, not AI-extracted atomic memories."
+  ]
+}

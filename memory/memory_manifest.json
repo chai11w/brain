@@ -1,0 +1,40 @@
+[
+  {
+    "memory_id": "legacy:2",
+    "raw_message_id": null,
+    "title": "Codex 每周整理最近 7 天内容到 Markdown topics 和 insights。",
+    "summary": "Codex 每周整理最近 7 天内容到 Markdown topics 和 insights。",
+    "topics": [
+      "legacy_unprocessed"
+    ],
+    "importance": null,
+    "confidence": null,
+    "memory_type": "legacy_raw_message",
+    "ai_generated": false,
+    "created_at": "2026-06-03 15:30:49",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "legacy_memories",
+      "record_id": 2
+    }
+  },
+  {
+    "memory_id": "legacy:1",
+    "raw_message_id": null,
+    "title": "Personal Brain V0 应该先保存原文，不要一开始分类。",
+    "summary": "Personal Brain V0 应该先保存原文，不要一开始分类。",
+    "topics": [
+      "legacy_unprocessed"
+    ],
+    "importance": null,
+    "confidence": null,
+    "memory_type": "legacy_raw_message",
+    "ai_generated": false,
+    "created_at": "2026-06-03 15:30:48",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "legacy_memories",
+      "record_id": 1
+    }
+  }
+]
