@@ -190,3 +190,22 @@ Security boundary:
 
 V0 uses Windows DPAPI plus master-password-derived entropy. Every decrypt
 requires the master password. This is a local vault, not an AI memory flow.
+
+## Update: Message Adapter Boundary
+
+`PersonalBrain.handle_message(text, sender, source)` is now the stable entry for
+future WeChat adapters.
+
+Behavior:
+
+```text
+text message
+-> ingest
+-> AI memory extraction
+-> router rebuild
+-> lightweight reply
+```
+
+`scripts/webhook_server.py` exposes this as a local HTTP bridge. Real wxauto,
+Wechaty, or other WeChat integrations should call this boundary instead of
+duplicating memory logic.
