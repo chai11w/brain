@@ -149,6 +149,16 @@ Router.
 This is not retrieval yet. It does not create embeddings and does not answer
 questions.
 
+Memory quality review commands:
+
+```powershell
+python brain.py memory-list
+python brain.py memory-show 1
+```
+
+Use these to inspect AI memory content, raw evidence, topics, entities,
+importance, confidence, model, and prompt version before building embeddings.
+
 Next correct foundation step:
 
 ```text

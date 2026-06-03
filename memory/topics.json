@@ -1,5 +1,41 @@
 [
   {
+    "topic_id": 1,
+    "name": "AI 产品设计偏好",
+    "summary": "用户对 AI 工具交互方式和能力边界的期望",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      1
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 3,
+    "name": "个人知识管理",
+    "summary": "用户如何组织和保留个人知识与想法",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      2
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 2,
+    "name": "人机交互理念",
+    "summary": "用户如何看待人与 AI 系统之间的理想交互模式",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      1
+    ],
+    "ai_generated": true
+  },
+  {
     "topic_id": "legacy_unprocessed",
     "name": "Legacy unprocessed memories",
     "summary": "Records imported from the old prototype. They are raw or lightly stored text, not AI-extracted atomic memories.",

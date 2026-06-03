@@ -5,6 +5,7 @@ import getpass
 import sys
 
 from personal_brain import PersonalBrain
+from personal_brain.memory_view import format_memory_detail, format_memory_summary
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -15,6 +16,12 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("init-db", help="initialize the AI-native database foundation")
     subparsers.add_parser("build-router", help="build brain_index.json and router manifests")
     subparsers.add_parser("stats", help="show local store stats")
+
+    memory_list_parser = subparsers.add_parser("memory-list", help="list AI-generated memories for review")
+    memory_list_parser.add_argument("--limit", type=int, default=20, help="max memories to show")
+
+    memory_show_parser = subparsers.add_parser("memory-show", help="show one memory with raw evidence")
+    memory_show_parser.add_argument("memory_id", type=int, help="memory id")
 
     secure_add_parser = subparsers.add_parser("secure-add", help="add encrypted secure item")
     secure_add_parser.add_argument("--label", required=True, help="item label, for example GitHub main")
@@ -91,6 +98,21 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "stats":
         print(brain.stats())
+        return 0
+
+    if args.command == "memory-list":
+        memories = brain.memory_list(limit=args.limit)
+        if not memories:
+            print("no AI memories yet")
+            return 0
+        for index, memory in enumerate(memories):
+            if index:
+                print("")
+            print(format_memory_summary(memory))
+        return 0
+
+    if args.command == "memory-show":
+        print(format_memory_detail(brain.memory_show(args.memory_id)))
         return 0
 
     if args.command == "secure-add":
