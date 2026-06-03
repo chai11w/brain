@@ -70,6 +70,7 @@ class BrainSchema:
             "memory_topics",
             "entities",
             "memory_entities",
+            "secure_items",
             "legacy_memories",
         ]
         counts: dict[str, int] = {}
@@ -204,6 +205,24 @@ class BrainSchema:
                 FOREIGN KEY (memory_id) REFERENCES memories(id),
                 FOREIGN KEY (entity_id) REFERENCES entities(id)
             );
+
+            CREATE TABLE IF NOT EXISTS secure_items (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                label TEXT NOT NULL UNIQUE,
+                secret_type TEXT NOT NULL,
+                username TEXT,
+                encrypted_value TEXT NOT NULL,
+                encryption_scheme TEXT NOT NULL,
+                kdf_name TEXT NOT NULL,
+                kdf_salt TEXT NOT NULL,
+                kdf_iterations INTEGER NOT NULL,
+                note TEXT,
+                created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+                updated_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_secure_items_label
+            ON secure_items(label);
             """
         )
 
@@ -225,4 +244,3 @@ class BrainSchema:
     def _has_column(conn: sqlite3.Connection, table: str, column: str) -> bool:
         rows = conn.execute(f"PRAGMA table_info({table})").fetchall()
         return any(row["name"] == column for row in rows)
-

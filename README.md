@@ -98,6 +98,32 @@ first AI memory formation layer.
 python brain.py stats
 ```
 
+## Secure Vault
+
+Sensitive secrets are not normal memories. Passwords, API keys, tokens, and
+private notes must not go through AI extraction, Router manifests, embeddings,
+or Markdown exports.
+
+This project has a separate local encrypted vault:
+
+```powershell
+python brain.py secure-add --label "GitHub main" --type password --username chai11w
+python brain.py secure-list
+python brain.py secure-get "GitHub main"
+```
+
+`secure-add` and `secure-get` ask for a master password every time. V0 uses
+Windows DPAPI plus master-password-derived entropy. The database stores only
+encrypted values.
+
+Important boundaries:
+
+- secrets are not sent to the chat model
+- secrets are not written to `memories`
+- secrets are not included in `brain_index.json`
+- secrets are not included in `memory/memory_manifest.json`
+- secrets are not committed to Git
+
 ## Configure Chat Model
 
 The first real AI layer will use a chat model to rewrite casual input into

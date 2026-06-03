@@ -157,3 +157,26 @@ memories
 -> memory_embeddings
 -> semantic recall foundation
 ```
+
+## Update: Secure Vault V1
+
+The project now has a separate secure vault for sensitive items.
+
+Commands:
+
+```powershell
+python brain.py secure-add --label "..." --type password --username "..."
+python brain.py secure-list
+python brain.py secure-get "..."
+```
+
+Security boundary:
+
+- secrets must not be sent to AI models
+- secrets must not be stored in `raw_messages` or `memories`
+- secrets must not appear in Router files
+- secrets must not be embedded
+- secrets must not be committed to Git
+
+V0 uses Windows DPAPI plus master-password-derived entropy. Every decrypt
+requires the master password. This is a local vault, not an AI memory flow.
