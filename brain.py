@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import getpass
 import sys
 
 from personal_brain import PersonalBrain
@@ -14,6 +15,17 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser("init-db", help="initialize the AI-native database foundation")
     subparsers.add_parser("build-router", help="build brain_index.json and router manifests")
     subparsers.add_parser("stats", help="show local store stats")
+
+    secure_add_parser = subparsers.add_parser("secure-add", help="add encrypted secure item")
+    secure_add_parser.add_argument("--label", required=True, help="item label, for example GitHub main")
+    secure_add_parser.add_argument("--type", default="password", help="secret type: password/api_key/token/note")
+    secure_add_parser.add_argument("--username", help="optional username")
+    secure_add_parser.add_argument("--note", help="optional non-secret note")
+
+    subparsers.add_parser("secure-list", help="list secure item metadata without secrets")
+
+    secure_get_parser = subparsers.add_parser("secure-get", help="decrypt one secure item")
+    secure_get_parser.add_argument("label", help="item label")
 
     ingest_parser = subparsers.add_parser("ingest", help="extract AI atomic memories from input text")
     ingest_parser.add_argument("text", help="raw user input")
@@ -79,6 +91,42 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "stats":
         print(brain.stats())
+        return 0
+
+    if args.command == "secure-add":
+        secret = getpass.getpass("secret: ")
+        master_password = getpass.getpass("master password: ")
+        item_id = brain.secure_add(
+            label=args.label,
+            secret_type=args.type,
+            username=args.username,
+            note=args.note,
+            secret=secret,
+            master_password=master_password,
+        )
+        print(f"secure item saved: {item_id}")
+        print("secret was encrypted locally and was not sent to AI or Router")
+        return 0
+
+    if args.command == "secure-list":
+        items = brain.secure_list()
+        if not items:
+            print("no secure items")
+            return 0
+        for item in items:
+            username = f" username={item.username}" if item.username else ""
+            note = f" note={item.note}" if item.note else ""
+            print(f"#{item.id} {item.label} type={item.secret_type}{username}{note} updated={item.updated_at}")
+        return 0
+
+    if args.command == "secure-get":
+        master_password = getpass.getpass("master password: ")
+        item = brain.secure_get(args.label, master_password)
+        print(f"label: {item.summary.label}")
+        print(f"type: {item.summary.secret_type}")
+        if item.summary.username:
+            print(f"username: {item.summary.username}")
+        print(f"secret: {item.secret}")
         return 0
 
     if args.command == "test-chat":
