@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 @dataclass(frozen=True)
@@ -63,6 +63,7 @@ class BrainSchema:
     def table_counts(self, conn: sqlite3.Connection) -> dict[str, int]:
         tables = [
             "raw_messages",
+            "interaction_logs",
             "memory_extraction_runs",
             "memories",
             "memory_embeddings",
@@ -115,6 +116,30 @@ class BrainSchema:
             CREATE INDEX IF NOT EXISTS idx_raw_messages_processed_status
             ON raw_messages(processed_status);
 
+            CREATE TABLE IF NOT EXISTS interaction_logs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                message_id TEXT,
+                source TEXT NOT NULL,
+                sender TEXT NOT NULL,
+                user_text TEXT NOT NULL,
+                mode TEXT NOT NULL,
+                action TEXT NOT NULL,
+                raw_message_id INTEGER,
+                reply_text TEXT,
+                evidence_json TEXT,
+                status TEXT NOT NULL,
+                error TEXT,
+                latency_ms INTEGER,
+                created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+                FOREIGN KEY (raw_message_id) REFERENCES raw_messages(id)
+            );
+
+            CREATE INDEX IF NOT EXISTS idx_interaction_logs_created_at
+            ON interaction_logs(created_at);
+
+            CREATE INDEX IF NOT EXISTS idx_interaction_logs_source
+            ON interaction_logs(source);
+
             CREATE TABLE IF NOT EXISTS memory_extraction_runs (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 raw_message_id INTEGER NOT NULL,
@@ -138,6 +163,7 @@ class BrainSchema:
                 extraction_run_id INTEGER NOT NULL,
                 content TEXT NOT NULL,
                 title TEXT,
+                memory_category TEXT NOT NULL DEFAULT '未分类',
                 memory_type TEXT NOT NULL,
                 importance REAL NOT NULL CHECK (importance >= 0 AND importance <= 1),
                 confidence REAL NOT NULL CHECK (confidence >= 0 AND confidence <= 1),
@@ -223,6 +249,15 @@ class BrainSchema:
 
             CREATE INDEX IF NOT EXISTS idx_secure_items_label
             ON secure_items(label);
+            """
+        )
+        if not self._has_column(conn, "memories", "memory_category"):
+            conn.execute("ALTER TABLE memories ADD COLUMN memory_category TEXT NOT NULL DEFAULT '未分类'")
+        conn.execute("UPDATE memories SET memory_category = '未分类' WHERE memory_category IS NULL OR memory_category = ''")
+        conn.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_memories_category
+            ON memories(memory_category)
             """
         )
 

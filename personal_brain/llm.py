@@ -2,10 +2,17 @@ from __future__ import annotations
 
 import json
 import os
+import threading
+import time
 import urllib.error
 import urllib.request
 
 from .config import ChatModelConfig, EmbeddingModelConfig
+
+
+_REQUEST_LOCK = threading.Lock()
+_LAST_REQUEST_AT = 0.0
+_MIN_REQUEST_INTERVAL_SECONDS = 1.5
 
 
 class LLMClient:
@@ -47,14 +54,11 @@ class LLMClient:
             },
             method="POST",
         )
-        try:
-            with urllib.request.urlopen(request, timeout=self.config.timeout_seconds) as response:
-                data = json.loads(response.read().decode("utf-8"))
-        except urllib.error.HTTPError as exc:
-            detail = exc.read().decode("utf-8", errors="replace")
-            raise RuntimeError(f"model HTTP error {exc.code}: {detail}") from exc
-        except urllib.error.URLError as exc:
-            raise RuntimeError(f"model call failed: {exc}") from exc
+        data = request_json_with_retries(
+            request,
+            timeout_seconds=self.config.timeout_seconds,
+            error_prefix="model",
+        )
 
         message = data["choices"][0]["message"]
         content = message.get("content")
@@ -108,14 +112,11 @@ class EmbeddingClient:
             },
             method="POST",
         )
-        try:
-            with urllib.request.urlopen(request, timeout=self.config.timeout_seconds) as response:
-                data = json.loads(response.read().decode("utf-8"))
-        except urllib.error.HTTPError as exc:
-            detail = exc.read().decode("utf-8", errors="replace")
-            raise RuntimeError(f"embedding HTTP error {exc.code}: {detail}") from exc
-        except urllib.error.URLError as exc:
-            raise RuntimeError(f"embedding call failed: {exc}") from exc
+        data = request_json_with_retries(
+            request,
+            timeout_seconds=self.config.timeout_seconds,
+            error_prefix="embedding",
+        )
 
         vectors_by_index: dict[int, list[float]] = {}
         for item in data.get("data", []):
@@ -142,3 +143,41 @@ def get_secret_env(name: str) -> str | None:
         return None
     text = str(value).strip()
     return text or None
+
+
+def request_json_with_retries(
+    request: urllib.request.Request,
+    timeout_seconds: int,
+    error_prefix: str,
+    attempts: int = 3,
+) -> dict:
+    retry_delays = [5, 15]
+    last_error: Exception | None = None
+    for attempt in range(1, attempts + 1):
+        try:
+            with _REQUEST_LOCK:
+                wait_for_request_spacing()
+                with urllib.request.urlopen(request, timeout=timeout_seconds) as response:
+                    return json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode("utf-8", errors="replace")
+            last_error = RuntimeError(f"{error_prefix} HTTP error {exc.code}: {detail}")
+            if exc.code not in {429, 500, 502, 503, 504} or attempt == attempts:
+                raise last_error from exc
+        except (urllib.error.URLError, TimeoutError) as exc:
+            last_error = RuntimeError(f"{error_prefix} call failed: {exc}")
+            if attempt == attempts:
+                raise last_error from exc
+        time.sleep(retry_delays[min(attempt - 1, len(retry_delays) - 1)])
+    if last_error:
+        raise last_error
+    raise RuntimeError(f"{error_prefix} call failed")
+
+
+def wait_for_request_spacing() -> None:
+    global _LAST_REQUEST_AT
+    now = time.monotonic()
+    wait_seconds = _MIN_REQUEST_INTERVAL_SECONDS - (now - _LAST_REQUEST_AT)
+    if wait_seconds > 0:
+        time.sleep(wait_seconds)
+    _LAST_REQUEST_AT = time.monotonic()

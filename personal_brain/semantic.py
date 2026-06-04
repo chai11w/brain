@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 import sqlite3
 from dataclasses import dataclass
 
@@ -23,6 +24,7 @@ class RecallResult:
     score: float
     title: str | None
     content: str
+    memory_category: str
     memory_type: str
     importance: float
     confidence: float
@@ -57,7 +59,7 @@ class SemanticMemory:
         with self.schema.connect() as conn:
             rows = conn.execute(
                 """
-                SELECT m.id, m.title, m.content, m.memory_type
+                SELECT m.id, m.title, m.content, m.memory_category, m.memory_type
                 FROM memories m
                 LEFT JOIN memory_embeddings e
                   ON e.memory_id = m.id
@@ -97,7 +99,7 @@ class SemanticMemory:
         with self.schema.connect() as conn:
             rows = conn.execute(
                 f"""
-                SELECT m.id, m.title, m.content, m.memory_type
+                SELECT m.id, m.title, m.content, m.memory_category, m.memory_type
                 FROM memories m
                 LEFT JOIN memory_embeddings e
                   ON e.memory_id = m.id
@@ -136,7 +138,7 @@ class SemanticMemory:
             rows = conn.execute(
                 """
                 SELECT
-                    m.id, m.title, m.content, m.memory_type, m.importance, m.confidence,
+                    m.id, m.title, m.content, m.memory_category, m.memory_type, m.importance, m.confidence,
                     m.created_at, m.raw_message_id, r.content AS raw_content,
                     e.vector_json
                 FROM memory_embeddings e
@@ -152,7 +154,18 @@ class SemanticMemory:
             for row in rows:
                 vector = json.loads(row["vector_json"])
                 if isinstance(vector, list):
-                    score = cosine_similarity(query_vector, [float(value) for value in vector])
+                    semantic_score = cosine_similarity(query_vector, [float(value) for value in vector])
+                    lexical_boost = exact_match_boost(
+                        clean_query,
+                        [
+                            row["title"],
+                            row["content"],
+                            row["memory_type"],
+                            row["raw_content"],
+                            ", ".join(self._topics_for_memory(conn, int(row["id"]))),
+                        ],
+                    )
+                    score = min(1.0, semantic_score + lexical_boost)
                     scored.append((score, row))
             scored.sort(key=lambda item: item[0], reverse=True)
             results = [
@@ -161,6 +174,7 @@ class SemanticMemory:
                     score=score,
                     title=row["title"],
                     content=row["content"],
+                    memory_category=row["memory_category"],
                     memory_type=row["memory_type"],
                     importance=float(row["importance"]),
                     confidence=float(row["confidence"]),
@@ -179,6 +193,7 @@ class SemanticMemory:
         parts = [
             f"title: {row['title'] or ''}",
             f"content: {row['content']}",
+            f"category: {row['memory_category']}",
             f"type: {row['memory_type']}",
             f"topics: {topics}",
             f"entities: {entities}",
@@ -255,12 +270,31 @@ def cosine_similarity(left: list[float], right: list[float]) -> float:
     return dot / (left_norm * right_norm)
 
 
+def exact_match_boost(query: str, fields: list[str | None]) -> float:
+    tokens = query_tokens(query)
+    if not tokens:
+        return 0.0
+    haystack = "\n".join(field or "" for field in fields).lower()
+    matched = sum(1 for token in tokens if token in haystack)
+    if matched == 0:
+        return 0.0
+    return min(0.12, 0.04 * matched)
+
+
+def query_tokens(query: str) -> list[str]:
+    lowered = query.lower()
+    return [
+        match.group(0)
+        for match in re.finditer(r"[a-z0-9_+\-.]{2,}|[\u4e00-\u9fff]{2,}", lowered)
+    ]
+
+
 def format_recall_result(result: RecallResult) -> str:
     title = result.title or short_text(result.content, 60)
     topics = ", ".join(result.topics) if result.topics else "no topics"
     return (
         f"#{result.memory_id} score={result.score:.4f} {title}\n"
-        f"  type={result.memory_type} importance={result.importance:.2f} "
+        f"  category={result.memory_category} type={result.memory_type} importance={result.importance:.2f} "
         f"confidence={result.confidence:.2f} created={result.created_at}\n"
         f"  topics={topics}\n"
         f"  memory={short_text(result.content, 180)}\n"

@@ -205,6 +205,7 @@ def recall_to_payload(item: RecallResult) -> dict[str, Any]:
         "semantic_score": item.score,
         "title": item.title,
         "content": item.content,
+        "memory_category": item.memory_category,
         "memory_type": item.memory_type,
         "importance": item.importance,
         "confidence": item.confidence,

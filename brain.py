@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import argparse
 import getpass
+import json
 import sys
+from pathlib import Path
 
 from personal_brain import PersonalBrain
 from personal_brain.answer import format_answer_result
 from personal_brain.memory_view import format_memory_detail, format_memory_summary
+from personal_brain.reviewer import format_memory_review
 from personal_brain.semantic import format_recall_result
 
 
@@ -24,6 +27,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     memory_show_parser = subparsers.add_parser("memory-show", help="show one memory with raw evidence")
     memory_show_parser.add_argument("memory_id", type=int, help="memory id")
+
+    interaction_list_parser = subparsers.add_parser("interaction-list", help="list recent Feishu/adapter interactions")
+    interaction_list_parser.add_argument("--limit", type=int, default=20, help="max interactions to show")
+
+    review_parser = subparsers.add_parser("review-memories", help="dry-run AI review of memory quality")
+    review_parser.add_argument("--limit", type=int, default=80, help="max memories to review")
+    review_parser.add_argument("--raw-message-id", type=int, help="review only memories extracted from one raw message")
+    review_parser.add_argument("--output", help="optional JSON file path for the dry-run review")
 
     secure_add_parser = subparsers.add_parser("secure-add", help="add encrypted secure item")
     secure_add_parser.add_argument("--label", required=True, help="item label, for example GitHub main")
@@ -130,6 +141,39 @@ def main(argv: list[str] | None = None) -> int:
         print(format_memory_detail(brain.memory_show(args.memory_id)))
         return 0
 
+    if args.command == "interaction-list":
+        interactions = brain.list_interactions(limit=args.limit)
+        if not interactions:
+            print("no interactions logged yet")
+            return 0
+        for index, item in enumerate(interactions):
+            if index:
+                print("")
+            print(f"#{item['id']} {item['created_at']} source={item['source']} action={item['action']} status={item['status']} latency_ms={item['latency_ms']}")
+            print(f"  user: {short_text(item['user_text'], 160)}")
+            if item["reply_text"]:
+                print(f"  reply: {short_text(item['reply_text'], 220)}")
+            if item["error"]:
+                print(f"  error: {item['error']}")
+        return 0
+
+    if args.command == "review-memories":
+        try:
+            result = brain.review_memories(limit=args.limit, raw_message_id=args.raw_message_id)
+        except Exception as exc:
+            print(f"warning: {exc}")
+            return 1
+        if args.output:
+            output_path = Path(args.output)
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            output_path.write_text(
+                json.dumps(result.review_json, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            print(f"review json: {output_path}")
+        print(format_memory_review(result))
+        return 0
+
     if args.command == "embed-memories":
         result = brain.embed_missing_memories(limit=args.limit)
         print(f"embedded: {result.embedded_count}")
@@ -213,6 +257,13 @@ def configure_utf8_stdio() -> None:
     for stream in (sys.stdout, sys.stderr):
         if hasattr(stream, "reconfigure"):
             stream.reconfigure(encoding="utf-8")
+
+
+def short_text(text: str, limit: int) -> str:
+    clean = " ".join(str(text).split())
+    if len(clean) <= limit:
+        return clean
+    return clean[: limit - 1] + "..."
 
 
 if __name__ == "__main__":

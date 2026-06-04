@@ -1,9 +1,530 @@
 [
   {
+    "memory_id": 40,
+    "raw_message_id": 30,
+    "title": "小柴 AI 核心目标：从记忆检索到知识融通",
+    "summary": "小柴 AI 的目标不是机械地检索记忆，而是将长期记录沉淀为个人知识库，并基于这些知识进行融汇贯通的回答与判断。这意味着产品定位是从「记忆存储」向「知识推理」升级。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "个人知识库",
+      "记忆系统设计"
+    ],
+    "importance": 0.9,
+    "confidence": 0.95,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-04 20:37:43",
+    "updated_at": "2026-06-04 20:37:43",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 30
+    }
+  },
+  {
+    "memory_id": 39,
+    "raw_message_id": 29,
+    "title": "Codex 总结时自动识别并扩展大类",
+    "summary": "希望让 Codex 在进行总结时，能够智能识别当前归入「其他」类别的内容，并据此动态增加或扩展大类的种类，使分类体系更加完善",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "Codex 集成",
+      "分类体系优化"
+    ],
+    "importance": 0.6,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-04 19:05:07",
+    "updated_at": "2026-06-04 19:05:07",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 29
+    }
+  },
+  {
+    "memory_id": 38,
+    "raw_message_id": 28,
+    "title": "小柴记忆箱项目经历写入简历",
+    "summary": "计划将小柴记忆箱项目的推进过程整理后写入简历，作为个人项目经历展示",
+    "memory_category": "其他",
+    "topics": [
+      "小柴记忆箱",
+      "简历与职业展示"
+    ],
+    "importance": 0.6,
+    "confidence": 0.9,
+    "memory_type": "plan",
+    "ai_generated": true,
+    "created_at": "2026-06-04 18:59:34",
+    "updated_at": "2026-06-04 18:59:34",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 28
+    }
+  },
+  {
+    "memory_id": 33,
+    "raw_message_id": 24,
+    "title": "第二个我与事务处理愿景",
+    "summary": "用户希望小柴逐步记录人际关系、处事方式和决策模式，后期接入微信等外部软件，并最终形成能够模仿自己处理事务的“第二个我”。",
+    "memory_category": "未来产品设想",
+    "topics": [
+      "数字分身/ AI Agent"
+    ],
+    "importance": 0.85,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-04 14:34:54",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 24
+    }
+  },
+  {
+    "memory_id": 30,
+    "raw_message_id": 23,
+    "title": "记忆不能过于分散",
+    "summary": "用户偏好结构化的记忆组织方式，反对过于分散零碎的记忆存储，每条记忆应归属到明确的主题类别下",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "知识组织方法论"
+    ],
+    "importance": 0.85,
+    "confidence": 0.9,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-04 14:23:23",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 23
+    }
+  },
+  {
+    "memory_id": 29,
+    "raw_message_id": 23,
+    "title": "记忆需要稳定大类",
+    "summary": "用户希望个人记忆按照内容性质进行大类划分，主要包括：现有项目改进、未来产品设想、生活感悟、产品使用技巧、自身认知更新、技术思考等维度",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆管理系统"
+    ],
+    "importance": 0.9,
+    "confidence": 0.95,
+    "memory_type": "preference",
+    "ai_generated": true,
+    "created_at": "2026-06-04 14:23:23",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 23
+    }
+  },
+  {
+    "memory_id": 28,
+    "raw_message_id": 22,
+    "title": "AI Agent 技术跟随策略",
+    "summary": "用户认为应先跟随国外Agent的发展动态，待国内技术追赶上来形成大规模应用时机时再入场，以此建立信息和技术壁垒优势。",
+    "memory_category": "技术思考",
+    "topics": [
+      "AI Agent战略",
+      "技术竞争策略"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-04 14:20:54",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 22
+    }
+  },
+  {
+    "memory_id": 27,
+    "raw_message_id": 21,
+    "title": "周总结作为小柴纠错闭环",
+    "summary": "可以将Codex的周总结作为一个纠错环节，通过逐条检查其中的错误来持续改进小柴记忆箱的质量",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆系统优化方法",
+      "工作流闭环设计"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-04 14:10:34",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 21
+    }
+  },
+  {
+    "memory_id": 26,
+    "raw_message_id": 19,
+    "title": "小柴向专业模型演进的设想",
+    "summary": "用户认为小柴记忆箱未来的发展方向可能是向微调后的专业大模型演进",
+    "memory_category": "未来产品设想",
+    "topics": [
+      "AI产品趋势判断"
+    ],
+    "importance": 0.4,
+    "confidence": 0.7,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-04 14:00:54",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 19
+    }
+  },
+  {
+    "memory_id": 25,
+    "raw_message_id": 18,
+    "title": "周总结时重分类知识点",
+    "summary": "在进行周总结时，可以让Codex对本周记录的知识点进行重新分类整理",
+    "memory_category": "工作流方法",
+    "topics": [
+      "AI辅助知识管理",
+      "周总结工作流"
+    ],
+    "importance": 0.6,
+    "confidence": 0.85,
+    "memory_type": "plan",
+    "ai_generated": true,
+    "created_at": "2026-06-04 14:00:06",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 18
+    }
+  },
+  {
+    "memory_id": 24,
+    "raw_message_id": 17,
+    "title": "空格作为类标点的输入习惯",
+    "summary": "用户在打字或写作时有将空格作为类标点符号使用的习惯",
+    "memory_category": "自身认知更新",
+    "topics": [
+      "写作习惯"
+    ],
+    "importance": 0.3,
+    "confidence": 0.9,
+    "memory_type": "preference",
+    "ai_generated": true,
+    "created_at": "2026-06-04 13:58:13",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 17
+    }
+  },
+  {
+    "memory_id": 23,
+    "raw_message_id": 16,
+    "title": "同一段对话应利用主题连续性",
+    "summary": "用户认为同一段对话中的各个主题通常彼此相近或相关，不会偏离太远",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "对话理解认知",
+      "信息组织理念"
+    ],
+    "importance": 0.5,
+    "confidence": 0.75,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-04 13:56:32",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 16
+    }
+  },
+  {
+    "memory_id": 21,
+    "raw_message_id": 15,
+    "title": "技术资讯整理为学习文档",
+    "summary": "用户倾向于将收集到的技术资讯整理成结构化的学习文档，便于后续学习和参考",
+    "memory_category": "工作流方法",
+    "topics": [
+      "知识管理方式"
+    ],
+    "importance": 0.6,
+    "confidence": 0.85,
+    "memory_type": "preference",
+    "ai_generated": true,
+    "created_at": "2026-06-04 13:55:09",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 15
+    }
+  },
+  {
+    "memory_id": 20,
+    "raw_message_id": 15,
+    "title": "每周追踪 GitHub AI-native 项目",
+    "summary": "用户计划搭建一个自动化工作流，用于每周收集 GitHub 上热门的 AI-native 项目/工具",
+    "memory_category": "技术思考",
+    "topics": [
+      "AI-native 工具追踪",
+      "自动化工作流"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "plan",
+    "ai_generated": true,
+    "created_at": "2026-06-04 13:55:09",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 15
+    }
+  },
+  {
+    "memory_id": 19,
+    "raw_message_id": 14,
+    "title": "新项目启动闭环",
+    "summary": "启动新项目时，习惯先与ChatGPT讨论方案，再将方案结合project bootstrap skills交给AI执行，形成从方案讨论到上下文体系搭建的完整闭环",
+    "memory_category": "工作流方法",
+    "topics": [
+      "AI辅助工作流",
+      "项目管理方法"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "preference",
+    "ai_generated": true,
+    "created_at": "2026-06-04 13:07:56",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 14
+    }
+  },
+  {
+    "memory_id": 18,
+    "raw_message_id": 13,
+    "title": "大方向到小方向的记忆组织",
+    "summary": "用户提出采用「大方向→小方向」的层级结构来组织记忆，认为这种方式能让记录更聚焦不易跑偏，且便于后续按大类检索定位到具体的小类内容",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆组织架构",
+      "信息检索优化"
+    ],
+    "importance": 0.85,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-04 12:00:54",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 13
+    }
+  },
+  {
+    "memory_id": 17,
+    "raw_message_id": 13,
+    "title": "主题不能脱离上下文凭空生成",
+    "summary": "创建新主题时不应该凭空构想一个全新的、与上下文无关的主题名称",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "主题管理策略"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-04 12:00:54",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 13
+    }
+  },
+  {
+    "memory_id": 16,
+    "raw_message_id": 13,
+    "title": "小柴默认使用中文交互",
+    "summary": "用户希望在「小柴记忆箱」以及日常对话中不出现英文内容，全部使用中文",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "交互语言偏好"
+    ],
+    "importance": 0.8,
+    "confidence": 0.95,
+    "memory_type": "preference",
+    "ai_generated": true,
+    "created_at": "2026-06-04 12:00:54",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 13
+    }
+  },
+  {
+    "memory_id": 15,
+    "raw_message_id": 12,
+    "title": "小柴需要消息撤回能力",
+    "summary": "用户提出记忆箱系统需要增加消息撤回能力，允许撤回已发送的消息",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "memory-box-feature",
+      "message-management"
+    ],
+    "importance": 0.6,
+    "confidence": 0.9,
+    "memory_type": "plan",
+    "ai_generated": true,
+    "created_at": "2026-06-04 11:58:27",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 12
+    }
+  },
+  {
+    "memory_id": 14,
+    "raw_message_id": 11,
+    "title": "小柴需要主动判断能力",
+    "summary": "用户认为小柴记忆箱缺乏主动判断能力，无法自主进行智能决策",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "AI工具评估标准",
+      "主动智能"
+    ],
+    "importance": 0.6,
+    "confidence": 0.9,
+    "memory_type": "preference",
+    "ai_generated": true,
+    "created_at": "2026-06-04 11:57:49",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 11
+    }
+  },
+  {
+    "memory_id": 13,
+    "raw_message_id": 9,
+    "title": "agents.md 项目路由器设想",
+    "summary": "未来计划将agents.md升级为项目路由器，可能结合图片识别能力来实现更智能的路由分发",
+    "memory_category": "未来产品设想",
+    "topics": [
+      "系统架构演进",
+      "多Agent协作"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "plan",
+    "ai_generated": true,
+    "created_at": "2026-06-04 11:53:29",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 9
+    }
+  },
+  {
+    "memory_id": 12,
+    "raw_message_id": 9,
+    "title": "当前阶段轻量 MD 策略",
+    "summary": "当前阶段采用轻量级方案，仅创建一两个MD文件供新对话读取上下文信息",
+    "memory_category": "工作流方法",
+    "topics": [
+      "AI工作流设计",
+      "上下文管理"
+    ],
+    "importance": 0.6,
+    "confidence": 0.9,
+    "memory_type": "decision",
+    "ai_generated": true,
+    "created_at": "2026-06-04 11:53:29",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 9
+    }
+  },
+  {
+    "memory_id": 11,
+    "raw_message_id": 8,
+    "title": "新对话需显式指定项目记忆",
+    "summary": "在新对话中，AI不会自动主动读取项目中的md文件，需要用户显式指定要读取哪个文件",
+    "memory_category": "产品使用技巧",
+    "topics": [
+      "AI工具使用",
+      "人机交互习惯"
+    ],
+    "importance": 0.8,
+    "confidence": 0.9,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-04 11:47:19",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 8
+    }
+  },
+  {
+    "memory_id": 10,
+    "raw_message_id": 8,
+    "title": "md 文件可作为项目上下文",
+    "summary": "将md文件直接放入项目目录后，该文件可被AI作为项目记忆/上下文读取和使用",
+    "memory_category": "产品使用技巧",
+    "topics": [
+      "AI工具使用",
+      "项目记忆管理"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "fact",
+    "ai_generated": true,
+    "created_at": "2026-06-04 11:47:19",
+    "updated_at": "2026-06-04 15:24:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 8
+    }
+  },
+  {
     "memory_id": 9,
     "raw_message_id": 7,
-    "title": "记忆筛选机制认知",
+    "title": "短句和临时吐槽可被过滤",
     "summary": "用户理解小柴记忆箱可能会将临时吐槽、短句等碎片化内容判断为不值得长期记忆而过滤掉",
+    "memory_category": "产品使用技巧",
     "topics": [
       "小柴记忆箱使用规则"
     ],
@@ -12,7 +533,7 @@
     "memory_type": "reflection",
     "ai_generated": true,
     "created_at": "2026-06-04 11:00:56",
-    "updated_at": "2026-06-04 11:00:56",
+    "updated_at": "2026-06-04 15:24:47",
     "evidence": {
       "sqlite_path": "data/personal_brain.sqlite3",
       "sqlite_table": "raw_messages",
@@ -22,18 +543,19 @@
   {
     "memory_id": 8,
     "raw_message_id": 7,
-    "title": "信息安全规则",
+    "title": "敏感信息不进入飞书收集箱",
     "summary": "不应将密码、token、API key等敏感信息发送到飞书收集箱（小柴记忆箱的输入渠道）",
+    "memory_category": "信息安全",
     "topics": [
-      "信息安全习惯",
-      "小柴记忆箱使用规则"
+      "小柴记忆箱使用规则",
+      "信息安全习惯"
     ],
     "importance": 0.9,
     "confidence": 0.95,
     "memory_type": "principle",
     "ai_generated": true,
     "created_at": "2026-06-04 11:00:56",
-    "updated_at": "2026-06-04 11:00:56",
+    "updated_at": "2026-06-04 15:24:47",
     "evidence": {
       "sqlite_path": "data/personal_brain.sqlite3",
       "sqlite_table": "raw_messages",
@@ -43,8 +565,9 @@
   {
     "memory_id": 7,
     "raw_message_id": 7,
-    "title": "记忆准确性优化建议",
+    "title": "完整表达提升记忆准确性",
     "summary": "为了让小柴记忆箱更准确地记住内容，应尽量说完整句子而非半句或碎片化表达",
+    "memory_category": "产品使用技巧",
     "topics": [
       "小柴记忆箱使用规则"
     ],
@@ -53,7 +576,7 @@
     "memory_type": "preference",
     "ai_generated": true,
     "created_at": "2026-06-04 11:00:56",
-    "updated_at": "2026-06-04 11:00:56",
+    "updated_at": "2026-06-04 15:24:47",
     "evidence": {
       "sqlite_path": "data/personal_brain.sqlite3",
       "sqlite_table": "raw_messages",
@@ -65,6 +588,7 @@
     "raw_message_id": 7,
     "title": "小柴记忆箱提问方式",
     "summary": "向小柴记忆箱提问时，需要在消息前加问号'?'以区分于记忆指令",
+    "memory_category": "产品使用技巧",
     "topics": [
       "小柴记忆箱使用规则"
     ],
@@ -73,7 +597,7 @@
     "memory_type": "fact",
     "ai_generated": true,
     "created_at": "2026-06-04 11:00:56",
-    "updated_at": "2026-06-04 11:00:56",
+    "updated_at": "2026-06-04 15:24:47",
     "evidence": {
       "sqlite_path": "data/personal_brain.sqlite3",
       "sqlite_table": "raw_messages",
@@ -83,8 +607,9 @@
   {
     "memory_id": 5,
     "raw_message_id": 7,
-    "title": "小柴记忆箱基本用法",
+    "title": "小柴记忆箱记录方式",
     "summary": "使用小柴记忆箱时，直接发送内容即可让其记住，无需特殊格式",
+    "memory_category": "产品使用技巧",
     "topics": [
       "小柴记忆箱使用规则"
     ],
@@ -93,7 +618,7 @@
     "memory_type": "fact",
     "ai_generated": true,
     "created_at": "2026-06-04 11:00:56",
-    "updated_at": "2026-06-04 11:00:56",
+    "updated_at": "2026-06-04 15:24:47",
     "evidence": {
       "sqlite_path": "data/personal_brain.sqlite3",
       "sqlite_table": "raw_messages",
@@ -103,8 +628,9 @@
   {
     "memory_id": 4,
     "raw_message_id": 6,
-    "title": "项目工作流程：先方案后执行",
+    "title": "先讨论方案再交给 Codex 执行",
     "summary": "在做项目时，采用'先用ChatGPT商讨方案，再用Codex进行执行'的两阶段工作流程",
+    "memory_category": "工作流方法",
     "topics": [
       "AI辅助开发工作流",
       "项目管理方法论"
@@ -114,7 +640,7 @@
     "memory_type": "preference",
     "ai_generated": true,
     "created_at": "2026-06-04 10:55:44",
-    "updated_at": "2026-06-04 10:55:44",
+    "updated_at": "2026-06-04 15:24:47",
     "evidence": {
       "sqlite_path": "data/personal_brain.sqlite3",
       "sqlite_table": "raw_messages",
@@ -124,18 +650,19 @@
   {
     "memory_id": 3,
     "raw_message_id": 3,
-    "title": "AI作为记忆入口",
+    "title": "小柴作为记忆入口",
     "summary": "用户将AI系统定位为自己的'记忆入口'，意味着用户倾向于通过AI来管理和访问自己的个人记忆",
+    "memory_category": "现有项目改进",
     "topics": [
-      "AI交互模式",
-      "个人知识管理"
+      "个人知识管理",
+      "AI交互模式"
     ],
     "importance": 0.6,
     "confidence": 0.8,
     "memory_type": "preference",
     "ai_generated": true,
     "created_at": "2026-06-04 10:44:27",
-    "updated_at": "2026-06-04 10:44:27",
+    "updated_at": "2026-06-04 15:24:47",
     "evidence": {
       "sqlite_path": "data/personal_brain.sqlite3",
       "sqlite_table": "raw_messages",
@@ -145,8 +672,9 @@
   {
     "memory_id": 2,
     "raw_message_id": 1,
-    "title": "长期记忆系统的核心需求",
+    "title": "Personal Brain 长期记忆目标",
     "summary": "用户期望 Personal Brain 能够理解其想法并形成长期记忆，而非简单的信息检索。这表明用户看重知识的深度整合与持久化存储。",
+    "memory_category": "现有项目改进",
     "topics": [
       "个人知识管理"
     ],
@@ -155,7 +683,7 @@
     "memory_type": "preference",
     "ai_generated": true,
     "created_at": "2026-06-03 17:53:27",
-    "updated_at": "2026-06-03 17:53:27",
+    "updated_at": "2026-06-04 15:24:47",
     "evidence": {
       "sqlite_path": "data/personal_brain.sqlite3",
       "sqlite_table": "raw_messages",
@@ -165,8 +693,9 @@
   {
     "memory_id": 1,
     "raw_message_id": 1,
-    "title": "AI-native 工具偏好",
+    "title": "AI-native 工具原则",
     "summary": "用户偏好 AI-native 设计的工具，而非基于传统关键词搜索的工具。用户认为 AI 应该能够理解语义和意图，而不仅仅是匹配关键词。",
+    "memory_category": "现有项目改进",
     "topics": [
       "AI 产品设计偏好",
       "人机交互理念"
@@ -176,7 +705,7 @@
     "memory_type": "preference",
     "ai_generated": true,
     "created_at": "2026-06-03 17:53:27",
-    "updated_at": "2026-06-03 17:53:27",
+    "updated_at": "2026-06-04 15:24:47",
     "evidence": {
       "sqlite_path": "data/personal_brain.sqlite3",
       "sqlite_table": "raw_messages",

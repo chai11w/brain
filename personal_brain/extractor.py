@@ -12,7 +12,22 @@ from .llm import LLMClient
 from .schema import BrainSchema
 
 
-PROMPT_VERSION = "memory-extraction-v1"
+PROMPT_VERSION = "memory-extraction-v2"
+
+
+MEMORY_CATEGORIES = [
+    "现有项目改进",
+    "未来产品设想",
+    "生活感悟",
+    "产品使用技巧",
+    "自身认知更新",
+    "技术思考",
+    "人际关系",
+    "工作流方法",
+    "信息安全",
+    "临时待办",
+    "其他",
+]
 
 
 @dataclass(frozen=True)
@@ -87,17 +102,25 @@ class MemoryExtractor:
             "你是 AI-native Personal Brain 的记忆提取器。"
             "你的任务不是聊天，而是把用户的随意输入整理成长期记忆。"
             "你可以去掉口语、重复和噪音，但不能改变用户原意。"
-            "如果一句话包含多个独立想法，请拆成多条 atomic memories。"
+            "如果一句话包含多个独立想法，可以拆成多条 atomic memories；"
+            "但不要把一个完整愿景机械拆成过多零碎条目。"
+            "所有标题、主题、说明、原因必须使用中文，除非是 ChatGPT、Codex、GitHub、API key 这类专有名词。"
             "只输出 JSON，不要输出 Markdown，不要解释。"
         )
         user_prompt = {
             "task": "extract_personal_memory",
+            "stable_memory_categories": MEMORY_CATEGORIES,
             "rules": [
-                "Preserve the user's meaning.",
-                "Rewrite into concise third-person memory statements.",
-                "Use dynamic topics; do not force fixed categories.",
-                "Only remember durable preferences, decisions, ideas, principles, plans, or self-knowledge.",
-                "If the input is too trivial to remember, set should_remember=false.",
+                "保留用户原意，不要替用户拔高成他没说过的结论。",
+                "改写成简洁的第三人称长期记忆。",
+                "每条 atomic memory 必须选择一个 stable_memory_categories 中的大类。",
+                "topics 仍然由 AI 动态生成，但必须优先复用语义相近的中文主题名，不要为每条记忆凭空新造一个主题。",
+                "topic 是小方向，memory_category 是大方向；不要把二者混在一起。",
+                "只记 durable 的偏好、决定、想法、原则、计划、反思、自我认知、处事方式或产品方向。",
+                "临时命令、普通提问、能力询问、寒暄、过短且无上下文的吐槽，应 set should_remember=false。",
+                "如果用户是在记录系统改进方向，要优先归入“现有项目改进”。",
+                "如果用户是在描述未来产品形态、第二个我、数字分身、接入其他软件，优先归入“未来产品设想”。",
+                "如果用户只是在说某个工具名字，不要生成“用户知道某工具”这种低价值记忆。",
             ],
             "output_schema": {
                 "should_remember": True,
@@ -106,6 +129,7 @@ class MemoryExtractor:
                     {
                         "title": "short title",
                         "content": "AI-rewritten atomic memory",
+                        "memory_category": "one stable category from stable_memory_categories",
                         "memory_type": "preference|principle|decision|idea|plan|reflection|fact|other",
                         "importance": 0.0,
                         "confidence": 0.0,
@@ -257,6 +281,7 @@ class MemoryExtractor:
     ) -> int:
         content = clean_required_text(item.get("content"), "memory content")
         title = clean_optional_text(item.get("title"))
+        memory_category = normalize_memory_category(clean_optional_text(item.get("memory_category")))
         memory_type = clean_optional_text(item.get("memory_type")) or "other"
         importance = clamp_score(item.get("importance"), default=0.5)
         confidence = clamp_score(item.get("confidence"), default=0.7)
@@ -264,15 +289,16 @@ class MemoryExtractor:
             """
             INSERT INTO memories (
                 raw_message_id, extraction_run_id, content, title,
-                memory_type, importance, confidence
+                memory_category, memory_type, importance, confidence
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 raw_message_id,
                 extraction_run_id,
                 content,
                 title,
+                memory_category,
                 memory_type,
                 importance,
                 confidence,
@@ -398,6 +424,29 @@ def clamp_score(value: Any, default: float) -> float:
     return max(0.0, min(1.0, score))
 
 
+def normalize_memory_category(value: str | None) -> str:
+    if not value:
+        return "其他"
+    clean = value.strip()
+    if clean in MEMORY_CATEGORIES:
+        return clean
+    aliases = {
+        "项目改进": "现有项目改进",
+        "当前项目改进": "现有项目改进",
+        "产品设想": "未来产品设想",
+        "未来方向": "未来产品设想",
+        "产品技巧": "产品使用技巧",
+        "使用技巧": "产品使用技巧",
+        "自我认知": "自身认知更新",
+        "认知更新": "自身认知更新",
+        "技术判断": "技术思考",
+        "技术策略": "技术思考",
+        "工作流": "工作流方法",
+        "安全": "信息安全",
+    }
+    return aliases.get(clean, "其他")
+
+
 def upsert_topic(conn: sqlite3.Connection, name: str, description: str | None) -> int:
     conn.execute(
         """
@@ -433,4 +482,3 @@ def upsert_entity(
         (name, entity_type),
     ).fetchone()
     return int(row["id"])
-

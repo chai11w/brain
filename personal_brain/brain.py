@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
+from typing import Any
 
 from .answer import AnswerEngine, AnswerResult
 from .config import BrainConfig, load_config
 from .extractor import IngestResult, MemoryExtractor
 from .llm import EmbeddingClient, LLMClient
 from .memory_view import MemoryDetail, MemorySummary, MemoryView
+from .reviewer import MemoryReviewResult, MemoryReviewer
 from .router import MemoryRouterBuilder, RouterBuildResult
 from .schema import BrainSchema, SchemaInitResult
 from .semantic import EmbedMemoriesResult, RecallResult, SemanticMemory
@@ -180,6 +183,71 @@ class PersonalBrain:
             recall_limit=recall_limit,
             evidence_limit=evidence_limit,
         )
+
+    def record_interaction(
+        self,
+        *,
+        message_id: str | None,
+        source: str,
+        sender: str,
+        user_text: str,
+        mode: str,
+        action: str,
+        status: str,
+        raw_message_id: int | None = None,
+        reply_text: str | None = None,
+        evidence: list[dict[str, Any]] | None = None,
+        error: str | None = None,
+        latency_ms: int | None = None,
+    ) -> int:
+        self.schema.initialize()
+        evidence_json = json.dumps(evidence, ensure_ascii=False) if evidence is not None else None
+        with self.schema.connect() as conn:
+            cursor = conn.execute(
+                """
+                INSERT INTO interaction_logs (
+                    message_id, source, sender, user_text, mode, action,
+                    raw_message_id, reply_text, evidence_json, status, error, latency_ms
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    message_id,
+                    source,
+                    sender,
+                    user_text,
+                    mode,
+                    action,
+                    raw_message_id,
+                    reply_text,
+                    evidence_json,
+                    status,
+                    error,
+                    latency_ms,
+                ),
+            )
+            return int(cursor.lastrowid)
+
+    def list_interactions(self, limit: int = 20) -> list[dict[str, Any]]:
+        self.schema.initialize()
+        with self.schema.connect() as conn:
+            rows = conn.execute(
+                """
+                SELECT
+                    id, message_id, source, sender, user_text, mode, action,
+                    raw_message_id, reply_text, evidence_json, status, error,
+                    latency_ms, created_at
+                FROM interaction_logs
+                ORDER BY created_at DESC, id DESC
+                LIMIT ?
+                """,
+                (limit,),
+            ).fetchall()
+            return [dict(row) for row in rows]
+
+    def review_memories(self, limit: int = 80, raw_message_id: int | None = None) -> MemoryReviewResult:
+        reviewer = MemoryReviewer(schema=self.schema, chat_model=self.chat_model)
+        return reviewer.review(limit=limit, raw_message_id=raw_message_id)
 
 
 def combine_warning(first: str | None, second: str | None) -> str | None:

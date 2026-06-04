@@ -163,7 +163,9 @@ class MemoryRouterBuilder:
             """
             SELECT mt.memory_id, mt.topic_id, mt.confidence, t.name
             FROM memory_topics mt
+            JOIN memories m ON m.id = mt.memory_id
             LEFT JOIN topics t ON t.id = mt.topic_id
+            WHERE m.status = 'active'
             """
         ).fetchall()
         by_memory: dict[int, list[dict[str, Any]]] = {}
@@ -215,7 +217,14 @@ class MemoryRouterBuilder:
         conn: sqlite3.Connection,
         memory_topics: dict[int, list[dict[str, Any]]],
     ) -> list[dict[str, Any]]:
-        rows = conn.execute("SELECT * FROM memories ORDER BY updated_at DESC, id DESC").fetchall()
+        rows = conn.execute(
+            """
+            SELECT *
+            FROM memories
+            WHERE status = 'active'
+            ORDER BY updated_at DESC, id DESC
+            """
+        ).fetchall()
         manifest: list[dict[str, Any]] = []
         for row in rows:
             memory_id = int(row["id"])
@@ -226,6 +235,7 @@ class MemoryRouterBuilder:
                     "raw_message_id": row["raw_message_id"],
                     "title": row["title"] if "title" in row.keys() else self._shorten(row["content"], 80),
                     "summary": self._shorten(row["content"], 260),
+                    "memory_category": row["memory_category"] if "memory_category" in row.keys() else "未分类",
                     "topics": [topic["name"] for topic in topic_links],
                     "importance": row["importance"] if "importance" in row.keys() else None,
                     "confidence": row["confidence"] if "confidence" in row.keys() else None,
@@ -261,6 +271,13 @@ class MemoryRouterBuilder:
             "stats": {
                 "topics": len(topics),
                 "manifest_memories": len(manifest),
+                "memory_categories": sorted(
+                    {
+                        str(item.get("memory_category"))
+                        for item in manifest
+                        if item.get("memory_category")
+                    }
+                ),
             },
             "routing_protocol": [
                 "Read brain_index.json first.",

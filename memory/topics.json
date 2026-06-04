@@ -1,5 +1,27 @@
 [
   {
+    "topic_id": 44,
+    "name": "AI Agent战略",
+    "summary": "关于AI智能体技术的采用时机和竞争策略思考",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      28
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 48,
+    "name": "AI Personal Brain 功能需求",
+    "summary": "用户对AI记忆系统的功能期望和需求",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
     "topic_id": 1,
     "name": "AI 产品设计偏好",
     "summary": "用户对 AI 工具交互方式和能力边界的期望",
@@ -8,6 +30,18 @@
     "memory_count": 1,
     "manifest_refs": [
       1
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 32,
+    "name": "AI-native 工具追踪",
+    "summary": "持续关注和收集 AI 原生应用、工具和项目的动态",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      20
     ],
     "ai_generated": true
   },
@@ -24,6 +58,67 @@
     "ai_generated": true
   },
   {
+    "topic_id": 41,
+    "name": "AI产品趋势判断",
+    "summary": "用户对AI相关产品技术路线和发展方向的看法与推测",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      26
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 18,
+    "name": "AI工作流设计",
+    "summary": "与AI交互时使用的文件组织和工作流程设计",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      12
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 14,
+    "name": "AI工具使用",
+    "summary": "关于AI编程助手或AI工具的操作技巧和工作流",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 2,
+    "manifest_refs": [
+      10,
+      11
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 22,
+    "name": "AI工具评估标准",
+    "summary": "用户对AI工具核心能力的要求和期望",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      14
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 30,
+    "name": "AI辅助工作流",
+    "summary": "使用AI工具（如ChatGPT）辅助完成工作的方法和流程",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      19
+    ],
+    "ai_generated": true
+  },
+  {
     "topic_id": 6,
     "name": "AI辅助开发工作流",
     "summary": "使用AI工具进行软件开发的工作流程和方法",
@@ -32,6 +127,88 @@
     "memory_count": 1,
     "manifest_refs": [
       4
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 39,
+    "name": "AI辅助知识管理",
+    "summary": "使用AI工具（如Codex）辅助知识的分类、整理和管理",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      25
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 59,
+    "name": "Codex 集成",
+    "summary": "将 Codex 模型集成到个人大脑系统中用于总结和分类",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      39
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 24,
+    "name": "memory-box-feature",
+    "summary": "记忆箱系统的功能需求和改进方向",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      15
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 25,
+    "name": "message-management",
+    "summary": "消息相关的管理操作，如撤回、编辑等",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      15
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 19,
+    "name": "上下文管理",
+    "summary": "如何在新对话中传递和恢复上下文信息",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      12
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 35,
+    "name": "个人工具使用",
+    "summary": "用户接触或使用的各类工具和产品",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 61,
+    "name": "个人知识库",
+    "summary": "将碎片化长期记录转化为结构化、可推理的知识体系",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      40
     ],
     "ai_generated": true
   },
@@ -45,6 +222,64 @@
     "manifest_refs": [
       2,
       3
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 23,
+    "name": "主动智能",
+    "summary": "用户重视AI工具的自主判断和主动决策能力",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      14
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 27,
+    "name": "主题管理策略",
+    "summary": "关于如何命名和组织记忆主题的原则",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      17
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 53,
+    "name": "交互日志",
+    "summary": "AI与用户的对话记录和交互追踪机制",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 26,
+    "name": "交互语言偏好",
+    "summary": "用户对AI交互和记忆存储中使用的语言设定",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      16
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 17,
+    "name": "人机交互习惯",
+    "summary": "与AI协作时的交互模式和注意事项",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      11
     ],
     "ai_generated": true
   },
@@ -73,6 +308,112 @@
     "ai_generated": true
   },
   {
+    "topic_id": 29,
+    "name": "信息检索优化",
+    "summary": "提升记忆调用效率的设计思路",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      18
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 37,
+    "name": "信息组织理念",
+    "summary": "用户对如何组织和理解信息的思维方式",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      23
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 38,
+    "name": "写作习惯",
+    "summary": "用户在文字输入和排版方面的个人偏好与习惯",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      24
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 60,
+    "name": "分类体系优化",
+    "summary": "改进记忆分类的大类设计，使其能更好地覆盖内容",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      39
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 40,
+    "name": "周总结工作流",
+    "summary": "每周进行的总结回顾流程和方法",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      25
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 21,
+    "name": "多Agent协作",
+    "summary": "多个AI Agent之间的任务分配和协调机制",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      13
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 54,
+    "name": "大类回复",
+    "summary": "基于稳定记忆分类的结构化回复方式",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 36,
+    "name": "对话理解认知",
+    "summary": "用户对对话结构和主题组织的看法和理解",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      23
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 57,
+    "name": "小柴记忆箱",
+    "summary": "用户正在推进的个人项目",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      38
+    ],
+    "ai_generated": true
+  },
+  {
     "topic_id": 8,
     "name": "小柴记忆箱使用规则",
     "summary": "AI记忆工具小柴记忆箱的操作方式和交互规范",
@@ -89,6 +430,182 @@
     "ai_generated": true
   },
   {
+    "topic_id": 43,
+    "name": "工作流闭环设计",
+    "summary": "建立反馈循环以实现系统持续改进的设计思路",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      27
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 56,
+    "name": "异步处理",
+    "summary": "避免阻塞主流程的后台任务设计模式",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 45,
+    "name": "技术竞争策略",
+    "summary": "通过时间差和信息差获取竞争优势的方法论",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      28
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 50,
+    "name": "数字分身/ AI Agent",
+    "summary": "用AI模拟或替代本人进行事务处理的长期愿景",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      33
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 34,
+    "name": "知识管理方式",
+    "summary": "个人对信息整理和学习资料组织的方式偏好",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      21
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 47,
+    "name": "知识组织方法论",
+    "summary": "用户对信息整理和归类的核心理念",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      30
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 58,
+    "name": "简历与职业展示",
+    "summary": "个人经历的书面呈现与职业形象塑造",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      38
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 20,
+    "name": "系统架构演进",
+    "summary": "个人AI系统的长期架构规划和升级路径",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      13
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 51,
+    "name": "系统集成与扩展",
+    "summary": "将AI系统与其他软件和服务集成的规划",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 33,
+    "name": "自动化工作流",
+    "summary": "使用自动化工具/脚本完成周期性信息收集任务",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      20
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 46,
+    "name": "记忆管理系统",
+    "summary": "用户对个人知识库和记忆的组织方式偏好",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      29
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 42,
+    "name": "记忆系统优化方法",
+    "summary": "如何通过工具和流程持续改进个人知识管理系统的方法论",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      27
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 62,
+    "name": "记忆系统设计",
+    "summary": "AI 记忆系统的架构理念与功能边界",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      40
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 28,
+    "name": "记忆组织架构",
+    "summary": "用户对记忆系统分类和检索结构的设想",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      18
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 31,
+    "name": "项目管理方法",
+    "summary": "项目启动、规划和上下文搭建的方法论",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      19
+    ],
+    "ai_generated": true
+  },
+  {
     "topic_id": 7,
     "name": "项目管理方法论",
     "summary": "项目执行的方法和流程偏好",
@@ -98,6 +615,28 @@
     "manifest_refs": [
       4
     ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 15,
+    "name": "项目记忆管理",
+    "summary": "如何组织和管理供AI读取的项目级记忆/文档",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      10
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 55,
+    "name": "飞书集成",
+    "summary": "与飞书平台的事件交互、webhook 接收及消息处理",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
     "ai_generated": true
   },
   {

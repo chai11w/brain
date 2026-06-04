@@ -11,6 +11,7 @@ class MemorySummary:
     id: int
     title: str | None
     content: str
+    memory_category: str
     memory_type: str
     importance: float
     confidence: float
@@ -46,7 +47,7 @@ class MemoryView:
         with self.schema.connect() as conn:
             rows = conn.execute(
                 """
-                SELECT id, title, content, memory_type, importance, confidence, created_at
+                SELECT id, title, content, memory_category, memory_type, importance, confidence, created_at
                 FROM memories
                 WHERE status = 'active'
                 ORDER BY created_at DESC, id DESC
@@ -62,6 +63,7 @@ class MemoryView:
                         id=memory_id,
                         title=row["title"],
                         content=row["content"],
+                        memory_category=row["memory_category"],
                         memory_type=row["memory_type"],
                         importance=float(row["importance"]),
                         confidence=float(row["confidence"]),
@@ -78,6 +80,7 @@ class MemoryView:
                 """
                 SELECT
                     m.id, m.title, m.content, m.memory_type, m.importance, m.confidence,
+                    m.memory_category,
                     m.created_at, m.raw_message_id, m.extraction_run_id,
                     r.content AS raw_content, r.source AS raw_source, r.sender AS raw_sender,
                     r.created_at AS raw_created_at,
@@ -99,6 +102,7 @@ class MemoryView:
             id=int(row["id"]),
             title=row["title"],
             content=row["content"],
+            memory_category=row["memory_category"],
             memory_type=row["memory_type"],
             importance=float(row["importance"]),
             confidence=float(row["confidence"]),
@@ -173,7 +177,7 @@ def format_memory_summary(memory: MemorySummary) -> str:
     topics = ", ".join(memory.topics) if memory.topics else "no topics"
     return (
         f"#{memory.id} {title}\n"
-        f"  type={memory.memory_type} importance={memory.importance:.2f} "
+        f"  category={memory.memory_category} type={memory.memory_type} importance={memory.importance:.2f} "
         f"confidence={memory.confidence:.2f} created={memory.created_at}\n"
         f"  topics={topics}\n"
         f"  content={short_text(memory.content, 120)}"
@@ -184,6 +188,7 @@ def format_memory_detail(detail: MemoryDetail) -> str:
     lines = [
         f"memory #{detail.summary.id}",
         f"title: {detail.summary.title or '(none)'}",
+        f"category: {detail.summary.memory_category}",
         f"type: {detail.summary.memory_type}",
         f"importance: {detail.summary.importance:.2f}",
         f"confidence: {detail.summary.confidence:.2f}",
@@ -223,4 +228,3 @@ def short_text(text: str, limit: int) -> str:
     if len(clean) <= limit:
         return clean
     return clean[: limit - 1] + "..."
-
