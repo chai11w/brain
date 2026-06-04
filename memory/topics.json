@@ -12,14 +12,39 @@
     "ai_generated": true
   },
   {
-    "topic_id": 3,
-    "name": "个人知识管理",
-    "summary": "用户如何组织和保留个人知识与想法",
+    "topic_id": 4,
+    "name": "AI交互模式",
+    "summary": "用户与AI系统的互动方式和期望的角色定位",
     "parent_topic_id": null,
     "keywords": [],
     "memory_count": 1,
     "manifest_refs": [
-      2
+      3
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 6,
+    "name": "AI辅助开发工作流",
+    "summary": "使用AI工具进行软件开发的工作流程和方法",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      4
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 3,
+    "name": "个人知识管理",
+    "summary": "用户管理个人信息和记忆的方式",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 2,
+    "manifest_refs": [
+      2,
+      3
     ],
     "ai_generated": true
   },
@@ -32,6 +57,46 @@
     "memory_count": 1,
     "manifest_refs": [
       1
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 11,
+    "name": "信息安全习惯",
+    "summary": "用户在数字工具使用中的安全意识和防护措施",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      8
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 8,
+    "name": "小柴记忆箱使用规则",
+    "summary": "AI记忆工具小柴记忆箱的操作方式和交互规范",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 5,
+    "manifest_refs": [
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 7,
+    "name": "项目管理方法论",
+    "summary": "项目执行的方法和流程偏好",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      4
     ],
     "ai_generated": true
   },

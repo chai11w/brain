@@ -1,5 +1,148 @@
 [
   {
+    "memory_id": 9,
+    "raw_message_id": 7,
+    "title": "记忆筛选机制认知",
+    "summary": "用户理解小柴记忆箱可能会将临时吐槽、短句等碎片化内容判断为不值得长期记忆而过滤掉",
+    "topics": [
+      "小柴记忆箱使用规则"
+    ],
+    "importance": 0.5,
+    "confidence": 0.85,
+    "memory_type": "reflection",
+    "ai_generated": true,
+    "created_at": "2026-06-04 11:00:56",
+    "updated_at": "2026-06-04 11:00:56",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 7
+    }
+  },
+  {
+    "memory_id": 8,
+    "raw_message_id": 7,
+    "title": "信息安全规则",
+    "summary": "不应将密码、token、API key等敏感信息发送到飞书收集箱（小柴记忆箱的输入渠道）",
+    "topics": [
+      "信息安全习惯",
+      "小柴记忆箱使用规则"
+    ],
+    "importance": 0.9,
+    "confidence": 0.95,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-04 11:00:56",
+    "updated_at": "2026-06-04 11:00:56",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 7
+    }
+  },
+  {
+    "memory_id": 7,
+    "raw_message_id": 7,
+    "title": "记忆准确性优化建议",
+    "summary": "为了让小柴记忆箱更准确地记住内容，应尽量说完整句子而非半句或碎片化表达",
+    "topics": [
+      "小柴记忆箱使用规则"
+    ],
+    "importance": 0.6,
+    "confidence": 0.9,
+    "memory_type": "preference",
+    "ai_generated": true,
+    "created_at": "2026-06-04 11:00:56",
+    "updated_at": "2026-06-04 11:00:56",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 7
+    }
+  },
+  {
+    "memory_id": 6,
+    "raw_message_id": 7,
+    "title": "小柴记忆箱提问方式",
+    "summary": "向小柴记忆箱提问时，需要在消息前加问号'?'以区分于记忆指令",
+    "topics": [
+      "小柴记忆箱使用规则"
+    ],
+    "importance": 0.7,
+    "confidence": 0.95,
+    "memory_type": "fact",
+    "ai_generated": true,
+    "created_at": "2026-06-04 11:00:56",
+    "updated_at": "2026-06-04 11:00:56",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 7
+    }
+  },
+  {
+    "memory_id": 5,
+    "raw_message_id": 7,
+    "title": "小柴记忆箱基本用法",
+    "summary": "使用小柴记忆箱时，直接发送内容即可让其记住，无需特殊格式",
+    "topics": [
+      "小柴记忆箱使用规则"
+    ],
+    "importance": 0.7,
+    "confidence": 0.95,
+    "memory_type": "fact",
+    "ai_generated": true,
+    "created_at": "2026-06-04 11:00:56",
+    "updated_at": "2026-06-04 11:00:56",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 7
+    }
+  },
+  {
+    "memory_id": 4,
+    "raw_message_id": 6,
+    "title": "项目工作流程：先方案后执行",
+    "summary": "在做项目时，采用'先用ChatGPT商讨方案，再用Codex进行执行'的两阶段工作流程",
+    "topics": [
+      "AI辅助开发工作流",
+      "项目管理方法论"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "preference",
+    "ai_generated": true,
+    "created_at": "2026-06-04 10:55:44",
+    "updated_at": "2026-06-04 10:55:44",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 6
+    }
+  },
+  {
+    "memory_id": 3,
+    "raw_message_id": 3,
+    "title": "AI作为记忆入口",
+    "summary": "用户将AI系统定位为自己的'记忆入口'，意味着用户倾向于通过AI来管理和访问自己的个人记忆",
+    "topics": [
+      "AI交互模式",
+      "个人知识管理"
+    ],
+    "importance": 0.6,
+    "confidence": 0.8,
+    "memory_type": "preference",
+    "ai_generated": true,
+    "created_at": "2026-06-04 10:44:27",
+    "updated_at": "2026-06-04 10:44:27",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 3
+    }
+  },
+  {
     "memory_id": 2,
     "raw_message_id": 1,
     "title": "长期记忆系统的核心需求",

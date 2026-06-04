@@ -1,0 +1,262 @@
+from __future__ import annotations
+
+import json
+from dataclasses import dataclass
+from typing import Any
+
+from .extractor import parse_json_object
+from .llm import LLMClient
+from .semantic import RecallResult, SemanticMemory
+
+
+@dataclass(frozen=True)
+class RerankedEvidence:
+    memory_id: int
+    relevance: float
+    reason: str
+    recall: RecallResult
+
+
+@dataclass(frozen=True)
+class AnswerResult:
+    question: str
+    answer: str
+    evidence: list[RerankedEvidence]
+    warning: str | None = None
+
+
+class AnswerEngine:
+    """Evidence-constrained answer layer over semantic recall."""
+
+    def __init__(self, semantic_memory: SemanticMemory, chat_model: LLMClient):
+        self.semantic_memory = semantic_memory
+        self.chat_model = chat_model
+
+    def ask(self, question: str, recall_limit: int = 8, evidence_limit: int = 5) -> AnswerResult:
+        clean_question = question.strip()
+        if not clean_question:
+            raise ValueError("ask question cannot be empty")
+        if not self.chat_model.available:
+            raise RuntimeError("chat model unavailable; configure chat_model before ask")
+
+        recalled = self.semantic_memory.recall(clean_question, limit=recall_limit)
+        if not recalled:
+            return AnswerResult(
+                question=clean_question,
+                answer="没有找到可用的相关记忆证据，所以我不能可靠回答这个问题。",
+                evidence=[],
+                warning="no recalled memories",
+            )
+
+        warning = None
+        try:
+            reranked = self._rerank(clean_question, recalled, evidence_limit=evidence_limit)
+        except Exception as exc:
+            warning = f"AI rerank failed; used semantic recall order: {exc}"
+            reranked = [
+                RerankedEvidence(
+                    memory_id=item.memory_id,
+                    relevance=item.score,
+                    reason="Semantic recall fallback.",
+                    recall=item,
+                )
+                for item in recalled[:evidence_limit]
+            ]
+
+        if not reranked:
+            return AnswerResult(
+                question=clean_question,
+                answer="召回到了一些记忆，但没有足够相关的证据可以支撑回答。",
+                evidence=[],
+                warning=warning or "no relevant evidence after rerank",
+            )
+
+        answer = self._answer(clean_question, reranked)
+        citation_warning = citation_contract_warning(answer, reranked)
+        if citation_warning:
+            warning = combine_warnings(warning, citation_warning)
+        return AnswerResult(
+            question=clean_question,
+            answer=answer,
+            evidence=reranked,
+            warning=warning,
+        )
+
+    def _rerank(
+        self,
+        question: str,
+        recalled: list[RecallResult],
+        evidence_limit: int,
+    ) -> list[RerankedEvidence]:
+        evidence = [recall_to_payload(item) for item in recalled]
+        prompt = {
+            "task": "rerank_memory_evidence",
+            "question": question,
+            "rules": [
+                "Only judge the provided evidence.",
+                "Prefer evidence that directly answers the question.",
+                "Set relevance between 0 and 1.",
+                "Return at most the requested number of evidence items.",
+                "Do not invent memory ids.",
+            ],
+            "max_results": evidence_limit,
+            "evidence": evidence,
+            "output_schema": {
+                "selected": [
+                    {
+                        "memory_id": 1,
+                        "relevance": 0.95,
+                        "reason": "why this memory is relevant",
+                    }
+                ]
+            },
+        }
+        answer = self.chat_model.chat(
+            [
+                {
+                    "role": "system",
+                    "content": (
+                        "You rerank Personal Brain memory evidence. "
+                        "Output JSON only. Do not add Markdown."
+                    ),
+                },
+                {"role": "user", "content": json.dumps(prompt, ensure_ascii=False)},
+            ],
+            temperature=0.0,
+            response_format={"type": "json_object"},
+        )
+        if not answer:
+            raise RuntimeError("model returned empty rerank response")
+        payload = parse_json_object(answer)
+        selected = payload.get("selected") or []
+        if not isinstance(selected, list):
+            raise ValueError("rerank selected must be a list")
+
+        by_id = {item.memory_id: item for item in recalled}
+        reranked: list[RerankedEvidence] = []
+        seen: set[int] = set()
+        for item in selected:
+            if not isinstance(item, dict):
+                continue
+            try:
+                memory_id = int(item.get("memory_id"))
+            except (TypeError, ValueError):
+                continue
+            if memory_id in seen or memory_id not in by_id:
+                continue
+            relevance = clamp_score(item.get("relevance"), default=0.0)
+            if relevance <= 0.0:
+                continue
+            reranked.append(
+                RerankedEvidence(
+                    memory_id=memory_id,
+                    relevance=relevance,
+                    reason=str(item.get("reason") or "").strip(),
+                    recall=by_id[memory_id],
+                )
+            )
+            seen.add(memory_id)
+            if len(reranked) >= evidence_limit:
+                break
+        reranked.sort(key=lambda item: item.relevance, reverse=True)
+        return reranked
+
+    def _answer(self, question: str, evidence: list[RerankedEvidence]) -> str:
+        prompt = {
+            "task": "answer_from_personal_memory_evidence",
+            "question": question,
+            "rules": [
+                "Answer only from the provided evidence.",
+                "Cite evidence with exact format: [memory_id=1, raw_message_id=2].",
+                "If evidence is thin, say what is uncertain.",
+                "Do not use outside knowledge.",
+                "Write in concise Chinese unless the user asks otherwise.",
+            ],
+            "evidence": [
+                {
+                    **recall_to_payload(item.recall),
+                    "rerank_relevance": item.relevance,
+                    "rerank_reason": item.reason,
+                }
+                for item in evidence
+            ],
+        }
+        answer = self.chat_model.chat(
+            [
+                {
+                    "role": "system",
+                    "content": (
+                        "You answer questions using only provided Personal Brain evidence. "
+                        "Every claim must cite evidence as [memory_id=1, raw_message_id=2]."
+                    ),
+                },
+                {"role": "user", "content": json.dumps(prompt, ensure_ascii=False)},
+            ],
+            temperature=0.2,
+        )
+        if not answer:
+            raise RuntimeError("model returned empty answer")
+        return answer.strip()
+
+
+def recall_to_payload(item: RecallResult) -> dict[str, Any]:
+    return {
+        "memory_id": item.memory_id,
+        "semantic_score": item.score,
+        "title": item.title,
+        "content": item.content,
+        "memory_type": item.memory_type,
+        "importance": item.importance,
+        "confidence": item.confidence,
+        "created_at": item.created_at,
+        "topics": item.topics,
+        "raw_message_id": item.raw_message_id,
+        "raw_content": item.raw_content,
+    }
+
+
+def clamp_score(value: Any, default: float) -> float:
+    try:
+        score = float(value)
+    except (TypeError, ValueError):
+        score = default
+    return max(0.0, min(1.0, score))
+
+
+def format_answer_result(result: AnswerResult) -> str:
+    lines = [result.answer]
+    if result.warning:
+        lines.extend(["", f"warning: {result.warning}"])
+    if result.evidence:
+        lines.extend(["", "evidence:"])
+        for item in result.evidence:
+            recall = item.recall
+            title = recall.title or short_text(recall.content, 60)
+            lines.append(
+                f"- memory_id={recall.memory_id} raw_message_id={recall.raw_message_id} "
+                f"relevance={item.relevance:.2f} title={title}"
+            )
+    return "\n".join(lines)
+
+
+def short_text(text: str, limit: int) -> str:
+    clean = " ".join(str(text).split())
+    if len(clean) <= limit:
+        return clean
+    return clean[: limit - 1] + "..."
+
+
+def citation_contract_warning(answer: str, evidence: list[RerankedEvidence]) -> str | None:
+    if not evidence:
+        return None
+    has_memory_citation = any(f"memory_id={item.memory_id}" in answer for item in evidence)
+    has_raw_citation = any(f"raw_message_id={item.recall.raw_message_id}" in answer for item in evidence)
+    if has_memory_citation and has_raw_citation:
+        return None
+    return "answer did not fully satisfy citation contract"
+
+
+def combine_warnings(first: str | None, second: str | None) -> str | None:
+    if first and second:
+        return f"{first}; {second}"
+    return first or second

@@ -10,5 +10,14 @@
     "model": "glm-5v-turbo",
     "enabled": true,
     "timeout_seconds": 90
+  },
+  "embedding_model": {
+    "provider": "openai_compatible",
+    "base_url": "https://api.z.ai/api/paas/v4",
+    "api_key_env": "ZAI_API_KEY",
+    "model": "embedding-3",
+    "enabled": false,
+    "timeout_seconds": 90,
+    "dimension": 2048
   }
 }

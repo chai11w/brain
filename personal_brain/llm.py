@@ -5,7 +5,7 @@ import os
 import urllib.error
 import urllib.request
 
-from .config import ChatModelConfig
+from .config import ChatModelConfig, EmbeddingModelConfig
 
 
 class LLMClient:
@@ -14,7 +14,7 @@ class LLMClient:
 
     @property
     def available(self) -> bool:
-        return self.config.enabled and bool(os.environ.get(self.config.api_key_env))
+        return self.config.enabled and bool(get_secret_env(self.config.api_key_env))
 
     def chat(
         self,
@@ -27,7 +27,9 @@ class LLMClient:
         if self.config.provider != "openai_compatible":
             raise ValueError(f"unsupported llm provider: {self.config.provider}")
 
-        api_key = os.environ[self.config.api_key_env]
+        api_key = get_secret_env(self.config.api_key_env)
+        if not api_key:
+            return None
         endpoint = self.config.base_url.rstrip("/") + "/chat/completions"
         payload = {
             "model": self.config.model,
@@ -65,3 +67,78 @@ class LLMClient:
                     parts.append(item)
             return "\n".join(part for part in parts if part).strip()
         return str(content or "").strip()
+
+
+class EmbeddingClient:
+    def __init__(self, config: EmbeddingModelConfig):
+        self.config = config
+
+    @property
+    def available(self) -> bool:
+        return self.config.enabled and bool(get_secret_env(self.config.api_key_env))
+
+    def embed(self, text: str) -> list[float] | None:
+        vectors = self.embed_many([text])
+        if not vectors:
+            return None
+        return vectors[0]
+
+    def embed_many(self, texts: list[str]) -> list[list[float]]:
+        if not texts:
+            return []
+        if not self.available:
+            return []
+        if self.config.provider != "openai_compatible":
+            raise ValueError(f"unsupported embedding provider: {self.config.provider}")
+
+        api_key = get_secret_env(self.config.api_key_env)
+        if not api_key:
+            return []
+        endpoint = self.config.base_url.rstrip("/") + "/embeddings"
+        payload = {
+            "model": self.config.model,
+            "input": texts,
+        }
+        request = urllib.request.Request(
+            endpoint,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=self.config.timeout_seconds) as response:
+                data = json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode("utf-8", errors="replace")
+            raise RuntimeError(f"embedding HTTP error {exc.code}: {detail}") from exc
+        except urllib.error.URLError as exc:
+            raise RuntimeError(f"embedding call failed: {exc}") from exc
+
+        vectors_by_index: dict[int, list[float]] = {}
+        for item in data.get("data", []):
+            index = int(item.get("index", len(vectors_by_index)))
+            vector = item.get("embedding")
+            if not isinstance(vector, list):
+                raise RuntimeError("embedding response item has no vector")
+            vectors_by_index[index] = [float(value) for value in vector]
+        return [vectors_by_index[index] for index in range(len(texts))]
+
+
+def get_secret_env(name: str) -> str | None:
+    value = os.environ.get(name)
+    if value:
+        return value
+    if os.name != "nt":
+        return None
+    try:
+        import winreg
+
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Environment") as key:
+            value, _ = winreg.QueryValueEx(key, name)
+    except OSError:
+        return None
+    text = str(value).strip()
+    return text or None

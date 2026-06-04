@@ -5,7 +5,9 @@ import getpass
 import sys
 
 from personal_brain import PersonalBrain
+from personal_brain.answer import format_answer_result
 from personal_brain.memory_view import format_memory_detail, format_memory_summary
+from personal_brain.semantic import format_recall_result
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -44,6 +46,18 @@ def build_parser() -> argparse.ArgumentParser:
         help="do not rebuild Memory Router after ingest",
     )
 
+    embed_parser = subparsers.add_parser("embed-memories", help="embed active memories without embeddings")
+    embed_parser.add_argument("--limit", type=int, default=100, help="max memories to embed")
+
+    recall_parser = subparsers.add_parser("recall", help="semantic recall over embedded memories")
+    recall_parser.add_argument("query", help="semantic query")
+    recall_parser.add_argument("--limit", type=int, default=8, help="max recall results")
+
+    ask_parser = subparsers.add_parser("ask", help="answer a question from recalled memory evidence")
+    ask_parser.add_argument("question", help="question to answer")
+    ask_parser.add_argument("--recall-limit", type=int, default=8, help="max memories to recall")
+    ask_parser.add_argument("--evidence-limit", type=int, default=5, help="max evidence items to answer from")
+
     test_chat_parser = subparsers.add_parser("test-chat", help="test configured chat model")
     test_chat_parser.add_argument(
         "prompt",
@@ -55,6 +69,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    configure_utf8_stdio()
     args = build_parser().parse_args(argv)
     brain = PersonalBrain.from_config_file(args.config)
 
@@ -115,6 +130,42 @@ def main(argv: list[str] | None = None) -> int:
         print(format_memory_detail(brain.memory_show(args.memory_id)))
         return 0
 
+    if args.command == "embed-memories":
+        result = brain.embed_missing_memories(limit=args.limit)
+        print(f"embedded: {result.embedded_count}")
+        print(f"skipped: {result.skipped_count}")
+        if result.warning:
+            print(f"warning: {result.warning}")
+        return 0
+
+    if args.command == "recall":
+        try:
+            results = brain.recall(args.query, limit=args.limit)
+        except RuntimeError as exc:
+            print(f"warning: {exc}")
+            return 1
+        if not results:
+            print("no embedded memories found")
+            return 0
+        for index, result in enumerate(results):
+            if index:
+                print("")
+            print(format_recall_result(result))
+        return 0
+
+    if args.command == "ask":
+        try:
+            result = brain.ask(
+                args.question,
+                recall_limit=args.recall_limit,
+                evidence_limit=args.evidence_limit,
+            )
+        except RuntimeError as exc:
+            print(f"warning: {exc}")
+            return 1
+        print(format_answer_result(result))
+        return 0
+
     if args.command == "secure-add":
         secret = getpass.getpass("secret: ")
         master_password = getpass.getpass("master password: ")
@@ -156,6 +207,12 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     return 1
+
+
+def configure_utf8_stdio() -> None:
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
 
 
 if __name__ == "__main__":

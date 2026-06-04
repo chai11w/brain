@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-06-03T17:53:27",
+  "updated_at": "2026-06-04T11:15:00",
   "product": "AI-native Personal Brain",
   "purpose": "Lightweight routing index for Codex and other AI callers.",
   "entrypoints": {
@@ -9,8 +9,8 @@
     "sqlite": "data/personal_brain.sqlite3"
   },
   "stats": {
-    "topics": 4,
-    "manifest_memories": 4
+    "topics": 9,
+    "manifest_memories": 11
   },
   "routing_protocol": [
     "Read brain_index.json first.",
