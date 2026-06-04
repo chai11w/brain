@@ -497,3 +497,30 @@ Current stable state:
 - Local latest commit: `e93e44a Wire message adapter to ingestion`.
 - GitHub repo: `chai11w/brain`.
 - Remote latest commit observed: `24f03c321e7cf2a9787ba9eb24a7ee3565b032e3`.
+
+## Update: Core Ingest Owns New-Memory Embeddings
+
+`PersonalBrain.ingest(...)` now owns the post-ingest embedding step for newly
+created memory IDs when `embedding_model.enabled` is true.
+
+Reason:
+
+- CLI, Feishu, WeChat, and future adapters must behave consistently.
+- Message adapters should only receive/send messages and call the core brain.
+- Embedding is part of memory formation/retrievability, not adapter logic.
+
+Implementation notes:
+
+- Duplicate `PersonalBrain.handle_message(...)` definition was removed.
+- `personal_brain.semantic.SemanticMemory.embed_memories(memory_ids)` embeds
+  specific new memories instead of relying only on backlog-oriented
+  `embed_missing_memories(...)`.
+- `scripts/feishu_bridge.py` no longer calls its own `_embed_new_memories`.
+- If memory is saved but embedding fails, the warning should say the memory was
+  saved and later processing failed, not that long-term memory was not written.
+
+Docs:
+
+- `README.md` and `项目地图.md` now describe the actual current state:
+  extraction, embeddings, semantic recall, evidence ask, Feishu/WeChat bridge
+  shells, secure vault, and pending weekly Markdown review automation.
