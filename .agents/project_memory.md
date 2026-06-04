@@ -41,6 +41,16 @@ The user is not deeply technical and prefers Chinese explanations with context.
 When explaining architecture, database schema, Router, RAG, embeddings, or AI
 pipelines, explain plainly first, then point to files/code.
 
+Project-memory boundary:
+
+- In project collaboration context, when the user says to "write it into memory"
+  about workflow rules, CLI/GitHub upload habits, project status, or future
+  implementation plans, write/update `.agents/project_memory.md` rather than
+  ingesting it into Xiaochai's personal memory database.
+- After CLI/GitHub upload work, include a short Chinese summary explaining what
+  was changed, which CLI usage changed, what was pushed, and where to find it,
+  so the user can quickly trace the work later.
+
 ## Current Project State
 
 Implemented:
