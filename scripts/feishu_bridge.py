@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import ssl
 import sys
 import threading
@@ -182,6 +183,21 @@ class FeishuBrainBridge:
             print(f"failed to reply {message_id}: {exc}", file=sys.stderr, flush=True)
 
     def _reply_for_text(self, text: str, sender: str) -> BridgeReply:
+        archive_memory_id = extract_archive_memory_id(text)
+        if archive_memory_id is not None:
+            result = self.brain.archive_memory(archive_memory_id)
+            title = result.title or short_text(result.content, 48)
+            reply = (
+                f"已作废记忆 #{result.memory_id}：{title}\n"
+                f"这条记忆不会再进入语义召回或 Router，但原始证据仍保留。"
+            )
+            if result.previous_status == result.new_status:
+                reply = f"记忆 #{result.memory_id} 之前已经是作废状态。\n{reply}"
+            return BridgeReply(
+                text=reply,
+                action="archive",
+                raw_message_id=result.raw_message_id,
+            )
         if self.options.mode == "remember":
             return self._remember_text(text, sender)
         if self.options.mode == "ask":
@@ -395,6 +411,15 @@ def extract_question(text: str, ask_prefix: str) -> str | None:
     return None
 
 
+def extract_archive_memory_id(text: str) -> int | None:
+    clean = text.strip()
+    match = re.fullmatch(r"(?:删除|作废|撤回|归档)\s*#?(\d+)", clean, flags=re.IGNORECASE)
+    if not match:
+        return None
+    memory_id = int(match.group(1))
+    return memory_id if memory_id > 0 else None
+
+
 def format_remembered_reply(ack_message: str, details: list[MemoryDetail]) -> str:
     lines = [ack_message or "小柴记住了。"]
     if len(details) >= 4:
@@ -404,12 +429,20 @@ def format_remembered_reply(ack_message: str, details: list[MemoryDetail]) -> st
         lines.extend(
             [
                 "",
-                f"{index}. 大类：{detail.summary.memory_category}",
+                f"{index}. 记忆ID：{detail.summary.id}",
+                f"   大类：{detail.summary.memory_category}",
                 f"   主题：{topics}",
                 f"   内容：{detail.summary.content}",
             ]
         )
     return "\n".join(lines)
+
+
+def short_text(text: str, limit: int) -> str:
+    clean = " ".join(str(text).split())
+    if len(clean) <= limit:
+        return clean
+    return clean[: limit - 1] + "..."
 
 
 def answer_evidence_payload(result: AnswerResult) -> list[dict[str, Any]]:

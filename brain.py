@@ -28,6 +28,9 @@ def build_parser() -> argparse.ArgumentParser:
     memory_show_parser = subparsers.add_parser("memory-show", help="show one memory with raw evidence")
     memory_show_parser.add_argument("memory_id", type=int, help="memory id")
 
+    memory_archive_parser = subparsers.add_parser("memory-archive", help="archive one memory by id")
+    memory_archive_parser.add_argument("memory_id", type=int, help="memory id")
+
     interaction_list_parser = subparsers.add_parser("interaction-list", help="list recent Feishu/adapter interactions")
     interaction_list_parser.add_argument("--limit", type=int, default=20, help="max interactions to show")
 
@@ -139,6 +142,17 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "memory-show":
         print(format_memory_detail(brain.memory_show(args.memory_id)))
+        return 0
+
+    if args.command == "memory-archive":
+        result = brain.archive_memory(args.memory_id)
+        title = result.title or short_text(result.content, 60)
+        print(f"archived memory #{result.memory_id}: {title}")
+        print(f"raw_message_id: {result.raw_message_id}")
+        print(f"previous_status: {result.previous_status}")
+        print(f"new_status: {result.new_status}")
+        print(f"embeddings_deleted: {result.embeddings_deleted}")
+        print("router_rebuilt: True")
         return 0
 
     if args.command == "interaction-list":

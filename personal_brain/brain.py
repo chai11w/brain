@@ -8,6 +8,7 @@ from .answer import AnswerEngine, AnswerResult
 from .config import BrainConfig, load_config
 from .extractor import IngestResult, MemoryExtractor
 from .llm import EmbeddingClient, LLMClient
+from .memory_ops import ArchiveMemoryResult, MemoryOperations
 from .memory_view import MemoryDetail, MemorySummary, MemoryView
 from .reviewer import MemoryReviewResult, MemoryReviewer
 from .router import MemoryRouterBuilder, RouterBuildResult
@@ -23,6 +24,7 @@ class PersonalBrain:
         self.chat_model = LLMClient(self.config.chat_model)
         self.embedding_model = EmbeddingClient(self.config.embedding_model)
         self.vault = SecureVault(self.schema)
+        self.memory_ops = MemoryOperations(self.schema)
         self.memory_view = MemoryView(self.schema)
         self.semantic_memory = SemanticMemory(
             schema=self.schema,
@@ -170,6 +172,12 @@ class PersonalBrain:
 
     def memory_show(self, memory_id: int) -> MemoryDetail:
         return self.memory_view.show_memory(memory_id)
+
+    def archive_memory(self, memory_id: int, rebuild_router: bool = True) -> ArchiveMemoryResult:
+        result = self.memory_ops.archive_memory(memory_id)
+        if rebuild_router:
+            self.build_router()
+        return result
 
     def embed_missing_memories(self, limit: int = 100) -> EmbedMemoriesResult:
         return self.semantic_memory.embed_missing_memories(limit=limit)

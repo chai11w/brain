@@ -5,7 +5,11 @@ __pycache__/
 config.json
 data/*.sqlite3
 data/*.sqlite3-*
+data/*.sqlite3.bak*
+data/*.sqlite3-journal.bak*
 data/*.txt
+data/*.log
 data/pycache/
+data/__pycache__/
 .tmp_tests/
 .tmp_comtypes_cache/

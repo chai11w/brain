@@ -12,7 +12,7 @@ from .llm import LLMClient
 from .schema import BrainSchema
 
 
-PROMPT_VERSION = "memory-extraction-v2"
+PROMPT_VERSION = "memory-extraction-v3"
 
 
 MEMORY_CATEGORIES = [
@@ -102,8 +102,9 @@ class MemoryExtractor:
             "你是 AI-native Personal Brain 的记忆提取器。"
             "你的任务不是聊天，而是把用户的随意输入整理成长期记忆。"
             "你可以去掉口语、重复和噪音，但不能改变用户原意。"
-            "如果一句话包含多个独立想法，可以拆成多条 atomic memories；"
-            "但不要把一个完整愿景机械拆成过多零碎条目。"
+            "默认优先形成少量高密度记忆，而不是把一段完整想法切碎。"
+            "只有当输入里包含彼此独立、后续会分别检索和更新的长期事实时，才拆成多条 atomic memories。"
+            "使用规则、并列要点、同一愿景、同一项目决策、同一段反思，通常应合并成一条结构化记忆。"
             "所有标题、主题、说明、原因必须使用中文，除非是 ChatGPT、Codex、GitHub、API key 这类专有名词。"
             "只输出 JSON，不要输出 Markdown，不要解释。"
         )
@@ -113,6 +114,10 @@ class MemoryExtractor:
             "rules": [
                 "保留用户原意，不要替用户拔高成他没说过的结论。",
                 "改写成简洁的第三人称长期记忆。",
+                "宁可一条记忆内容稍完整，也不要把同一个 raw_message 机械拆成很多低密度记忆。",
+                "当输入是编号列表、使用规则、测试说明或同一主题下的多个并列要点时，优先抽取为一条结构化记忆。",
+                "只有当不同要点属于不同大类、不同时间计划、不同对象或后续需要独立作废/更新时，才拆分为多条记忆。",
+                "每条 atomic memory 应表达一个完整可复用判断；不要生成只改写半句话的低价值记忆。",
                 "每条 atomic memory 必须选择一个 stable_memory_categories 中的大类。",
                 "topics 仍然由 AI 动态生成，但必须优先复用语义相近的中文主题名，不要为每条记忆凭空新造一个主题。",
                 "topic 是小方向，memory_category 是大方向；不要把二者混在一起。",

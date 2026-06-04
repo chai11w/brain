@@ -30,6 +30,13 @@ Before implementing a request:
 3. Propose the better architecture.
 4. Then decide whether to change code.
 
+Before accepting any new feature proposal, Codex must explicitly review:
+
+1. What problem is the user really trying to solve?
+2. What is the current project's biggest bottleneck?
+3. Does this feature solve that biggest bottleneck?
+4. If not, clearly push back instead of simply implementing it.
+
 The user is not deeply technical and prefers Chinese explanations with context.
 When explaining architecture, database schema, Router, RAG, embeddings, or AI
 pipelines, explain plainly first, then point to files/code.
@@ -76,6 +83,7 @@ python brain.py test-chat "Reply in one short sentence: model connected."
 python brain.py ingest "..."
 python brain.py memory-list
 python brain.py memory-show 1
+python brain.py memory-archive 1
 python brain.py embed-memories
 python brain.py recall "..."
 python brain.py ask "..."
@@ -259,6 +267,11 @@ User-captured future directions:
 - Xiaochai should improve active judgment instead of passively storing text.
 - It needs message withdrawal/correction that invalidates linked raw messages,
   memories, embeddings, Router entries, and logs consistently.
+- MVP deletion/correction starts with ID-based memory archiving, not physical
+  deletion: commands such as `删除 42` / `作废 42` mark the target memory as
+  archived, remove its embedding from active recall, rebuild Router, keep raw
+  evidence for audit/recovery, and should later evolve into reply-based
+  deletion/correction.
 - Replies and generated topics should default to Chinese.
 - Memories should be less scattered: broad category first, dynamic topic second.
 - Weekly Codex review should be a quality-control loop, not just a summary.

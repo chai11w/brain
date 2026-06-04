@@ -100,12 +100,25 @@ Review extracted memories:
 ```powershell
 python brain.py memory-list
 python brain.py memory-show 1
+python brain.py memory-archive 1
 ```
 
 Review recent channel interactions:
 
 ```powershell
 python brain.py interaction-list
+```
+
+Run a quick V0 smoke test without writing new memories:
+
+```powershell
+python scripts/smoke_test.py
+```
+
+Run the full smoke test, including one real test ingest into the database:
+
+```powershell
+python scripts/smoke_test.py --live-ingest
 ```
 
 Generate missing embeddings:
@@ -184,6 +197,13 @@ Modes:
 - `remember`: store every text message as memory.
 - `ask`: answer every text message from memory evidence.
 - `auto`: messages starting with `?` are answered; other text is remembered.
+
+Memory correction MVP:
+
+- Send `删除 42`, `作废 42`, `撤回 42`, or `归档 42` in Feishu to archive
+  that memory ID.
+- Archived memories no longer appear in semantic recall or Router manifests.
+- Raw messages and extraction audit records are retained for review/recovery.
 
 The bridge also writes `interaction_logs` so Codex can later review what the
 user sent, whether the bridge remembered or answered, what it replied, which
