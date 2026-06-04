@@ -168,6 +168,7 @@ class MemoryExtractor:
                 },
             ],
             temperature=0.1,
+            response_format={"type": "json_object"},
         )
         if not answer:
             raise RuntimeError("model returned empty response")
@@ -395,13 +396,13 @@ def parse_json_object(text: str) -> dict[str, Any]:
         cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned)
         cleaned = re.sub(r"\s*```$", "", cleaned)
     try:
-        payload = json.loads(cleaned)
+        payload = json.loads(cleaned, strict=False)
     except json.JSONDecodeError:
         start = cleaned.find("{")
         end = cleaned.rfind("}")
         if start < 0 or end < start:
             raise
-        payload = json.loads(cleaned[start : end + 1])
+        payload = json.loads(cleaned[start : end + 1], strict=False)
     if not isinstance(payload, dict):
         raise ValueError("model output must be a JSON object")
     return payload
