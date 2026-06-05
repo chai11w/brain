@@ -116,6 +116,7 @@ Generate a local daily extraction report:
 ```powershell
 python brain.py daily-report --date today
 python brain.py daily-report --date 2026-06-05
+python brain.py daily-report --last-hours 24
 ```
 
 Reports are written to `reports/YYYY-MM-DD.md`. This version extracts same-day
@@ -131,7 +132,7 @@ Run the same extraction from a script:
 powershell -ExecutionPolicy Bypass -File scripts\run_daily_report.ps1
 ```
 
-Install a Windows scheduled task for daily extraction at 23:50:
+Install a Windows scheduled task for daily extraction at 12:00:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\install_daily_report_task.ps1

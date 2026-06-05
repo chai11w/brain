@@ -1,5 +1,5 @@
 param(
-    [string]$Date = "today",
+    [int]$LastHours = 24,
     [string]$OutputDir = "reports"
 )
 
@@ -14,9 +14,9 @@ New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 Set-Location -LiteralPath $ProjectDir
 
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-Add-Content -LiteralPath $LogPath -Encoding UTF8 -Value "[$timestamp] start daily-report date=$Date output_dir=$OutputDir"
+Add-Content -LiteralPath $LogPath -Encoding UTF8 -Value "[$timestamp] start daily-report last_hours=$LastHours output_dir=$OutputDir"
 
-$output = & python brain.py daily-report --date $Date --output-dir $OutputDir 2>&1
+$output = & python brain.py daily-report --last-hours $LastHours --output-dir $OutputDir 2>&1
 $exitCode = $LASTEXITCODE
 
 $output | Add-Content -LiteralPath $LogPath -Encoding UTF8

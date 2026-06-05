@@ -1,6 +1,7 @@
 param(
     [string]$TaskName = "XiaochaiDailyReport",
-    [string]$Time = "23:50"
+    [string]$Time = "12:00",
+    [int]$LastHours = 24
 )
 
 $ErrorActionPreference = "Stop"
@@ -12,13 +13,14 @@ if (-not (Test-Path -LiteralPath $RunScript)) {
     throw "Missing daily report runner: $RunScript"
 }
 
-$taskAction = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$RunScript`" -Date today"
+$taskAction = "powershell.exe -NoProfile -ExecutionPolicy Bypass -File `"$RunScript`" -LastHours $LastHours"
 
 schtasks /Create /TN $TaskName /SC DAILY /ST $Time /TR $taskAction /F | Out-Host
 
 Write-Host ""
 Write-Host "Installed scheduled task: $TaskName"
 Write-Host "Time: $Time"
+Write-Host "LastHours: $LastHours"
 Write-Host "Action: $taskAction"
 Write-Host ""
 Write-Host "This task only runs daily-report extraction."

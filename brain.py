@@ -37,6 +37,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     daily_report_parser = subparsers.add_parser("daily-report", help="write a local Markdown audit report for Codex review")
     daily_report_parser.add_argument("--date", default="today", help="today, yesterday, or YYYY-MM-DD")
+    daily_report_parser.add_argument("--last-hours", type=int, help="write a rolling report for the previous N hours")
     daily_report_parser.add_argument("--output-dir", default="reports", help="directory for local Markdown reports")
     daily_report_parser.add_argument("--print-path-only", action="store_true", help="only print the output path")
 
@@ -178,17 +179,25 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "daily-report":
-        try:
-            report_date = parse_report_date(args.date)
-        except ValueError:
-            print("warning: --date must be today, yesterday, or YYYY-MM-DD")
-            return 1
-        result = brain.daily_report(report_date=report_date, output_dir=Path(args.output_dir))
+        if args.last_hours is not None:
+            if args.last_hours <= 0:
+                print("warning: --last-hours must be positive")
+                return 1
+            result = brain.recent_report(hours=args.last_hours, output_dir=Path(args.output_dir))
+        else:
+            try:
+                report_date = parse_report_date(args.date)
+            except ValueError:
+                print("warning: --date must be today, yesterday, or YYYY-MM-DD")
+                return 1
+            result = brain.daily_report(report_date=report_date, output_dir=Path(args.output_dir))
         if args.print_path_only:
             print(result.output_path)
             return 0
         print(f"daily report: {result.output_path}")
         print(f"date: {result.report_date.isoformat()}")
+        print(f"start_at: {result.start_at}")
+        print(f"end_at: {result.end_at}")
         for key, value in result.counts.items():
             print(f"{key}: {value}")
         return 0

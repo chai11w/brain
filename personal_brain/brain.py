@@ -263,6 +263,10 @@ class PersonalBrain:
         builder = DailyReportBuilder(schema=self.schema)
         return builder.build(report_date=report_date, output_dir=output_dir)
 
+    def recent_report(self, hours: int, output_dir: Path) -> DailyReportResult:
+        builder = DailyReportBuilder(schema=self.schema)
+        return builder.build_recent_hours(hours=hours, output_dir=output_dir)
+
 
 def combine_warning(first: str | None, second: str | None) -> str | None:
     if first and second:

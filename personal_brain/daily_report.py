@@ -14,6 +14,8 @@ from .schema import BrainSchema
 @dataclass(frozen=True)
 class DailyReportResult:
     report_date: date
+    start_at: str
+    end_at: str
     output_path: Path
     markdown: str
     counts: dict[str, int]
@@ -26,24 +28,59 @@ class DailyReportBuilder:
         self.schema = schema
 
     def build(self, report_date: date, output_dir: Path) -> DailyReportResult:
-        self.schema.initialize()
-        output_dir.mkdir(parents=True, exist_ok=True)
+        start_at = datetime.combine(report_date, datetime.min.time())
+        end_at = start_at + timedelta(days=1)
         output_path = output_dir / f"{report_date.isoformat()}.md"
+        return self.build_window(
+            start_at=start_at,
+            end_at=end_at,
+            output_path=output_path,
+            title=f"小柴每日提取记录 {report_date.isoformat()}",
+            window_label="自然日",
+        )
+
+    def build_recent_hours(self, hours: int, output_dir: Path, now: datetime | None = None) -> DailyReportResult:
+        if hours <= 0:
+            raise ValueError("hours must be positive")
+        current = now or datetime.now()
+        start_at = current - timedelta(hours=hours)
+        output_path = output_dir / f"last-{hours}h-{current.strftime('%Y-%m-%d-%H%M')}.md"
+        return self.build_window(
+            start_at=start_at,
+            end_at=current,
+            output_path=output_path,
+            title=f"小柴最近 {hours} 小时提取记录",
+            window_label=f"最近 {hours} 小时",
+        )
+
+    def build_window(
+        self,
+        *,
+        start_at: datetime,
+        end_at: datetime,
+        output_path: Path,
+        title: str,
+        window_label: str,
+    ) -> DailyReportResult:
+        self.schema.initialize()
+        output_path.parent.mkdir(parents=True, exist_ok=True)
         with self.schema.connect() as conn:
-            data = load_daily_data(conn, report_date)
-        markdown = format_daily_report(report_date, data)
+            data = load_window_data(conn, start_at=start_at, end_at=end_at)
+        markdown = format_daily_report(
+            title=title,
+            window_label=window_label,
+            start_at=start_at,
+            end_at=end_at,
+            data=data,
+        )
         output_path.write_text(markdown + "\n", encoding="utf-8")
         return DailyReportResult(
-            report_date=report_date,
+            report_date=end_at.date(),
+            start_at=format_dt(start_at),
+            end_at=format_dt(end_at),
             output_path=output_path,
             markdown=markdown,
-            counts={
-                "raw_messages": len(data["raw_messages"]),
-                "extraction_runs": len(data["extraction_runs"]),
-                "memories": len(data["memories"]),
-                "interactions": len(data["interactions"]),
-                "issue_markers": len(build_issue_markers(data)),
-            },
+            counts=report_counts(data),
         )
 
 
@@ -56,8 +93,14 @@ def parse_report_date(value: str | None) -> date:
 
 
 def load_daily_data(conn: sqlite3.Connection, report_date: date) -> dict[str, list[dict[str, Any]]]:
-    start = report_date.isoformat()
-    end = (report_date + timedelta(days=1)).isoformat()
+    start_at = datetime.combine(report_date, datetime.min.time())
+    end_at = start_at + timedelta(days=1)
+    return load_window_data(conn, start_at=start_at, end_at=end_at)
+
+
+def load_window_data(conn: sqlite3.Connection, start_at: datetime, end_at: datetime) -> dict[str, list[dict[str, Any]]]:
+    start = format_dt(start_at)
+    end = format_dt(end_at)
     return {
         "raw_messages": fetch_rows(
             conn,
@@ -113,13 +156,40 @@ def fetch_rows(conn: sqlite3.Connection, query: str, params: tuple[str, ...]) ->
     return [dict(row) for row in conn.execute(query, params).fetchall()]
 
 
-def format_daily_report(report_date: date, data: dict[str, list[dict[str, Any]]]) -> str:
+def report_counts(data: dict[str, list[dict[str, Any]]]) -> dict[str, int]:
+    return {
+        "raw_messages": len(data["raw_messages"]),
+        "extraction_runs": len(data["extraction_runs"]),
+        "memories": len(data["memories"]),
+        "interactions": len(data["interactions"]),
+        "issue_markers": len(build_issue_markers(data)),
+    }
+
+
+def format_dt(value: datetime) -> str:
+    return value.strftime("%Y-%m-%d %H:%M:%S")
+
+
+def format_daily_report(
+    *,
+    title: str,
+    window_label: str,
+    start_at: datetime,
+    end_at: datetime,
+    data: dict[str, list[dict[str, Any]]],
+) -> str:
     lines = [
-        f"# 小柴每日提取记录 {report_date.isoformat()}",
+        f"# {title}",
         "",
-        "用途：提取当天记录，并用固定规则标记可能需要回看的链路问题；不调用 AI，不修改数据。",
+        "用途：提取指定时间窗口内的记录，并用固定规则标记可能需要回看的链路问题；不调用 AI，不修改数据。",
         "提醒：未来 Codex 解读本报告前，应先阅读 .agents/project_memory.md。",
         "隐私：本报告可能包含用户原文，只应保留在本地。",
+        "",
+        "## 时间窗口",
+        "",
+        f"- window: {window_label}",
+        f"- start_at: {format_dt(start_at)}",
+        f"- end_at: {format_dt(end_at)}",
         "",
         "## 数量",
         "",
