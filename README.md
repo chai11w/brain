@@ -33,7 +33,7 @@ Implemented:
 - Feishu bridge MVP
 - Feishu interaction logs for answer/reply review
 - local daily Markdown extraction reports
-- scheduled daily report extraction automation
+- Codex App daily report extraction automation
 - wxauto WeChat bridge shell
 
 Not implemented:
@@ -132,14 +132,17 @@ Run the same extraction from a script:
 powershell -ExecutionPolicy Bypass -File scripts\run_daily_report.ps1
 ```
 
-Install a Windows scheduled task for daily extraction at 12:00:
+Backup only: install a Windows scheduled task for daily extraction at 12:00:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\install_daily_report_task.ps1
 ```
 
-The scheduled task only calls the report extraction command. It does not call
-AI, read reports, diagnose, edit data, or repair anything.
+The active automation is the Codex App automation named `小柴每日报告提取`,
+scheduled at 12:00 to run the previous 24 hours. The Windows scheduled task
+installer is only a backup option and is not expected to be active by default.
+Both paths only call the report extraction command. They do not call AI, read
+reports, diagnose, edit data, or repair anything.
 
 Run a quick V0 smoke test without writing new memories:
 
@@ -328,17 +331,17 @@ plus master-password-derived entropy. The database stores encrypted values only.
 
 The next product step is not a new database or knowledge graph.
 
-The next useful step is a smoke test and Feishu stabilization pass:
+The next useful step is a one-month stabilization pass while the user actually
+uses Xiaochai:
 
 ```text
-ingest
--> embed
--> recall
--> ask
--> Feishu remember/ask loop
+daily 12:00 rolling 24h extraction report
+-> user asks Codex to inspect reports when needed
+-> fix extraction, recall, answer formatting, deletion/archive, and startup issues
+-> keep the foundation stable before adding larger product features
 ```
 
-After that, implement weekly Markdown review automation:
+After the foundation is stable, revisit weekly reflective review automation:
 
 ```text
 Codex reads Router + recent memories

@@ -53,6 +53,8 @@ Implemented modules:
 - `personal_brain/semantic.py`: embeddings and semantic recall
 - `personal_brain/answer.py`: evidence-based answer generation
 - `personal_brain/router.py`: Memory Router
+- `personal_brain/memory_ops.py`: memory archive/lifecycle operations
+- `personal_brain/daily_report.py`: local extraction/audit Markdown reports
 - `personal_brain/vault.py`: encrypted secure vault
 - `scripts/feishu_bridge.py`: Feishu interaction channel
 - `scripts/wxauto_bridge.py`: WeChat shell
@@ -455,8 +457,12 @@ memory_extraction_runs
 secure_items for encrypted secrets
 ```
 
-Weekly Markdown review should be generated from the database and Router through
-AI synthesis, with evidence links preserved.
+Current daily Markdown reports are extraction/audit snapshots generated from the
+database. They may include deterministic issue markers, but they must not become
+the source of truth and the automation must not modify data.
+
+Weekly Markdown review is a later reflective layer. It should be generated from
+the database and Router through AI synthesis, with evidence links preserved.
 
 ## Codex Role
 

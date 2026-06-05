@@ -73,6 +73,8 @@ Implemented:
 - secure vault in `personal_brain/vault.py`
 - Feishu bridge MVP in `scripts/feishu_bridge.py`
 - Feishu interaction audit in `interaction_logs`
+- daily extraction report CLI in `personal_brain/daily_report.py`
+- Codex App daily report extraction automation at 12:00 for the previous 24 hours
 - wxauto WeChat bridge shell in `scripts/wxauto_bridge.py`
 
 Not implemented:
@@ -97,6 +99,7 @@ python brain.py memory-archive 1
 python brain.py embed-memories
 python brain.py recall "..."
 python brain.py ask "..."
+python brain.py daily-report --last-hours 24
 python brain.py build-router
 ```
 
@@ -257,13 +260,15 @@ Do not jump to Neo4j, GraphRAG, frontend, or a new database.
 Recommended next step:
 
 ```text
-stabilize V0 smoke test
--> verify ingest/embed/recall/ask
--> verify Feishu remember/ask loop
--> then add weekly Markdown review automation
+use Xiaochai for the next few weeks
+-> let Codex App generate rolling 24h extraction reports at 12:00
+-> inspect reports when the user asks
+-> fix foundation issues in extraction, recall, answer formatting, deletion/archive, and startup
+-> avoid larger product features until the foundation feels stable
 ```
 
-Weekly review should be Codex/AI reflective work:
+Weekly review is still a later idea, not the immediate next step. It should be
+Codex/AI reflective work:
 
 ```text
 read Router + recent memories
@@ -287,23 +292,25 @@ User-captured future directions:
 - Weekly Codex review should be a quality-control loop, not just a summary.
 - Daily reports are first-version extraction snapshots plus deterministic issue
   markers, not an automatic worker. Use
-  `python brain.py daily-report --date today` to generate a local
-  `reports/YYYY-MM-DD.md` file containing same-day raw inputs, extraction runs,
-  created/updated memories, interaction replies, errors, evidence JSON, and
-  fixed-rule markers for pipeline issues such as extraction failure, explicit
-  remember requests that produced no memory, Markdown noise in stored memories,
-  interaction failures, and old reply citation formats. This command does not
-  call AI, does not edit memories, and does not assume the runner has project
-  memory loaded. Future Codex should read this project memory file before
-  interpreting a report.
+  `python brain.py daily-report --last-hours 24` to generate a local
+  `reports/last-24h-YYYY-MM-DD-HHMM.md` file containing recent raw inputs,
+  extraction runs, created/updated memories, interaction replies, errors,
+  evidence JSON, and fixed-rule markers for pipeline issues such as extraction
+  failure, explicit remember requests that produced no memory, Markdown noise in
+  stored memories, interaction failures, and old reply citation formats. This
+  command does not call AI, does not edit memories, and does not assume the
+  runner has project memory loaded. Future Codex should read this project memory
+  file before interpreting a report.
   `reports/` is git-ignored because it may contain private raw text.
 - Daily report automation is intentionally narrow. `scripts/run_daily_report.ps1`
-  only calls `python brain.py daily-report --last-hours 24`. The Codex App
-  automation should run this at 12:00 every day, because the user's computer may
-  be off at night. The backup Windows task installer
-  `scripts/install_daily_report_task.ps1` also defaults to 12:00 and
-  `LastHours=24`. Automation must not read reports, call Codex for analysis,
-  call any AI model, diagnose, modify data, or repair anything.
+  only calls `python brain.py daily-report --last-hours 24`. The active
+  automation is a Codex App automation named `小柴每日报告提取`, scheduled at 12:00
+  every day because the user's computer may be off at night. The backup Windows
+  task installer `scripts/install_daily_report_task.ps1` also defaults to 12:00
+  and `LastHours=24`, but the Windows task should not be active unless the user
+  explicitly chooses that backup path. Automation must not read reports, call
+  Codex for analysis, call any AI model, diagnose, modify data, or repair
+  anything.
 - Later versions should add a memory lifecycle system like human memory:
   recent and frequently used memories stay sharp; old, low-value, or duplicate
   memories gradually lose recall weight, merge into higher-level summaries, or
