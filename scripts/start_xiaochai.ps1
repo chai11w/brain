@@ -9,8 +9,11 @@ $BridgeUrl = "http://127.0.0.1:$Port"
 $LogDir = Join-Path $ProjectDir ".tmp_tests"
 $CloudflaredLog = Join-Path $LogDir "cloudflared.log"
 $DesktopDir = [Environment]::GetFolderPath("Desktop")
-$FeishuUrlFile = Join-Path $DesktopDir "小柴飞书地址.txt"
+$FeishuUrlFile = $null
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
+
+$FeishuUrlFileName = ((0x5C0F, 0x67F4, 0x98DE, 0x4E66, 0x6700, 0x65B0, 0x5730, 0x5740 | ForEach-Object { [char]$_ }) -join "") + ".txt"
+$FeishuUrlFile = Join-Path $DesktopDir $FeishuUrlFileName
 
 Write-Host "Project: $ProjectDir"
 Write-Host "Starting Xiaochai bridge..."
@@ -97,9 +100,18 @@ Write-Host "If it shows https://xxxxx.trycloudflare.com, set Feishu event URL to
 Write-Host "https://xxxxx.trycloudflare.com/feishu/events"
 Write-Host "Temporary trycloudflare URLs may change every time."
 
+Get-Process cloudflared -ErrorAction SilentlyContinue | ForEach-Object {
+    try {
+        Write-Host "Stopping old cloudflared: PID $($_.Id)"
+        Stop-Process -Id $_.Id -Force -ErrorAction Stop
+    } catch {
+        Write-Host "Could not stop cloudflared PID $($_.Id): $($_.Exception.Message)"
+    }
+}
+
 Remove-Item -LiteralPath $CloudflaredLog -ErrorAction SilentlyContinue
 $tunnelCommand = @"
-& '$cloudflaredPath' tunnel --url $BridgeUrl --logfile '$CloudflaredLog'
+& '$cloudflaredPath' tunnel --protocol http2 --url $BridgeUrl --logfile '$CloudflaredLog'
 "@
 
 Start-Process powershell.exe -ArgumentList @(
@@ -123,19 +135,22 @@ for ($i = 0; $i -lt 20; $i++) {
 
 if ($publicUrl) {
     $eventUrl = "$publicUrl/feishu/events"
+    $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+    $backupFeishuUrlFile = Join-Path $DesktopDir ($FeishuUrlFileName -replace "\.txt$", "-$stamp.txt")
     $fileLines = @(
-        "Xiaochai Feishu event URL:",
         $eventUrl,
         "",
+        "Xiaochai Feishu event URL. Copy the first line into Feishu event subscription settings.",
         "Updated at: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')",
         "",
-        "Paste this URL into Feishu event subscription settings."
+        "Keep both Xiaochai bridge and cloudflared tunnel windows open."
     )
     try {
         $fileLines | Set-Content -LiteralPath $FeishuUrlFile -Encoding UTF8 -ErrorAction Stop
+        $fileLines | Set-Content -LiteralPath $backupFeishuUrlFile -Encoding UTF8 -ErrorAction Stop
     } catch {
         $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
-        $FeishuUrlFile = Join-Path $DesktopDir "小柴飞书最新地址-$stamp.txt"
+        $FeishuUrlFile = $backupFeishuUrlFile
         $fileLines | Set-Content -LiteralPath $FeishuUrlFile -Encoding UTF8
     }
     Write-Host ""
