@@ -32,7 +32,7 @@ Implemented:
 - local encrypted secure vault
 - Feishu bridge MVP
 - Feishu interaction logs for answer/reply review
-- local daily Markdown audit reports for Codex diagnosis
+- local daily Markdown extraction reports
 - wxauto WeChat bridge shell
 
 Not implemented:
@@ -111,16 +111,17 @@ Review recent channel interactions:
 python brain.py interaction-list
 ```
 
-Generate a local daily audit report for future Codex diagnosis:
+Generate a local daily extraction report:
 
 ```powershell
 python brain.py daily-report --date today
 python brain.py daily-report --date 2026-06-05
 ```
 
-Reports are written to `reports/YYYY-MM-DD.md`. The `reports/` directory is
-git-ignored because reports contain raw user text, extracted memories, replies,
-errors, and diagnosis flags.
+Reports are written to `reports/YYYY-MM-DD.md`. This first version only extracts
+same-day records; it does not call AI, edit memories, or perform scheduled
+automation. The `reports/` directory is git-ignored because reports contain raw
+user text, extracted memories, replies, errors, and evidence.
 
 Run a quick V0 smoke test without writing new memories:
 

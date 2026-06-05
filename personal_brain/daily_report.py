@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import re
 import sqlite3
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
@@ -20,7 +19,7 @@ class DailyReportResult:
 
 
 class DailyReportBuilder:
-    """Builds a local audit report for future Codex diagnosis."""
+    """Builds a local daily extraction report."""
 
     def __init__(self, schema: BrainSchema):
         self.schema = schema
@@ -42,7 +41,6 @@ class DailyReportBuilder:
                 "extraction_runs": len(data["extraction_runs"]),
                 "memories": len(data["memories"]),
                 "interactions": len(data["interactions"]),
-                "diagnosis_flags": len(build_diagnosis_flags(data)),
             },
         )
 
@@ -114,11 +112,11 @@ def fetch_rows(conn: sqlite3.Connection, query: str, params: tuple[str, ...]) ->
 
 
 def format_daily_report(report_date: date, data: dict[str, list[dict[str, Any]]]) -> str:
-    flags = build_diagnosis_flags(data)
     lines = [
         f"# Personal Brain Daily Audit {report_date.isoformat()}",
         "",
-        "Purpose: local audit material for Codex to evaluate and repair the memory foundation.",
+        "Purpose: extract same-day records only. It does not call AI or modify data.",
+        "Context: future Codex should read .agents/project_memory.md before interpreting this report.",
         "Privacy: this report may contain raw user text and should stay local.",
         "",
         "## Counts",
@@ -127,15 +125,7 @@ def format_daily_report(report_date: date, data: dict[str, list[dict[str, Any]]]
         f"- extraction_runs: {len(data['extraction_runs'])}",
         f"- memories_created_or_updated: {len(data['memories'])}",
         f"- interactions: {len(data['interactions'])}",
-        f"- diagnosis_flags: {len(flags)}",
-        "",
-        "## Diagnosis Flags",
-        "",
     ]
-    if flags:
-        lines.extend(f"- {flag}" for flag in flags)
-    else:
-        lines.append("- none")
 
     lines.extend(["", "## Raw Messages", ""])
     append_raw_messages(lines, data["raw_messages"])
@@ -253,45 +243,6 @@ def append_interactions(lines: list[str], rows: list[dict[str, Any]]) -> None:
                 "",
             ]
         )
-
-
-def build_diagnosis_flags(data: dict[str, list[dict[str, Any]]]) -> list[str]:
-    flags: list[str] = []
-    raw_ids_with_memories = {int(row["raw_message_id"]) for row in data["memories"]}
-    for row in data["raw_messages"]:
-        raw_id = int(row["id"])
-        if row["processed_status"] != "processed":
-            flags.append(f"raw_message {raw_id} status is {row['processed_status']}")
-        if row["processed_status"] == "processed" and raw_id not in raw_ids_with_memories:
-            flags.append(f"raw_message {raw_id} processed but produced no memory in this report window")
-    for row in data["extraction_runs"]:
-        if row["status"] != "succeeded":
-            flags.append(f"extraction_run {row['id']} failed: {row['error'] or 'unknown error'}")
-        if contains_markdown_noise(row["output_json"]):
-            flags.append(f"extraction_run {row['id']} output contains Markdown noise")
-    for row in data["memories"]:
-        if row["status"] != "active":
-            flags.append(f"memory {row['id']} status is {row['status']}")
-        if contains_markdown_noise(row["content"]):
-            flags.append(f"memory {row['id']} content contains Markdown noise")
-    for row in data["interactions"]:
-        if row["status"] != "succeeded":
-            flags.append(f"interaction {row['id']} status is {row['status']}: {row['error'] or 'unknown error'}")
-        if contains_legacy_citation(row["reply_text"] or ""):
-            flags.append(f"interaction {row['id']} reply used legacy citation format")
-        if contains_markdown_noise(row["reply_text"] or ""):
-            flags.append(f"interaction {row['id']} reply contains Markdown noise")
-    return flags
-
-
-def contains_markdown_noise(text: str | None) -> bool:
-    if not text:
-        return False
-    return "**" in text or "`" in text or bool(re.search(r"(?m)^\s{0,3}#{1,6}\s+", text))
-
-
-def contains_legacy_citation(text: str) -> bool:
-    return "memory_id=" in text or "raw_message_id=" in text
 
 
 def summarize_extraction_output(output_json: str) -> str:

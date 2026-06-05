@@ -285,12 +285,14 @@ User-captured future directions:
 - Replies and generated topics should default to Chinese.
 - Memories should be less scattered: broad category first, dynamic topic second.
 - Weekly Codex review should be a quality-control loop, not just a summary.
-- Daily audit reports are for future Codex diagnosis, not for the user to read
-  casually. Use `python brain.py daily-report --date today` to generate a local
+- Daily reports are first-version extraction snapshots, not an automatic worker.
+  Use `python brain.py daily-report --date today` to generate a local
   `reports/YYYY-MM-DD.md` file containing same-day raw inputs, extraction runs,
-  created/updated memories, interaction replies, errors, evidence, and
-  deterministic diagnosis flags such as Markdown noise or legacy citation
-  formats. `reports/` is git-ignored because it may contain private raw text.
+  created/updated memories, interaction replies, errors, and evidence JSON.
+  This command does not call AI, does not edit memories, and does not assume the
+  runner has project memory loaded. Future Codex should read this project memory
+  file before interpreting a report.
+  `reports/` is git-ignored because it may contain private raw text.
 - Later versions should add a memory lifecycle system like human memory:
   recent and frequently used memories stay sharp; old, low-value, or duplicate
   memories gradually lose recall weight, merge into higher-level summaries, or
