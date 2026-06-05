@@ -167,10 +167,17 @@ class AnswerEngine:
             "question": question,
             "rules": [
                 "Answer only from the provided evidence.",
-                "Cite evidence with exact format: [memory_id=1, raw_message_id=2].",
+                "Write for a human reader, not like a search report.",
+                "Use natural concise Chinese unless the user asks otherwise.",
+                "Default structure: 1-2 sentence direct answer, then a simple numbered list, then one short suggestion if useful, then one final evidence line.",
+                "Do not use Markdown section headings such as ## or ###.",
+                "Do not use bold pseudo-headings such as **工具与方法论补充**.",
+                "Do not put memory_id/raw_message_id in headings.",
+                "Avoid bullet-heavy or deeply nested Markdown. Prefer short paragraphs or a simple numbered list.",
+                "Group similar evidence into one idea instead of listing each memory separately.",
+                "End with one compact evidence line using exact format: 证据：memory_id=1/raw_message_id=2；memory_id=3/raw_message_id=4",
                 "If evidence is thin, say what is uncertain.",
                 "Do not use outside knowledge.",
-                "Write in concise Chinese unless the user asks otherwise.",
             ],
             "evidence": [
                 {
@@ -187,7 +194,8 @@ class AnswerEngine:
                     "role": "system",
                     "content": (
                         "You answer questions using only provided Personal Brain evidence. "
-                        "Every claim must cite evidence as [memory_id=1, raw_message_id=2]."
+                        "Optimize for readable Chinese summaries. Keep evidence traceable, "
+                        "but put citations in a compact final evidence line instead of interrupting headings."
                     ),
                 },
                 {"role": "user", "content": json.dumps(prompt, ensure_ascii=False)},
@@ -228,15 +236,6 @@ def format_answer_result(result: AnswerResult) -> str:
     lines = [result.answer]
     if result.warning:
         lines.extend(["", f"warning: {result.warning}"])
-    if result.evidence:
-        lines.extend(["", "evidence:"])
-        for item in result.evidence:
-            recall = item.recall
-            title = recall.title or short_text(recall.content, 60)
-            lines.append(
-                f"- memory_id={recall.memory_id} raw_message_id={recall.raw_message_id} "
-                f"relevance={item.relevance:.2f} title={title}"
-            )
     return "\n".join(lines)
 
 
