@@ -118,10 +118,13 @@ python brain.py daily-report --date today
 python brain.py daily-report --date 2026-06-05
 ```
 
-Reports are written to `reports/YYYY-MM-DD.md`. This first version only extracts
-same-day records; it does not call AI, edit memories, or perform scheduled
-automation. The `reports/` directory is git-ignored because reports contain raw
-user text, extracted memories, replies, errors, and evidence.
+Reports are written to `reports/YYYY-MM-DD.md`. This version extracts same-day
+records and adds deterministic issue markers for the memory pipeline, including
+raw message status, extraction failures, stored memory formatting, interaction
+errors, and old reply citation formats. It does not call AI, edit memories, or
+perform scheduled automation. The `reports/` directory is git-ignored because
+reports contain raw user text, extracted memories, replies, errors, and
+evidence.
 
 Run a quick V0 smoke test without writing new memories:
 

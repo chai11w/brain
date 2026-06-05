@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sqlite3
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
@@ -41,6 +42,7 @@ class DailyReportBuilder:
                 "extraction_runs": len(data["extraction_runs"]),
                 "memories": len(data["memories"]),
                 "interactions": len(data["interactions"]),
+                "issue_markers": len(build_issue_markers(data)),
             },
         )
 
@@ -113,29 +115,168 @@ def fetch_rows(conn: sqlite3.Connection, query: str, params: tuple[str, ...]) ->
 
 def format_daily_report(report_date: date, data: dict[str, list[dict[str, Any]]]) -> str:
     lines = [
-        f"# Personal Brain Daily Audit {report_date.isoformat()}",
+        f"# 小柴每日提取记录 {report_date.isoformat()}",
         "",
-        "Purpose: extract same-day records only. It does not call AI or modify data.",
-        "Context: future Codex should read .agents/project_memory.md before interpreting this report.",
-        "Privacy: this report may contain raw user text and should stay local.",
+        "用途：提取当天记录，并用固定规则标记可能需要回看的链路问题；不调用 AI，不修改数据。",
+        "提醒：未来 Codex 解读本报告前，应先阅读 .agents/project_memory.md。",
+        "隐私：本报告可能包含用户原文，只应保留在本地。",
         "",
-        "## Counts",
+        "## 数量",
         "",
         f"- raw_messages: {len(data['raw_messages'])}",
         f"- extraction_runs: {len(data['extraction_runs'])}",
         f"- memories_created_or_updated: {len(data['memories'])}",
         f"- interactions: {len(data['interactions'])}",
+        f"- issue_markers: {len(build_issue_markers(data))}",
     ]
 
-    lines.extend(["", "## Raw Messages", ""])
+    lines.extend(["", "## 链路问题标记", ""])
+    append_issue_markers(lines, build_issue_markers(data))
+    lines.extend(["", "## 原文 -> 实际存入的记忆", ""])
+    append_raw_to_memories(lines, data["raw_messages"], data["memories"])
+    lines.extend(["", "## 原文详情", ""])
     append_raw_messages(lines, data["raw_messages"])
-    lines.extend(["", "## Extraction Runs", ""])
+    lines.extend(["", "## 提取详情", ""])
     append_extraction_runs(lines, data["extraction_runs"])
-    lines.extend(["", "## Memories", ""])
+    lines.extend(["", "## 记忆详情", ""])
     append_memories(lines, data["memories"])
-    lines.extend(["", "## Interactions", ""])
+    lines.extend(["", "## 交互详情", ""])
     append_interactions(lines, data["interactions"])
     return "\n".join(lines).rstrip()
+
+
+def append_raw_to_memories(
+    lines: list[str],
+    raw_messages: list[dict[str, Any]],
+    memories: list[dict[str, Any]],
+) -> None:
+    if not raw_messages:
+        lines.append("- none")
+        return
+    memories_by_raw: dict[int, list[dict[str, Any]]] = {}
+    for memory in memories:
+        memories_by_raw.setdefault(int(memory["raw_message_id"]), []).append(memory)
+    for raw in raw_messages:
+        raw_id = int(raw["id"])
+        stored = memories_by_raw.get(raw_id, [])
+        lines.extend(
+            [
+                f"### raw_message {raw_id}",
+                "",
+                f"- created_at: {raw['created_at']}",
+                f"- processed_status: {raw['processed_status']}",
+                "",
+                "原文：",
+                "",
+                fenced(raw["content"]),
+                "",
+                f"实际存入记忆：{len(stored)}",
+                "",
+            ]
+        )
+        if not stored:
+            lines.append("- none")
+            lines.append("")
+            continue
+        for memory in stored:
+            lines.extend(
+                [
+                    f"#### memory {memory['id']}",
+                    "",
+                    f"- title: {memory['title'] or ''}",
+                    f"- status: {memory['status']}",
+                    f"- category: {memory['memory_category']}",
+                    f"- type: {memory['memory_type']}",
+                    f"- importance: {memory['importance']}",
+                    f"- confidence: {memory['confidence']}",
+                    "",
+                    "存入内容：",
+                    "",
+                    fenced(memory["content"]),
+                    "",
+                ]
+            )
+
+
+def append_issue_markers(lines: list[str], markers: list[str]) -> None:
+    if not markers:
+        lines.append("- none")
+        return
+    lines.extend(f"- {marker}" for marker in markers)
+
+
+def build_issue_markers(data: dict[str, list[dict[str, Any]]]) -> list[str]:
+    markers: list[str] = []
+    memories_by_raw: dict[int, list[dict[str, Any]]] = {}
+    for memory in data["memories"]:
+        memories_by_raw.setdefault(int(memory["raw_message_id"]), []).append(memory)
+
+    for raw in data["raw_messages"]:
+        raw_id = int(raw["id"])
+        status = str(raw["processed_status"])
+        content = str(raw["content"] or "")
+        stored = memories_by_raw.get(raw_id, [])
+        if status == "failed":
+            markers.append(f"raw_message {raw_id}: 原文处理失败")
+        if status == "ignored":
+            markers.append(f"raw_message {raw_id}: 原文被忽略，未进入长期记忆")
+        if user_explicitly_asked_to_remember(content) and not stored:
+            markers.append(f"raw_message {raw_id}: 用户明确要求记住，但没有实际存入记忆")
+
+    for run in data["extraction_runs"]:
+        run_id = int(run["id"])
+        if run["status"] != "succeeded":
+            markers.append(f"extraction_run {run_id}: 提取失败：{run['error'] or 'unknown error'}")
+        else:
+            summary = summarize_extraction_output(run["output_json"])
+            if summary == "invalid JSON" or "missing" in summary:
+                markers.append(f"extraction_run {run_id}: 模型输出结构异常：{summary}")
+
+    seen_active: dict[str, int] = {}
+    for memory in data["memories"]:
+        memory_id = int(memory["id"])
+        status = str(memory["status"])
+        content = str(memory["content"] or "")
+        if contains_markdown_noise(content):
+            markers.append(f"memory {memory_id}: 入库内容含 Markdown 噪音")
+        if status not in ("active", "archived"):
+            markers.append(f"memory {memory_id}: 当前状态为 {status}")
+        key = normalize_for_duplicate_check(content)
+        if status == "active" and key:
+            previous = seen_active.get(key)
+            if previous:
+                markers.append(f"memory {memory_id}: 疑似重复 active 记忆，接近 memory {previous}")
+            else:
+                seen_active[key] = memory_id
+
+    for interaction in data["interactions"]:
+        interaction_id = int(interaction["id"])
+        reply = str(interaction["reply_text"] or "")
+        if interaction["status"] != "succeeded":
+            markers.append(f"interaction {interaction_id}: 交互失败：{interaction['error'] or 'unknown error'}")
+        if contains_legacy_citation(reply):
+            markers.append(f"interaction {interaction_id}: 回复仍使用旧证据格式")
+        if contains_markdown_noise(reply):
+            markers.append(f"interaction {interaction_id}: 回复含 Markdown 噪音")
+    return markers
+
+
+def user_explicitly_asked_to_remember(text: str) -> bool:
+    return any(token in text for token in ("记得", "要记", "记住", "帮我记"))
+
+
+def contains_markdown_noise(text: str) -> bool:
+    return "**" in text or "`" in text or bool(re.search(r"(?m)^\s{0,3}#{1,6}\s+", text))
+
+
+def contains_legacy_citation(text: str) -> bool:
+    return "memory_id=" in text or "raw_message_id=" in text
+
+
+def normalize_for_duplicate_check(text: str) -> str:
+    clean = re.sub(r"\s+", "", text.lower())
+    clean = clean.replace("，", ",").replace("。", ".")
+    return clean[:180]
 
 
 def append_raw_messages(lines: list[str], rows: list[dict[str, Any]]) -> None:

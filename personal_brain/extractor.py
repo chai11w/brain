@@ -285,7 +285,7 @@ class MemoryExtractor:
         extraction_run_id: int,
         item: dict[str, Any],
     ) -> int:
-        content = clean_required_text(item.get("content"), "memory content")
+        content = clean_memory_text(clean_required_text(item.get("content"), "memory content"))
         title = clean_optional_text(item.get("title"))
         memory_category = normalize_memory_category(clean_optional_text(item.get("memory_category")))
         memory_type = clean_optional_text(item.get("memory_type")) or "other"
@@ -420,6 +420,15 @@ def clean_optional_text(value: Any) -> str | None:
         return None
     text = str(value).strip()
     return text or None
+
+
+def clean_memory_text(text: str) -> str:
+    clean = re.sub(r"\*\*([^*\n]+)\*\*", r"\1", text)
+    clean = clean.replace("**", "").replace("`", "")
+    clean = re.sub(r"(?m)^\s{0,3}#{1,6}\s*", "", clean)
+    clean = re.sub(r"[ \t]+\n", "\n", clean)
+    clean = re.sub(r"\n{3,}", "\n\n", clean)
+    return clean.strip()
 
 
 def clamp_score(value: Any, default: float) -> float:
