@@ -32,11 +32,13 @@ Implemented:
 - local encrypted secure vault
 - Feishu bridge MVP
 - Feishu interaction logs for answer/reply review
+- local daily Markdown audit reports for Codex diagnosis
 - wxauto WeChat bridge shell
 
 Not implemented:
 
-- weekly Markdown review automation
+- scheduled daily report automation
+- weekly reflective review automation
 - frontend
 - knowledge graph visualization
 - Neo4j
@@ -108,6 +110,17 @@ Review recent channel interactions:
 ```powershell
 python brain.py interaction-list
 ```
+
+Generate a local daily audit report for future Codex diagnosis:
+
+```powershell
+python brain.py daily-report --date today
+python brain.py daily-report --date 2026-06-05
+```
+
+Reports are written to `reports/YYYY-MM-DD.md`. The `reports/` directory is
+git-ignored because reports contain raw user text, extracted memories, replies,
+errors, and diagnosis flags.
 
 Run a quick V0 smoke test without writing new memories:
 

@@ -13,3 +13,4 @@ data/pycache/
 data/__pycache__/
 .tmp_tests/
 .tmp_comtypes_cache/
+reports/

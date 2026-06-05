@@ -8,6 +8,7 @@ from pathlib import Path
 
 from personal_brain import PersonalBrain
 from personal_brain.answer import format_answer_result
+from personal_brain.daily_report import parse_report_date
 from personal_brain.memory_view import format_memory_detail, format_memory_summary
 from personal_brain.reviewer import format_memory_review
 from personal_brain.semantic import format_recall_result
@@ -33,6 +34,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     interaction_list_parser = subparsers.add_parser("interaction-list", help="list recent Feishu/adapter interactions")
     interaction_list_parser.add_argument("--limit", type=int, default=20, help="max interactions to show")
+
+    daily_report_parser = subparsers.add_parser("daily-report", help="write a local Markdown audit report for Codex review")
+    daily_report_parser.add_argument("--date", default="today", help="today, yesterday, or YYYY-MM-DD")
+    daily_report_parser.add_argument("--output-dir", default="reports", help="directory for local Markdown reports")
+    daily_report_parser.add_argument("--print-path-only", action="store_true", help="only print the output path")
 
     review_parser = subparsers.add_parser("review-memories", help="dry-run AI review of memory quality")
     review_parser.add_argument("--limit", type=int, default=80, help="max memories to review")
@@ -169,6 +175,22 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"  reply: {short_text(item['reply_text'], 220)}")
             if item["error"]:
                 print(f"  error: {item['error']}")
+        return 0
+
+    if args.command == "daily-report":
+        try:
+            report_date = parse_report_date(args.date)
+        except ValueError:
+            print("warning: --date must be today, yesterday, or YYYY-MM-DD")
+            return 1
+        result = brain.daily_report(report_date=report_date, output_dir=Path(args.output_dir))
+        if args.print_path_only:
+            print(result.output_path)
+            return 0
+        print(f"daily report: {result.output_path}")
+        print(f"date: {result.report_date.isoformat()}")
+        for key, value in result.counts.items():
+            print(f"{key}: {value}")
         return 0
 
     if args.command == "review-memories":

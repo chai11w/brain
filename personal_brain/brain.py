@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import json
+from datetime import date
 from pathlib import Path
 from typing import Any
 
 from .answer import AnswerEngine, AnswerResult
 from .config import BrainConfig, load_config
+from .daily_report import DailyReportResult, DailyReportBuilder
 from .extractor import IngestResult, MemoryExtractor
 from .llm import EmbeddingClient, LLMClient
 from .memory_ops import ArchiveMemoryResult, MemoryOperations
@@ -256,6 +258,10 @@ class PersonalBrain:
     def review_memories(self, limit: int = 80, raw_message_id: int | None = None) -> MemoryReviewResult:
         reviewer = MemoryReviewer(schema=self.schema, chat_model=self.chat_model)
         return reviewer.review(limit=limit, raw_message_id=raw_message_id)
+
+    def daily_report(self, report_date: date, output_dir: Path) -> DailyReportResult:
+        builder = DailyReportBuilder(schema=self.schema)
+        return builder.build(report_date=report_date, output_dir=output_dir)
 
 
 def combine_warning(first: str | None, second: str | None) -> str | None:
