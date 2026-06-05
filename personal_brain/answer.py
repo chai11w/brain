@@ -169,13 +169,17 @@ class AnswerEngine:
                 "Answer only from the provided evidence.",
                 "Write for a human reader, not like a search report.",
                 "Use natural concise Chinese unless the user asks otherwise.",
-                "Default structure: 1-2 sentence direct answer, then a simple numbered list, then one short suggestion if useful, then one final evidence line.",
+                "Write like a clear Feishu chat reply, not a formal report.",
+                "Default structure: one short opening sentence, then a flat numbered list, then one short judgment or suggestion if useful, then one final compact evidence line.",
                 "Do not use Markdown section headings such as ## or ###.",
                 "Do not use bold pseudo-headings such as **工具与方法论补充**.",
+                "Do not use bold, backticks, stars, decorative punctuation, or nested bullet lists.",
+                "Avoid phrases like 具体方法可归纳为以下几类, 开发环境与流程优化, 核心策略是; sound simple and direct.",
                 "Do not put memory_id/raw_message_id in headings.",
                 "Avoid bullet-heavy or deeply nested Markdown. Prefer short paragraphs or a simple numbered list.",
-                "Group similar evidence into one idea instead of listing each memory separately.",
-                "End with one compact evidence line using exact format: 证据：memory_id=1/raw_message_id=2；memory_id=3/raw_message_id=4",
+                "If evidence explicitly separates multiple tools or methods, list them separately; do not merge distinct methods only to be concise.",
+                "Each numbered item should usually be no more than two short lines.",
+                "End with one compact evidence line using exact format: 依据：记忆1/原文2；记忆3/原文4",
                 "If evidence is thin, say what is uncertain.",
                 "Do not use outside knowledge.",
             ],
@@ -194,8 +198,8 @@ class AnswerEngine:
                     "role": "system",
                     "content": (
                         "You answer questions using only provided Personal Brain evidence. "
-                        "Optimize for readable Chinese summaries. Keep evidence traceable, "
-                        "but put citations in a compact final evidence line instead of interrupting headings."
+                        "Optimize for readable Chinese chat replies. Keep evidence traceable, "
+                        "but make citations compact and keep them only in the final evidence line."
                     ),
                 },
                 {"role": "user", "content": json.dumps(prompt, ensure_ascii=False)},
@@ -249,8 +253,14 @@ def short_text(text: str, limit: int) -> str:
 def citation_contract_warning(answer: str, evidence: list[RerankedEvidence]) -> str | None:
     if not evidence:
         return None
-    has_memory_citation = any(f"memory_id={item.memory_id}" in answer for item in evidence)
-    has_raw_citation = any(f"raw_message_id={item.recall.raw_message_id}" in answer for item in evidence)
+    has_memory_citation = any(
+        f"memory_id={item.memory_id}" in answer or f"记忆{item.memory_id}" in answer
+        for item in evidence
+    )
+    has_raw_citation = any(
+        f"raw_message_id={item.recall.raw_message_id}" in answer or f"原文{item.recall.raw_message_id}" in answer
+        for item in evidence
+    )
     if has_memory_citation and has_raw_citation:
         return None
     return "answer did not fully satisfy citation contract"
