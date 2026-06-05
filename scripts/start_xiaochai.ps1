@@ -7,6 +7,9 @@ $ErrorActionPreference = "Stop"
 $ProjectDir = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $BridgeUrl = "http://127.0.0.1:$Port"
 $LogDir = Join-Path $ProjectDir ".tmp_tests"
+$CloudflaredLog = Join-Path $LogDir "cloudflared.log"
+$DesktopDir = [Environment]::GetFolderPath("Desktop")
+$FeishuUrlFile = Join-Path $DesktopDir "小柴飞书地址.txt"
 New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 
 Write-Host "Project: $ProjectDir"
@@ -84,8 +87,9 @@ Write-Host "If it shows https://xxxxx.trycloudflare.com, set Feishu event URL to
 Write-Host "https://xxxxx.trycloudflare.com/feishu/events"
 Write-Host "Temporary trycloudflare URLs may change every time."
 
+Remove-Item -LiteralPath $CloudflaredLog -ErrorAction SilentlyContinue
 $tunnelCommand = @"
-& '$cloudflaredPath' tunnel --url $BridgeUrl
+& '$cloudflaredPath' tunnel --url $BridgeUrl --logfile '$CloudflaredLog'
 "@
 
 Start-Process powershell.exe -ArgumentList @(
@@ -93,6 +97,40 @@ Start-Process powershell.exe -ArgumentList @(
     "-ExecutionPolicy", "Bypass",
     "-Command", $tunnelCommand
 ) -WindowStyle Normal
+
+$publicUrl = $null
+for ($i = 0; $i -lt 20; $i++) {
+    if (Test-Path -LiteralPath $CloudflaredLog) {
+        $logText = Get-Content -LiteralPath $CloudflaredLog -Raw -ErrorAction SilentlyContinue
+        $match = [regex]::Match($logText, "https://[a-z0-9-]+\.trycloudflare\.com")
+        if ($match.Success) {
+            $publicUrl = $match.Value
+            break
+        }
+    }
+    Start-Sleep -Seconds 1
+}
+
+if ($publicUrl) {
+    $eventUrl = "$publicUrl/feishu/events"
+    @(
+        "Xiaochai Feishu event URL:",
+        $eventUrl,
+        "",
+        "Updated at: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')",
+        "",
+        "Paste this URL into Feishu event subscription settings."
+    ) | Set-Content -LiteralPath $FeishuUrlFile -Encoding UTF8
+    Write-Host ""
+    Write-Host "Feishu event URL:"
+    Write-Host $eventUrl
+    Write-Host "Also saved to: $FeishuUrlFile"
+} else {
+    Write-Host ""
+    Write-Host "Could not find trycloudflare URL yet."
+    Write-Host "Check cloudflared window or log:"
+    Write-Host $CloudflaredLog
+}
 
 Write-Host ""
 Write-Host "Startup commands sent."
