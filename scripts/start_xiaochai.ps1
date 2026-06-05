@@ -112,9 +112,9 @@ $publicUrl = $null
 for ($i = 0; $i -lt 20; $i++) {
     if (Test-Path -LiteralPath $CloudflaredLog) {
         $logText = Get-Content -LiteralPath $CloudflaredLog -Raw -ErrorAction SilentlyContinue
-        $match = [regex]::Match($logText, "https://[a-z0-9-]+\.trycloudflare\.com")
-        if ($match.Success) {
-            $publicUrl = $match.Value
+        $matches = [regex]::Matches($logText, "https://[a-z0-9-]+\.trycloudflare\.com")
+        if ($matches.Count -gt 0) {
+            $publicUrl = $matches[$matches.Count - 1].Value
             break
         }
     }
@@ -123,14 +123,21 @@ for ($i = 0; $i -lt 20; $i++) {
 
 if ($publicUrl) {
     $eventUrl = "$publicUrl/feishu/events"
-    @(
+    $fileLines = @(
         "Xiaochai Feishu event URL:",
         $eventUrl,
         "",
         "Updated at: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')",
         "",
         "Paste this URL into Feishu event subscription settings."
-    ) | Set-Content -LiteralPath $FeishuUrlFile -Encoding UTF8
+    )
+    try {
+        $fileLines | Set-Content -LiteralPath $FeishuUrlFile -Encoding UTF8 -ErrorAction Stop
+    } catch {
+        $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+        $FeishuUrlFile = Join-Path $DesktopDir "小柴飞书最新地址-$stamp.txt"
+        $fileLines | Set-Content -LiteralPath $FeishuUrlFile -Encoding UTF8
+    }
     Write-Host ""
     Write-Host "Feishu event URL:"
     Write-Host $eventUrl
