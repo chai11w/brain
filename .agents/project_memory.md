@@ -297,6 +297,11 @@ User-captured future directions:
   memory loaded. Future Codex should read this project memory file before
   interpreting a report.
   `reports/` is git-ignored because it may contain private raw text.
+- Daily report automation is intentionally narrow. `scripts/run_daily_report.ps1`
+  only calls `python brain.py daily-report --date today`. The Windows task
+  installed by `scripts/install_daily_report_task.ps1` only schedules that
+  extraction command, defaulting to 23:50. It must not read reports, call Codex,
+  call any AI model, diagnose, modify data, or repair anything.
 - Later versions should add a memory lifecycle system like human memory:
   recent and frequently used memories stay sharp; old, low-value, or duplicate
   memories gradually lose recall weight, merge into higher-level summaries, or

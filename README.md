@@ -33,11 +33,11 @@ Implemented:
 - Feishu bridge MVP
 - Feishu interaction logs for answer/reply review
 - local daily Markdown extraction reports
+- scheduled daily report extraction automation
 - wxauto WeChat bridge shell
 
 Not implemented:
 
-- scheduled daily report automation
 - weekly reflective review automation
 - frontend
 - knowledge graph visualization
@@ -122,9 +122,23 @@ Reports are written to `reports/YYYY-MM-DD.md`. This version extracts same-day
 records and adds deterministic issue markers for the memory pipeline, including
 raw message status, extraction failures, stored memory formatting, interaction
 errors, and old reply citation formats. It does not call AI, edit memories, or
-perform scheduled automation. The `reports/` directory is git-ignored because
-reports contain raw user text, extracted memories, replies, errors, and
-evidence.
+read or repair reports. The `reports/` directory is git-ignored because reports
+contain raw user text, extracted memories, replies, errors, and evidence.
+
+Run the same extraction from a script:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\run_daily_report.ps1
+```
+
+Install a Windows scheduled task for daily extraction at 23:50:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\install_daily_report_task.ps1
+```
+
+The scheduled task only calls the report extraction command. It does not call
+AI, read reports, diagnose, edit data, or repair anything.
 
 Run a quick V0 smoke test without writing new memories:
 
