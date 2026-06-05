@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -208,7 +209,7 @@ class AnswerEngine:
         )
         if not answer:
             raise RuntimeError("model returned empty answer")
-        return answer.strip()
+        return clean_answer_for_chat(answer.strip())
 
 
 def recall_to_payload(item: RecallResult) -> dict[str, Any]:
@@ -241,6 +242,31 @@ def format_answer_result(result: AnswerResult) -> str:
     if result.warning:
         lines.extend(["", f"warning: {result.warning}"])
     return "\n".join(lines)
+
+
+def clean_answer_for_chat(answer: str) -> str:
+    clean = answer.strip()
+    clean = re.sub(r"(?m)^\s{0,3}#{1,6}\s*", "", clean)
+    clean = re.sub(r"\*\*([^*\n]+)\*\*", r"\1", clean)
+    clean = re.sub(r"`([^`\n]+)`", r"\1", clean)
+    clean = clean.replace("**", "").replace("`", "")
+    clean = re.sub(
+        r"memory_id\s*=\s*(\d+)\s*/\s*raw_message_id\s*=\s*(\d+)",
+        r"记忆\1/原文\2",
+        clean,
+    )
+    clean = re.sub(
+        r"memory_id\s*=\s*(\d+)\s*[,，;；]\s*raw_message_id\s*=\s*(\d+)",
+        r"记忆\1/原文\2",
+        clean,
+    )
+    clean = clean.replace("证据：", "依据：").replace("证据:", "依据：")
+    clean = re.sub(r"依据：\s+", "依据：", clean)
+    clean = re.sub(r"(?m)^(\s*\d+[.、]\s*)\*+", r"\1", clean)
+    clean = re.sub(r"\*+([：:])", r"\1", clean)
+    clean = re.sub(r"[ \t]+\n", "\n", clean)
+    clean = re.sub(r"\n{3,}", "\n\n", clean)
+    return clean.strip()
 
 
 def short_text(text: str, limit: int) -> str:
