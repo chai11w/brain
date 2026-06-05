@@ -15,9 +15,19 @@ New-Item -ItemType Directory -Force -Path $LogDir | Out-Null
 Write-Host "Project: $ProjectDir"
 Write-Host "Starting Xiaochai bridge..."
 
-$existing = Get-NetTCPConnection -LocalPort $Port -ErrorAction SilentlyContinue |
+$existing = @()
+$existing += Get-NetTCPConnection -LocalPort $Port -ErrorAction SilentlyContinue |
     Where-Object { $_.State -eq "Listen" } |
     Select-Object -ExpandProperty OwningProcess -Unique
+
+$netstatPattern = "^\s*TCP\s+\S+:$Port\s+\S+\s+LISTENING\s+(\d+)\s*$"
+$existing += netstat -ano |
+    ForEach-Object {
+        $match = [regex]::Match($_, $netstatPattern)
+        if ($match.Success) { [int]$match.Groups[1].Value }
+    }
+
+$existing = $existing | Where-Object { $_ -and $_ -ne 0 } | Sort-Object -Unique
 
 foreach ($processId in $existing) {
     try {
