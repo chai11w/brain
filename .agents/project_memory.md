@@ -1,92 +1,143 @@
-# Project Memory: AI-native Personal Brain
+# Project Memory: Xiaochai / AI-native Personal Brain
 
 This is project-scoped handoff memory for Codex/AI agents working in this
 repository. Do not treat it as global memory.
 
 ## User Goal
 
-The user is building an AI-native Personal Brain, not a simple note app, CRUD
-tool, keyword search system, or fixed folder taxonomy.
+The user is building an AI-native Personal Brain / Xiaochai Memory Box, not a
+note app, CRUD tool, keyword search system, or fixed folder taxonomy.
 
-Product goal:
+Target flow:
 
 ```text
 casual input
--> AI understands, rewrites, and structures it
--> long-term atomic memories are formed
--> semantic retrieval finds relevant evidence
--> AI reasons over retrieved evidence and answers
+-> preserve exact raw input
+-> AI judges whether it is worth remembering
+-> AI rewrites it into long-term atomic memories
+-> topics/entities/category/importance/confidence are assigned
+-> embeddings support semantic recall
+-> answers cite retrieved evidence
 ```
 
-The user wants Codex to act as a technical partner and architecture reviewer,
-not merely an executor.
+The user wants Codex to act as a long-term technical partner and architecture
+reviewer, not merely an executor.
 
 ## Working Style
 
-Before implementing a request:
-
-1. Check whether it fits the AI-native Personal Brain goal.
-2. Push back if the proposed path is too CRUD-like, keyword-based, or fixed-folder based.
-3. Propose the better architecture.
-4. Then decide whether to change code.
-
-Before accepting any new feature proposal, Codex must explicitly review:
-
-1. What problem is the user really trying to solve?
-2. What is the current project's biggest bottleneck?
-3. Does this feature solve that biggest bottleneck?
-4. If not, clearly push back instead of simply implementing it.
-
-The user is not deeply technical and prefers Chinese explanations with context.
-When explaining architecture, database schema, Router, RAG, embeddings, or AI
-pipelines, explain plainly first, then point to files/code.
-
-Project-memory boundary:
-
-- In project collaboration context, when the user says to "write it into memory"
-  about workflow rules, CLI/GitHub upload habits, project status, or future
-  implementation plans, write/update `.agents/project_memory.md` rather than
-  ingesting it into Xiaochai's personal memory database.
-- After CLI/GitHub upload work, include a short Chinese summary explaining what
-  was changed, which CLI usage changed, what was pushed, and where to find it,
-  so the user can quickly trace the work later.
+- Explain in Chinese, plainly first, then point to files/code.
+- Before implementing product/architecture changes, review whether the request
+  solves the current bottleneck.
+- Push back when a proposal is too CRUD-like, keyword-based, fixed-folder based,
+  or premature for the current stage.
+- For project rules/status/future plans, update `.agents/project_memory.md`;
+  do not ingest them into Xiaochai's personal memory database.
+- Never write real API keys, Feishu secrets, passwords, tokens, or local private
+  database contents into tracked files.
 
 ## Current Project State
 
+Repository:
+
+- Workspace: `F:\cc\13khoj第二大脑-记忆`
+- Branch: `codex-memory-archive-mvp`
+- Remote: `origin https://github.com/chai11w/brain.git`
+- Upload status: this handoff expects the latest local fixes to be committed and
+  pushed to `origin/codex-memory-archive-mvp`. Verify with `git status --branch`
+  and `git log -1`.
+
 Implemented:
 
-- SQLite source of truth in `data/personal_brain.sqlite3`
-- AI-native schema in `personal_brain/schema.py`
-- raw input preservation in `raw_messages`
-- AI extraction audit in `memory_extraction_runs`
-- AI-rewritten atomic memories in `memories`
-- dynamic AI topics/entities
-- stable broad `memory_category` on each memory for navigation
-- embedding storage in `memory_embeddings`
-- semantic recall in `personal_brain/semantic.py`
-- evidence-constrained answer layer in `personal_brain/answer.py`
-- Memory Router in `personal_brain/router.py`
-- Router outputs:
-  - `brain_index.json`
-  - `memory/topics.json`
-  - `memory/memory_manifest.json`
-- secure vault in `personal_brain/vault.py`
-- Feishu bridge MVP in `scripts/feishu_bridge.py`
-- Feishu interaction audit in `interaction_logs`
-- daily extraction report CLI in `personal_brain/daily_report.py`
-- Codex App daily report extraction automation at 12:00 for the previous 24 hours
-- wxauto WeChat bridge shell in `scripts/wxauto_bridge.py`
+- SQLite source of truth: `data/personal_brain.sqlite3`
+- Raw input preservation: `raw_messages`
+- AI extraction audit: `memory_extraction_runs`
+- AI-rewritten atomic memories: `memories`
+- Dynamic topics/entities plus stable broad `memory_category`
+- Embedding storage and semantic recall: `personal_brain/semantic.py`
+- Evidence-constrained answering: `personal_brain/answer.py`
+- Memory Router outputs: `brain_index.json`, `memory/topics.json`,
+  `memory/memory_manifest.json`
+- Secure vault: `personal_brain/vault.py`
+- Feishu bridge MVP: `scripts/feishu_bridge.py`
+- Feishu interaction audit: `interaction_logs`
+- Xiaochai launcher/watchdog: `scripts/start_xiaochai.ps1`,
+  `scripts/xiaochai_watchdog.ps1`
+- Daily extraction report CLI: `personal_brain/daily_report.py`
+- Codex App daily report automation at 10:00 for the previous 24 hours
+- wxauto WeChat bridge shell exists but is not the preferred channel
 
-Not implemented:
+Not implemented / deferred:
 
-- weekly Markdown topics/insights review automation
-- frontend
-- knowledge graph visualization
-- Neo4j
-- GraphRAG
-- multi-database deployment
+- Frontend
+- Neo4j / knowledge graph visualization / GraphRAG
+- Multi-database deployment
+- Weekly reflective Markdown review automation
+- Full embedding-based semantic write-time dedupe
+- Read-time evidence dedupe
 
-## Commands
+## Recent Fixes In Current Branch
+
+These fixes were implemented during the latest stabilization pass. The local
+bridge was restarted after the code changes, so runtime behavior should already
+be active locally.
+
+1. Feishu delayed retry protection
+   - File: `scripts/feishu_bridge.py`
+   - Adds persistent `message_id` dedupe via `interaction_logs`.
+   - Ignores Feishu messages older than 15 minutes by default.
+   - Stale events are logged as `stale_ignored`, not replied to, and not stored.
+
+2. Write-time near-duplicate protection
+   - File: `personal_brain/extractor.py`
+   - Before inserting extracted memory candidates, compares them with recent
+     active memories.
+   - Skips very similar candidates while preserving raw messages and extraction
+     runs for audit.
+   - This is deterministic text/near-duplicate filtering, not full embedding
+     semantic dedupe yet.
+
+3. Question-shaped Xiaochai product feedback guard
+   - File: `personal_brain/extractor.py`
+   - If the model would ignore an input, but the text clearly discusses Xiaochai,
+     the memory box, reports, Feishu, startup stability, retrieval, RAG, or
+     embeddings as product feedback, preserve it as a project feedback memory.
+
+4. Daily report Xiaochai review section
+   - File: `personal_brain/daily_report.py`
+   - Adds `小柴相关复盘分类`.
+   - This is an extra deterministic index over the full report.
+   - It does not remove or change the original full extraction details.
+   - Categories: current defects, near-term fixes, future directions, other
+     Xiaochai-related notes.
+
+5. Documentation updates
+   - Files: `README.md`, `.agents/project_memory.md`
+   - README explains stale retry protection and the extra daily report section.
+   - Project memory was cleaned into this current-state handoff.
+
+Verification already run:
+
+```powershell
+python brain.py daily-report --last-hours 24
+```
+
+Latest verification report generated locally:
+
+```text
+reports/last-24h-2026-06-06-1039.md
+```
+
+Also verified with small Python checks:
+
+- Chinese near-duplicate normalization works.
+- Duplicate candidate matches an existing memory.
+- Xiaochai question-shaped feedback is preserved.
+- Daily report bucket classification returns current defects / near-term fixes /
+  future directions for representative examples.
+
+## Current Commands
+
+General:
 
 ```powershell
 python brain.py init-db
@@ -103,6 +154,18 @@ python brain.py daily-report --last-hours 24
 python brain.py build-router
 ```
 
+Feishu bridge:
+
+```powershell
+python scripts\feishu_bridge.py --port 8787 --mode auto --ask-prefix "?"
+```
+
+Launcher/watchdog:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\start_xiaochai.ps1
+```
+
 Secure vault:
 
 ```powershell
@@ -111,11 +174,21 @@ python brain.py secure-list
 python brain.py secure-get "..."
 ```
 
-Feishu bridge:
+## Runtime / Channel Notes
 
-```powershell
-python scripts/feishu_bridge.py --port 8787 --mode auto --ask-prefix "?"
-```
+- Feishu is the preferred MVP interaction channel.
+- Desktop WeChat automation is a backup shell only; do not resume unless the
+  user explicitly asks.
+- `启动小柴.bat` calls the launcher. The launcher starts a hidden watchdog that
+  keeps the local Feishu bridge and cloudflared process alive and writes status
+  to `.tmp_tests/xiaochai_status.txt`.
+- The watchdog can restart local processes, but account-less `trycloudflare.com`
+  quick tunnel URLs are not stable.
+- Stable daily Feishu use requires a fixed public URL, preferably Cloudflare
+  Named Tunnel configured through `XIAOCHAI_TUNNEL_NAME`,
+  `XIAOCHAI_CLOUDFLARED_CONFIG`, and `XIAOCHAI_PUBLIC_HOST`.
+- Current local bridge was restarted after the latest local fixes, so the new
+  runtime behavior should already be active locally.
 
 ## Architecture Rules
 
@@ -125,28 +198,13 @@ Non-negotiable:
 - Store AI-rewritten atomic memories in `memories`.
 - Retrieval should use embeddings/RAG as the primary recall path.
 - Topics, entities, type, importance, and confidence must be AI-generated.
-- Broad memory category should guide navigation without replacing semantic recall.
+- Stable broad category guides navigation; it must not replace semantic recall.
 - Answers must cite retrieved memory/raw-message evidence.
 - Markdown/folders are exports or views, not the source of truth.
-- Do not store secrets in normal memory.
-- Do not send secrets to AI models.
-- Do not build Neo4j, GraphRAG, visualization, or frontend unless explicitly revisited.
-
-## Runtime Model Policy
-
-Current intended setup:
-
-- Chat/reasoning model: Z.AI `glm-5v-turbo`
-- Chat endpoint: `https://api.z.ai/api/paas/v4`
-- API key env var: `ZAI_API_KEY`
-- Embedding model: Z.AI `embedding-3`
-- Embedding dimension: `2048`
-
-`personal_brain/llm.py` reads environment variables and, on Windows, falls back
-to `HKCU\Environment` when a variable is not present in the current process.
-
-Do not write real API keys, Feishu secrets, passwords, tokens, or local database
-files into tracked project files.
+- Adapters such as Feishu/WeChat only receive/send messages and call the core
+  brain. They must not duplicate extraction, embeddings, recall, or answer logic.
+- Do not build frontend, Neo4j, GraphRAG, visualization, or a new database unless
+  the user explicitly revisits that architecture decision.
 
 ## Current Memory Flow
 
@@ -156,35 +214,14 @@ Ingest:
 input text
 -> raw_messages
 -> AI structured extraction
+-> Xiaochai product-feedback guard
+-> write-time near-duplicate filter
 -> memory_extraction_runs
 -> memories
--> stable memory_category
--> topics/entities links
--> embed new memory IDs when embedding_model.enabled is true
+-> topic/entity links
+-> embeddings for new memory IDs when enabled
 -> rebuild Router
 ```
-
-Current stable memory categories:
-
-```text
-现有项目改进
-未来产品设想
-生活感悟
-产品使用技巧
-自身认知更新
-技术思考
-人际关系
-工作流方法
-信息安全
-临时待办
-其他
-```
-
-Important boundary:
-
-- `PersonalBrain.ingest(...)` owns post-ingest embeddings for newly created memory IDs.
-- Adapters such as Feishu/WeChat should only receive/send messages and call the core brain.
-- Feishu/WeChat must not duplicate memory extraction, embedding, database writes, recall, or answer logic.
 
 Ask:
 
@@ -196,131 +233,43 @@ question
 -> cite memory_id and raw_message_id
 ```
 
-## Feishu Status
+## Known Risks / Watch Items
 
-Feishu is the preferred MVP interaction channel because it uses an official bot
-and event subscription rather than desktop UI automation.
-
-Bridge facts:
-
-- Event path: `/feishu/events`
-- Health path: `/health`
-- Supported event type: `im.message.receive_v1`
-- Reply API: `POST /open-apis/im/v1/messages/{message_id}/reply`
-- Token API: `POST /open-apis/auth/v3/tenant_access_token/internal`
-- Modes: `remember`, `ask`, `auto`
-- In `auto`, messages starting with `?` are answered; other text is remembered.
-- MVP supports verification token, not encrypted event payloads.
-- Bridge writes `interaction_logs` with user text, action, reply text, evidence,
-  status, error, and latency for later quality review.
-
-Required env vars:
-
-```text
-FEISHU_APP_ID
-FEISHU_APP_SECRET
-FEISHU_VERIFICATION_TOKEN
-```
-
-## WeChat Status
-
-`scripts/wxauto_bridge.py` exists as a backup shell for Windows desktop WeChat.
-
-Do not continue desktop WeChat UI automation unless the user explicitly resumes
-it. Feishu is the preferred MVP channel for now.
-
-## Secure Vault Boundary
-
-Secrets must use `secure-add`, `secure-list`, and `secure-get`.
-
-Secrets must not enter:
-
-- `raw_messages`
-- `memories`
-- `memory_embeddings`
-- Router manifests
-- Markdown exports
-- Git
-- AI model calls
-
-V0 uses Windows DPAPI plus master-password-derived entropy. Every decrypt
-requires the master password.
+- Deterministic near-duplicate filtering may miss paraphrases with different
+  wording. If real duplicates still leak through, add embedding-based semantic
+  dedupe before insertion.
+- Daily report Xiaochai classification is fixed-rule indexing. It is useful for
+  review, but not a replacement for Codex reading the full report when the user
+  asks for product interpretation.
+- Temporary trycloudflare URLs can expire or change. Fixed domain/Named Tunnel
+  remains the real stability solution.
+- Existing files may contain mojibake from older Windows console output. When
+  editing docs, prefer UTF-8 and verify Chinese text in the file, not only in
+  PowerShell output.
 
 ## Documentation Roles
 
-- `README.md`: current usage and setup
-- `项目地图.md`: Chinese overview for the user
+- `README.md`: usage and setup
+- `项目地图.md`: Chinese user-facing overview
 - `ARCHITECTURE.md`: architecture principles and review gates
-- `.agents/project_memory.md`: this handoff memory for future Codex work
+- `.agents/project_memory.md`: current project handoff memory for future Codex
 
 ## Next Best Step
 
-Do not jump to Neo4j, GraphRAG, frontend, or a new database.
-
-Recommended next step:
+Continue the stabilization loop:
 
 ```text
-use Xiaochai for the next few weeks
--> let Codex App generate rolling 24h extraction reports at 12:00
--> inspect reports when the user asks
--> fix foundation issues in extraction, recall, answer formatting, deletion/archive, and startup
--> avoid larger product features until the foundation feels stable
+use Xiaochai normally
+-> daily 10:00 rolling 24h report is generated
+-> user asks Codex to inspect reports when needed
+-> fix extraction, recall, answer formatting, archive/correction, and startup issues
+-> avoid large product features until the foundation feels stable
 ```
 
-Weekly review is still a later idea, not the immediate next step. It should be
-Codex/AI reflective work:
+Later, after the foundation is stable:
 
-```text
-read Router + recent memories
--> synthesize Markdown topics
--> extract insights
--> preserve links back to evidence
-```
-
-User-captured future directions:
-
-- Xiaochai should improve active judgment instead of passively storing text.
-- It needs message withdrawal/correction that invalidates linked raw messages,
-  memories, embeddings, Router entries, and logs consistently.
-- MVP deletion/correction starts with ID-based memory archiving, not physical
-  deletion: commands such as `删除 42` / `作废 42` mark the target memory as
-  archived, remove its embedding from active recall, rebuild Router, keep raw
-  evidence for audit/recovery, and should later evolve into reply-based
-  deletion/correction.
-- Replies and generated topics should default to Chinese.
-- Memories should be less scattered: broad category first, dynamic topic second.
-- Weekly Codex review should be a quality-control loop, not just a summary.
-- Daily reports are first-version extraction snapshots plus deterministic issue
-  markers, not an automatic worker. Use
-  `python brain.py daily-report --last-hours 24` to generate a local
-  `reports/last-24h-YYYY-MM-DD-HHMM.md` file containing recent raw inputs,
-  extraction runs, created/updated memories, interaction replies, errors,
-  evidence JSON, and fixed-rule markers for pipeline issues such as extraction
-  failure, explicit remember requests that produced no memory, Markdown noise in
-  stored memories, interaction failures, and old reply citation formats. This
-  command does not call AI, does not edit memories, and does not assume the
-  runner has project memory loaded. Future Codex should read this project memory
-  file before interpreting a report.
-  `reports/` is git-ignored because it may contain private raw text.
-- Daily report automation is intentionally narrow. `scripts/run_daily_report.ps1`
-  only calls `python brain.py daily-report --last-hours 24`. The active
-  automation is a Codex App automation named `小柴每日报告提取`, scheduled at 12:00
-  every day because the user's computer may be off at night. The backup Windows
-  task installer `scripts/install_daily_report_task.ps1` also defaults to 12:00
-  and `LastHours=24`, but the Windows task should not be active unless the user
-  explicitly chooses that backup path. Automation must not read reports, call
-  Codex for analysis, call any AI model, diagnose, modify data, or repair
-  anything.
-- Later versions should add a memory lifecycle system like human memory:
-  recent and frequently used memories stay sharp; old, low-value, or duplicate
-  memories gradually lose recall weight, merge into higher-level summaries, or
-  move to archived/superseded status while raw evidence remains preserved.
-- Later versions should add image memory through a real media evidence layer:
-  Feishu image/file events should preserve the original image or file reference,
-  store metadata in a `media_assets`-style table, use a multimodal model for OCR
-  and captioning, then feed the derived text into normal memory extraction only
-  after checking whether the image is worth remembering and not obviously
-  sensitive.
-- Longer-term product direction includes relationship memory, decision-style
-  memory, digital-twin behavior, and later external app integrations such as
-  WeChat.
+- Add embedding-based write-time semantic dedupe if needed.
+- Add read-time evidence dedupe.
+- Add periodic storage-library quality review.
+- Revisit weekly reflective Markdown review automation.
+- Revisit Query Planning RAG and more capable Xiaochai robot behavior.

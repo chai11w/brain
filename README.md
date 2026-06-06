@@ -126,20 +126,25 @@ errors, and old reply citation formats. It does not call AI, edit memories, or
 read or repair reports. The `reports/` directory is git-ignored because reports
 contain raw user text, extracted memories, replies, errors, and evidence.
 
+Reports also include an extra `小柴相关复盘分类` section. This is only an index
+over the full report, and it groups Xiaochai-related material into current
+defects, near-term fixes, future directions, and other related notes without
+removing or changing the full extraction details later in the report.
+
 Run the same extraction from a script:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\run_daily_report.ps1
 ```
 
-Backup only: install a Windows scheduled task for daily extraction at 12:00:
+Backup only: install a Windows scheduled task for daily extraction at 10:00:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\install_daily_report_task.ps1
 ```
 
 The active automation is the Codex App automation named `小柴每日报告提取`,
-scheduled at 12:00 to run the previous 24 hours. The Windows scheduled task
+scheduled at 10:00 to run the previous 24 hours. The Windows scheduled task
 installer is only a backup option and is not expected to be active by default.
 Both paths only call the report extraction command. They do not call AI, read
 reports, diagnose, edit data, or repair anything.
@@ -244,6 +249,12 @@ The bridge also writes `interaction_logs` so Codex can later review what the
 user sent, whether the bridge remembered or answered, what it replied, which
 evidence was used, and whether a model/API error occurred.
 
+To avoid delayed Feishu retries becoming duplicate memories, the bridge ignores
+already-seen `message_id` values from `interaction_logs` and skips Feishu
+messages older than `--max-message-age-minutes` minutes. The default is 15
+minutes, and stale messages are logged with action `stale_ignored` but are not
+replied to or stored as memories.
+
 Memory acknowledgement replies include the broad memory category and dynamic
 topics for each extracted memory. If one message is split into many memories,
 the reply warns that the split may need review.
@@ -276,6 +287,36 @@ Local tunnel example:
 
 ```powershell
 cloudflared tunnel --url http://127.0.0.1:8787
+```
+
+The desktop launcher `启动小柴.bat` starts a background watchdog through
+`scripts/start_xiaochai.ps1`. The watchdog keeps the local Feishu bridge and
+cloudflared process running and writes status to:
+
+```text
+.tmp_tests/xiaochai_status.txt
+```
+
+The latest Feishu event URL is shown in the `Xiaochai Status` monitor window
+and `.tmp_tests/xiaochai_status.txt`.
+
+If no fixed tunnel is configured, it falls back to a temporary
+`trycloudflare.com` tunnel. This is only a backup: temporary URLs can change
+when the tunnel restarts, so Feishu may still point to an expired URL.
+
+For stable daily use, configure a Cloudflare Named Tunnel or another fixed
+public domain, then set user-level environment variables before launching:
+
+```powershell
+[Environment]::SetEnvironmentVariable("XIAOCHAI_TUNNEL_NAME", "your-tunnel-name", "User")
+[Environment]::SetEnvironmentVariable("XIAOCHAI_CLOUDFLARED_CONFIG", "C:\Users\you\.cloudflared\config.yml", "User")
+[Environment]::SetEnvironmentVariable("XIAOCHAI_PUBLIC_HOST", "xiaochai.your-domain.com", "User")
+```
+
+Then set Feishu event subscription to:
+
+```text
+https://xiaochai.your-domain.com/feishu/events
 ```
 
 Health check:
@@ -335,7 +376,7 @@ The next useful step is a one-month stabilization pass while the user actually
 uses Xiaochai:
 
 ```text
-daily 12:00 rolling 24h extraction report
+daily 10:00 rolling 24h extraction report
 -> user asks Codex to inspect reports when needed
 -> fix extraction, recall, answer formatting, deletion/archive, and startup issues
 -> keep the foundation stable before adding larger product features

@@ -1,6 +1,6 @@
 param(
     [string]$TaskName = "XiaochaiDailyReport",
-    [string]$Time = "12:00",
+    [string]$Time = "10:00",
     [int]$LastHours = 24
 )
 

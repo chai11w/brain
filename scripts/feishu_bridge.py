@@ -37,6 +37,7 @@ class FeishuOptions:
     app_id: str
     app_secret: str
     dry_run: bool
+    max_message_age_seconds: int
 
 
 @dataclass(frozen=True)
@@ -135,6 +136,25 @@ class FeishuBrainBridge:
         sender = extract_sender(event)
         if not message_id or not text:
             return {"ok": True, "ignored": "non-text-or-missing-message"}
+
+        if self.brain.has_interaction_message(message_id):
+            print(f"ignored duplicate Feishu message_id={message_id}", flush=True)
+            return {"ok": True, "duplicate_message": message_id}
+
+        message_created_at = extract_message_created_at(payload, event, message)
+        if is_stale_message(message_created_at, self.options.max_message_age_seconds):
+            age_seconds = int(time.time() - message_created_at) if message_created_at else None
+            self._record_stale_interaction(
+                message_id=message_id,
+                text=text,
+                sender=sender,
+                age_seconds=age_seconds,
+            )
+            print(
+                f"ignored stale Feishu message_id={message_id} age_seconds={age_seconds}",
+                flush=True,
+            )
+            return {"ok": True, "ignored": "stale-message", "message_id": message_id}
 
         self._mark_working_async(message_id)
         thread = threading.Thread(
@@ -280,6 +300,36 @@ class FeishuBrainBridge:
         except Exception as exc:
             print(f"failed to record interaction log {message_id}: {exc}", file=sys.stderr, flush=True)
 
+    def _record_stale_interaction(
+        self,
+        *,
+        message_id: str,
+        text: str,
+        sender: str,
+        age_seconds: int | None,
+    ) -> None:
+        if age_seconds is None:
+            note = "stale Feishu message ignored before processing; no reply sent"
+        else:
+            note = f"stale Feishu message ignored before processing; age_seconds={age_seconds}; no reply sent"
+        try:
+            self.brain.record_interaction(
+                message_id=message_id,
+                source="feishu",
+                sender=sender,
+                user_text=text,
+                mode=self.options.mode,
+                action="stale_ignored",
+                raw_message_id=None,
+                reply_text=note,
+                evidence=None,
+                status="succeeded",
+                error=None,
+                latency_ms=0,
+            )
+        except Exception as exc:
+            print(f"failed to record stale interaction log {message_id}: {exc}", file=sys.stderr, flush=True)
+
     def _valid_token(self, payload: dict[str, Any]) -> bool:
         expected = self.options.verification_token
         if not expected:
@@ -343,6 +393,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--app-secret-env", default="FEISHU_APP_SECRET")
     parser.add_argument("--verification-token-env", default="FEISHU_VERIFICATION_TOKEN")
     parser.add_argument("--dry-run", action="store_true", help="process events but do not call Feishu reply API")
+    parser.add_argument(
+        "--max-message-age-minutes",
+        type=int,
+        default=15,
+        help="ignore Feishu messages older than this many minutes; 0 disables stale-message filtering",
+    )
     return parser
 
 
@@ -365,6 +421,7 @@ def main(argv: list[str] | None = None) -> int:
         app_id=app_id,
         app_secret=app_secret,
         dry_run=args.dry_run,
+        max_message_age_seconds=max(0, args.max_message_age_minutes) * 60,
     )
     FeishuHandler.bridge = FeishuBrainBridge(brain=brain, client=client, options=options)
     server = ThreadingHTTPServer((args.host, args.port), FeishuHandler)
@@ -397,6 +454,53 @@ def extract_sender(event: dict[str, Any]) -> str:
         if value:
             return str(value)
     return "feishu"
+
+
+def extract_message_created_at(
+    payload: dict[str, Any],
+    event: dict[str, Any],
+    message: dict[str, Any],
+) -> float | None:
+    header = payload.get("header") or {}
+    candidates = [
+        message.get("create_time"),
+        message.get("update_time"),
+        event.get("create_time"),
+        header.get("create_time"),
+        header.get("event_create_time"),
+        header.get("timestamp"),
+    ]
+    for candidate in candidates:
+        timestamp = parse_feishu_timestamp(candidate)
+        if timestamp is not None:
+            return timestamp
+    return None
+
+
+def parse_feishu_timestamp(value: Any) -> float | None:
+    if value is None:
+        return None
+    if isinstance(value, str):
+        value = value.strip()
+        if not value:
+            return None
+    try:
+        timestamp = float(value)
+    except (TypeError, ValueError):
+        return None
+    if timestamp <= 0:
+        return None
+    if timestamp > 10_000_000_000_000:
+        return timestamp / 1_000_000
+    if timestamp > 10_000_000_000:
+        return timestamp / 1000
+    return timestamp
+
+
+def is_stale_message(created_at: float | None, max_age_seconds: int) -> bool:
+    if created_at is None or max_age_seconds <= 0:
+        return False
+    return time.time() - created_at > max_age_seconds
 
 
 def extract_question(text: str, ask_prefix: str) -> str | None:

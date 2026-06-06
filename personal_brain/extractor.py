@@ -4,6 +4,7 @@ import hashlib
 import json
 import re
 import sqlite3
+from difflib import SequenceMatcher
 from dataclasses import dataclass
 from typing import Any
 
@@ -12,7 +13,8 @@ from .llm import LLMClient
 from .schema import BrainSchema
 
 
-PROMPT_VERSION = "memory-extraction-v3"
+PROMPT_VERSION = "memory-extraction-v4"
+DUPLICATE_SIMILARITY_THRESHOLD = 0.92
 
 
 MEMORY_CATEGORIES = [
@@ -95,6 +97,7 @@ class MemoryExtractor:
             self._mark_raw_status(raw_message_id, "failed")
             raise RuntimeError(f"memory extraction failed: {exc}") from exc
 
+        payload = preserve_xiaochai_product_feedback(content, payload)
         return self._persist_extraction(raw_message_id, content, payload)
 
     def _call_model(self, content: str) -> str:
@@ -123,6 +126,8 @@ class MemoryExtractor:
                 "topic 是小方向，memory_category 是大方向；不要把二者混在一起。",
                 "只记 durable 的偏好、决定、想法、原则、计划、反思、自我认知、处事方式或产品方向。",
                 "临时命令、普通提问、能力询问、寒暄、过短且无上下文的吐槽，应 set should_remember=false。",
+                "但如果用户的问题是在围绕小柴、小柴记忆箱、当前项目、记忆系统、日报、飞书接入、启动稳定性、去重、检索、RAG、embedding 等提出产品改进、缺陷、近期修复或未来方向，即使句式是问题，也应作为长期项目反馈记住。",
+                "判断问题式输入时，区分‘询问当前能力’和‘提出产品方向’：例如‘能不能让小柴日报单独分类缺陷/修复/未来方向’属于项目改进，应 should_remember=true。",
                 "如果用户是在记录系统改进方向，要优先归入“现有项目改进”。",
                 "如果用户是在描述未来产品形态、第二个我、数字分身、接入其他软件，优先归入“未来产品设想”。",
                 "如果用户只是在说某个工具名字，不要生成“用户知道某工具”这种低价值记忆。",
@@ -229,6 +234,7 @@ class MemoryExtractor:
         memory_ids: list[int] = []
         topic_ids: list[int] = []
         entity_ids: list[int] = []
+        skipped_duplicates: list[tuple[str, int]] = []
 
         with self.schema.connect() as conn:
             run_cursor = conn.execute(
@@ -252,6 +258,10 @@ class MemoryExtractor:
 
             if should_remember:
                 for item in memories:
+                    duplicate = find_duplicate_memory(conn, item)
+                    if duplicate is not None:
+                        skipped_duplicates.append((clean_optional_text(item.get("title")) or short_text(str(item.get("content") or ""), 40), duplicate))
+                        continue
                     memory_id = self._insert_memory(conn, raw_message_id, extraction_run_id, item)
                     memory_ids.append(memory_id)
                     topic_ids.extend(self._link_topics(conn, memory_id, item.get("topics") or []))
@@ -267,6 +277,13 @@ class MemoryExtractor:
                 (status, raw_message_id),
             )
 
+        warning = None if should_remember else "model decided not to remember this input"
+        if skipped_duplicates:
+            detail = "; ".join(f"{title} ~= memory {memory_id}" for title, memory_id in skipped_duplicates[:5])
+            warning = combine_warning(warning, f"skipped duplicate memory candidate(s): {detail}")
+        if should_remember and not memory_ids and skipped_duplicates:
+            warning = combine_warning(warning, "all extracted memory candidates were duplicates")
+
         return IngestResult(
             raw_message_id=raw_message_id,
             extraction_run_id=extraction_run_id,
@@ -275,7 +292,7 @@ class MemoryExtractor:
             entity_ids=sorted(set(entity_ids)),
             should_remember=should_remember,
             router_rebuilt=False,
-            warning=None if should_remember else "model decided not to remember this input",
+            warning=warning,
         )
 
     def _insert_memory(
@@ -408,6 +425,110 @@ def parse_json_object(text: str) -> dict[str, Any]:
     return payload
 
 
+def preserve_xiaochai_product_feedback(content: str, payload: dict[str, Any]) -> dict[str, Any]:
+    if bool(payload.get("should_remember", False)):
+        return payload
+    if not looks_like_xiaochai_product_feedback(content):
+        return payload
+
+    forced = dict(payload)
+    forced["should_remember"] = True
+    forced["reason"] = (
+        str(payload.get("reason") or "").strip()
+        or "question-shaped Xiaochai product feedback should be preserved"
+    )
+    forced["atomic_memories"] = [
+        {
+            "title": classify_xiaochai_feedback_title(content),
+            "content": rewrite_xiaochai_feedback_memory(content),
+            "memory_category": classify_xiaochai_feedback_category(content),
+            "memory_type": "idea",
+            "importance": 0.72,
+            "confidence": 0.68,
+            "topics": [
+                {
+                    "name": "小柴记忆箱改进",
+                    "description": "围绕小柴记忆箱当前缺陷、近期修复和未来方向的产品反馈",
+                    "confidence": 0.8,
+                    "reason": "用户在讨论小柴记忆箱的产品改进",
+                }
+            ],
+            "entities": [
+                {
+                    "name": "小柴记忆箱",
+                    "type": "product",
+                    "description": "用户正在测试和改进的个人记忆系统",
+                    "confidence": 0.9,
+                }
+            ],
+        }
+    ]
+    return forced
+
+
+def looks_like_xiaochai_product_feedback(text: str) -> bool:
+    clean = text.strip()
+    if not clean:
+        return False
+    subject_terms = (
+        "小柴",
+        "记忆箱",
+        "第二大脑",
+        "日报",
+        "提取",
+        "飞书",
+        "启动小柴",
+        "embedding",
+        "RAG",
+        "检索",
+    )
+    signal_terms = (
+        "怎么修",
+        "怎么解决",
+        "要不要",
+        "需不需要",
+        "是不是可以",
+        "能不能",
+        "可不可以",
+        "应该",
+        "优化",
+        "改进",
+        "问题",
+        "缺陷",
+        "失败",
+        "重复",
+        "不在线",
+        "失效",
+        "未来",
+        "方向",
+        "下一步",
+    )
+    extra_signal_terms = ("分类", "单独")
+    return any(term.lower() in clean.lower() for term in subject_terms) and (
+        any(term in clean for term in signal_terms)
+        or any(term in clean for term in extra_signal_terms)
+    )
+
+
+def classify_xiaochai_feedback_category(text: str) -> str:
+    if any(term in text for term in ("未来", "方向", "第二个我", "数字分身", "机器人", "接入")):
+        return "未来产品设想"
+    return "现有项目改进"
+
+
+def classify_xiaochai_feedback_title(text: str) -> str:
+    if any(term in text for term in ("失败", "不能", "不在线", "失效", "挂", "重复")):
+        return "小柴记忆箱当前缺陷反馈"
+    if any(term in text for term in ("未来", "方向", "第二个我", "机器人")):
+        return "小柴记忆箱未来方向反馈"
+    return "小柴记忆箱近期改进反馈"
+
+
+def rewrite_xiaochai_feedback_memory(text: str) -> str:
+    clean = " ".join(text.strip().split())
+    return f"用户提出一条小柴记忆箱产品反馈：{clean}"
+
+
 def clean_required_text(value: Any, label: str) -> str:
     text = clean_optional_text(value)
     if not text:
@@ -429,6 +550,66 @@ def clean_memory_text(text: str) -> str:
     clean = re.sub(r"[ \t]+\n", "\n", clean)
     clean = re.sub(r"\n{3,}", "\n\n", clean)
     return clean.strip()
+
+
+def find_duplicate_memory(conn: sqlite3.Connection, item: dict[str, Any]) -> int | None:
+    candidate_content = clean_memory_text(clean_required_text(item.get("content"), "memory content"))
+    candidate_title = clean_optional_text(item.get("title")) or ""
+    candidate_text = f"{candidate_title}\n{candidate_content}"
+    candidate_key = normalize_for_near_duplicate(candidate_text)
+    candidate_content_key = normalize_for_near_duplicate(candidate_content)
+    if not candidate_key:
+        return None
+    rows = conn.execute(
+        """
+        SELECT id, title, content
+        FROM memories
+        WHERE status = 'active'
+        ORDER BY updated_at DESC, id DESC
+        LIMIT 300
+        """
+    ).fetchall()
+    for row in rows:
+        existing_text = f"{row['title'] or ''}\n{row['content'] or ''}"
+        existing_key = normalize_for_near_duplicate(existing_text)
+        existing_content_key = normalize_for_near_duplicate(row["content"] or "")
+        if not existing_key:
+            continue
+        if candidate_content_key and candidate_content_key == existing_content_key:
+            return int(row["id"])
+        if candidate_key == existing_key:
+            return int(row["id"])
+        if candidate_key in existing_key or existing_key in candidate_key:
+            shorter = min(len(candidate_key), len(existing_key))
+            longer = max(len(candidate_key), len(existing_key))
+            if shorter >= 24 and shorter / max(1, longer) >= 0.72:
+                return int(row["id"])
+        similarity = SequenceMatcher(None, candidate_key, existing_key).ratio()
+        if similarity >= DUPLICATE_SIMILARITY_THRESHOLD:
+            return int(row["id"])
+    return None
+
+
+def normalize_for_near_duplicate(text: str) -> str:
+    clean = str(text).lower()
+    clean = "".join(char for char in clean if char.isalnum())
+    clean = clean.replace("小柴记忆箱", "小柴")
+    clean = clean.replace("这个记忆箱", "小柴")
+    clean = clean.replace("记忆箱", "小柴")
+    return clean[:500]
+
+
+def short_text(text: str, limit: int) -> str:
+    clean = " ".join(str(text).split())
+    if len(clean) <= limit:
+        return clean
+    return clean[: limit - 1] + "..."
+
+
+def combine_warning(first: str | None, second: str | None) -> str | None:
+    if first and second:
+        return f"{first}; {second}"
+    return first or second
 
 
 def clamp_score(value: Any, default: float) -> float:

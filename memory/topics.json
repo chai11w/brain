@@ -70,6 +70,18 @@
     "ai_generated": true
   },
   {
+    "topic_id": 111,
+    "name": "AI学习资源",
+    "summary": "用户关注的AI领域内容创作者和学习路径规划",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      69
+    ],
+    "ai_generated": true
+  },
+  {
     "topic_id": 18,
     "name": "AI工作流设计",
     "summary": "与AI交互时使用的文件组织和工作流程设计",
@@ -143,6 +155,76 @@
     "ai_generated": true
   },
   {
+    "topic_id": 84,
+    "name": "Agent 角色定位",
+    "summary": "关于 agent 应作为伙伴而非仅执行者的产品设计理念",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      53
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 83,
+    "name": "Agent 项目初始化",
+    "summary": "关于如何正确初始化和配置 agent 项目的最佳实践",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      52
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 108,
+    "name": "Agent工作流自动化",
+    "summary": "让AI Agent自动接入现有工作流程，实现信息的智能提取与整合",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      66
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 120,
+    "name": "ChatGPT订阅购买",
+    "summary": "ChatGPT付费版本的获取渠道与价格信息",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      74
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 101,
+    "name": "Codex",
+    "summary": "OpenAI代码生成工具及其生态插件",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 122,
+    "name": "Codex 自动化工作流",
+    "summary": "Codex 执行的定时任务与自动化检查流程的优化方向",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      76
+    ],
+    "ai_generated": true
+  },
+  {
     "topic_id": 59,
     "name": "Codex 集成",
     "summary": "将 Codex 模型集成到个人大脑系统中用于总结和分类",
@@ -151,6 +233,220 @@
     "memory_count": 1,
     "manifest_refs": [
       39
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 93,
+    "name": "Codex使用体验",
+    "summary": "关于Codex工具的功能评价和使用反馈",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 88,
+    "name": "Codex使用经验",
+    "summary": "OpenAI Codex模型及相关插件的实战效果与适用场景",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      55
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 126,
+    "name": "Codex工作流优化",
+    "summary": "关于 Codex 自动化工作流的功能改进方向",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      78
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 91,
+    "name": "Codex插件使用",
+    "summary": "Codex内置各类插件的功能与使用体验",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 100,
+    "name": "Codex插件生态",
+    "summary": "Codex平台的各种内置及第三方插件",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 136,
+    "name": "Embedding",
+    "summary": "向量嵌入技术在 AI 系统中的角色",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      83
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 133,
+    "name": "Embedding向量化",
+    "summary": "将文本转为向量以支持语义相似度检索",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      81
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 79,
+    "name": "MBTI人格",
+    "summary": "用户的人格类型及相关特质",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 81,
+    "name": "MBTI人格类型",
+    "summary": "用户对自己MBTI类型的认知和归类",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      51
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 137,
+    "name": "RAG技术架构",
+    "summary": "检索增强生成技术在个人知识库/记忆系统中的应用",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      84
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 139,
+    "name": "RAG技术演进",
+    "summary": "从基础embedding检索到query planning再到结果智能补充的技术升级路径",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      85
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 135,
+    "name": "RAG架构",
+    "summary": "检索增强生成技术的组成与原理",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      83
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 102,
+    "name": "UI 开发",
+    "summary": "前端界面开发相关工作",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 104,
+    "name": "UI开发",
+    "summary": "前端界面设计与开发相关工作流",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 89,
+    "name": "UI开发工作流",
+    "summary": "UI界面开发相关的工具和方法选择",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      56
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 99,
+    "name": "UI开发工具",
+    "summary": "用于界面设计与开发的工具和插件",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 87,
+    "name": "UI开发工具链",
+    "summary": "UI界面开发相关的工具、框架和方法选择",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      55
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 63,
+    "name": "V0地基测试",
+    "summary": "小柴产品的初始版本验证阶段，聚焦核心基础能力验证",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      41
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 65,
+    "name": "V0稳定性目标",
+    "summary": "小柴/V0在试用期内需要优先达成的核心质量指标",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      42
     ],
     "ai_generated": true
   },
@@ -175,6 +471,18 @@
     "memory_count": 1,
     "manifest_refs": [
       15
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 85,
+    "name": "上下文优化",
+    "summary": "通过自定义 skills 改善 agent 上下文理解能力的实践",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      53
     ],
     "ai_generated": true
   },
@@ -215,13 +523,26 @@
   {
     "topic_id": 3,
     "name": "个人知识管理",
-    "summary": "用户管理个人信息和记忆的方式",
+    "summary": "关于如何系统化管理个人记忆、经验和方法论的思考",
     "parent_topic_id": null,
     "keywords": [],
-    "memory_count": 2,
+    "memory_count": 3,
     "manifest_refs": [
       2,
-      3
+      3,
+      60
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 86,
+    "name": "中转服务",
+    "summary": "API中转或代理类服务的购买与使用",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      54
     ],
     "ai_generated": true
   },
@@ -272,6 +593,50 @@
     "ai_generated": true
   },
   {
+    "topic_id": 64,
+    "name": "产品功能优先级",
+    "summary": "产品开发中不同功能的排序和取舍原则",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      41
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 67,
+    "name": "产品开发节奏",
+    "summary": "关于项目推进速度、停顿反思、深度使用验证的方法论",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      43
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 141,
+    "name": "人性本质",
+    "summary": "对人类本质、意识来源、自由意志等根本问题的思考",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 142,
+    "name": "人性认知",
+    "summary": "对人类本质、人与机器关系的哲学思考",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
     "topic_id": 17,
     "name": "人机交互习惯",
     "summary": "与AI协作时的交互模式和注意事项",
@@ -293,6 +658,38 @@
     "manifest_refs": [
       1
     ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 147,
+    "name": "人机协作",
+    "summary": "AI与人类在工作中的分工与配合方式",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 145,
+    "name": "人机协作模式",
+    "summary": "AI与人类在工作中的分工与配合方式",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      89
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 143,
+    "name": "人类本质",
+    "summary": "对人之所以为人的根本属性和运作机制的理解与看法",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
     "ai_generated": true
   },
   {
@@ -332,6 +729,18 @@
     "ai_generated": true
   },
   {
+    "topic_id": 129,
+    "name": "信息组织策略",
+    "summary": "如何随着数据量增长而调整信息的存储和检索结构",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      79
+    ],
+    "ai_generated": true
+  },
+  {
     "topic_id": 38,
     "name": "写作习惯",
     "summary": "用户在文字输入和排版方面的个人偏好与习惯",
@@ -356,6 +765,52 @@
     "ai_generated": true
   },
   {
+    "topic_id": 148,
+    "name": "创造力",
+    "summary": "人类独有的创意能力与灵感来源",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 146,
+    "name": "创造力本质",
+    "summary": "在AI辅助环境下，人类创造力的核心价值所在",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      89
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 75,
+    "name": "功能设计",
+    "summary": "产品功能的规划与实现",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      47
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 134,
+    "name": "向量检索",
+    "summary": "基于embedding相似度的语义检索机制",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      82
+    ],
+    "ai_generated": true
+  },
+  {
     "topic_id": 40,
     "name": "周总结工作流",
     "summary": "每周进行的总结回顾流程和方法",
@@ -364,6 +819,18 @@
     "memory_count": 1,
     "manifest_refs": [
       25
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 114,
+    "name": "哲学思考",
+    "summary": "关于存在、意识、自由意志等根本问题的思辨",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      70
     ],
     "ai_generated": true
   },
@@ -390,6 +857,18 @@
     "ai_generated": true
   },
   {
+    "topic_id": 125,
+    "name": "存储库治理",
+    "summary": "数据存储层面的分类、检索、漏洞检测等治理工作",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      77
+    ],
+    "ai_generated": true
+  },
+  {
     "topic_id": 36,
     "name": "对话理解认知",
     "summary": "用户对对话结构和主题组织的看法和理解",
@@ -402,14 +881,74 @@
     "ai_generated": true
   },
   {
-    "topic_id": 57,
-    "name": "小柴记忆箱",
-    "summary": "用户正在推进的个人项目",
+    "topic_id": 115,
+    "name": "小柴操作指南",
+    "summary": "小柴工具的使用方法和故障处理",
     "parent_topic_id": null,
     "keywords": [],
     "memory_count": 1,
     "manifest_refs": [
-      38
+      71
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 117,
+    "name": "小柴故障排除",
+    "summary": "小柴工具使用中遇到问题时的解决方法",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 140,
+    "name": "小柴机器人",
+    "summary": "用户设想的未来AI产品形态或个人数字助理概念",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      85
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 72,
+    "name": "小柴测试界面",
+    "summary": "用于功能验收的测试界面环境",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 57,
+    "name": "小柴记忆箱",
+    "summary": "用户的个人记忆/知识管理产品项目",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 5,
+    "manifest_refs": [
+      38,
+      45,
+      47,
+      66,
+      84
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 95,
+    "name": "小柴记忆箱产品定位",
+    "summary": "关于小柴记忆箱这一工具的核心功能定义与长期发展方向",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      60
     ],
     "ai_generated": true
   },
@@ -430,6 +969,26 @@
     "ai_generated": true
   },
   {
+    "topic_id": 78,
+    "name": "小柴记忆箱功能迭代",
+    "summary": "小柴记忆箱项目的功能开发和改进记录",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 76,
+    "name": "小柴项目工作流",
+    "summary": "小柴项目的开发流程与文档维护规范",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
     "topic_id": 43,
     "name": "工作流闭环设计",
     "summary": "建立反馈循环以实现系统持续改进的设计思路",
@@ -442,6 +1001,18 @@
     "ai_generated": true
   },
   {
+    "topic_id": 71,
+    "name": "开机启动习惯",
+    "summary": "电脑开机后的固定操作流程和习惯",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      45
+    ],
+    "ai_generated": true
+  },
+  {
     "topic_id": 56,
     "name": "异步处理",
     "summary": "避免阻塞主流程的后台任务设计模式",
@@ -449,6 +1020,40 @@
     "keywords": [],
     "memory_count": 0,
     "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 82,
+    "name": "思维习惯",
+    "summary": "用户日常的思考方式和心智活动特点",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      51
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 80,
+    "name": "思维方式",
+    "summary": "用户的思考习惯与认知倾向",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 109,
+    "name": "成长思维",
+    "summary": "关于如何看待成功、评价自我价值的方式",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      67
+    ],
     "ai_generated": true
   },
   {
@@ -472,6 +1077,52 @@
     "memory_count": 1,
     "manifest_refs": [
       33
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 119,
+    "name": "数据去重",
+    "summary": "识别并过滤重复内容的存储机制",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      73
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 77,
+    "name": "文档同步习惯",
+    "summary": "代码变更后同步更新使用文档的工作习惯",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 130,
+    "name": "智能分类",
+    "summary": "输入内容的自动语义识别与归类功能",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      80
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 69,
+    "name": "深度使用验证",
+    "summary": "通过实际深度使用来发现和修正问题的实践方式",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      44
     ],
     "ai_generated": true
   },
@@ -534,6 +1185,18 @@
     "ai_generated": true
   },
   {
+    "topic_id": 112,
+    "name": "职业发展参考",
+    "summary": "用户对未来职业方向的标杆人物设定",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      69
+    ],
+    "ai_generated": true
+  },
+  {
     "topic_id": 33,
     "name": "自动化工作流",
     "summary": "使用自动化工具/脚本完成周期性信息收集任务",
@@ -542,6 +1205,100 @@
     "memory_count": 1,
     "manifest_refs": [
       20
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 113,
+    "name": "自我认知",
+    "summary": "对自身及人类本质的理解与看法",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      70
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 110,
+    "name": "行动方法论",
+    "summary": "关于如何平衡理想与现实、规划与执行的个人原则",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      68
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 73,
+    "name": "记忆作废功能",
+    "summary": "按 ID 归档或删除已有记忆的能力",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 0,
+    "manifest_refs": [],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 123,
+    "name": "记忆内容自动分类",
+    "summary": "对提取的记忆内容按类型（改进/未来方向）进行自动归类的机制",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      76
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 121,
+    "name": "记忆去重策略",
+    "summary": "关于记忆存储系统中重复内容处理的方案讨论",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      75
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 132,
+    "name": "记忆处理流水线",
+    "summary": "从输入到存储到检索的完整数据处理链路",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      81
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 127,
+    "name": "记忆提取流程",
+    "summary": "日常记忆提取的操作规范和扩展需求",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      78
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 131,
+    "name": "记忆管理",
+    "summary": "个人记忆系统的组织与检索优化",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      80
     ],
     "ai_generated": true
   },
@@ -558,6 +1315,18 @@
     "ai_generated": true
   },
   {
+    "topic_id": 124,
+    "name": "记忆系统优化",
+    "summary": "关于个人知识库/记忆系统的架构改进与质量保障方向",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      77
+    ],
+    "ai_generated": true
+  },
+  {
     "topic_id": 42,
     "name": "记忆系统优化方法",
     "summary": "如何通过工具和流程持续改进个人知识管理系统的方法论",
@@ -566,6 +1335,18 @@
     "memory_count": 1,
     "manifest_refs": [
       27
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 128,
+    "name": "记忆系统架构",
+    "summary": "Personal Brain 记忆系统的分类体系、层级结构和信息组织方式",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      79
     ],
     "ai_generated": true
   },
@@ -582,6 +1363,18 @@
     "ai_generated": true
   },
   {
+    "topic_id": 66,
+    "name": "记忆系统质量",
+    "summary": "记忆写入与召回的核心质量要求",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      42
+    ],
+    "ai_generated": true
+  },
+  {
     "topic_id": 28,
     "name": "记忆组织架构",
     "summary": "用户对记忆系统分类和检索结构的设想",
@@ -590,6 +1383,30 @@
     "memory_count": 1,
     "manifest_refs": [
       18
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 68,
+    "name": "项目开发节奏",
+    "summary": "关于项目推进速度与质量平衡的方法论思考",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      44
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 90,
+    "name": "项目推进节奏",
+    "summary": "关于项目推进速度和方式的方法论",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      57
     ],
     "ai_generated": true
   },
@@ -632,7 +1449,19 @@
   {
     "topic_id": 55,
     "name": "飞书集成",
-    "summary": "与飞书平台的事件交互、webhook 接收及消息处理",
+    "summary": "与飞书平台相关的操作和配置",
+    "parent_topic_id": null,
+    "keywords": [],
+    "memory_count": 1,
+    "manifest_refs": [
+      71
+    ],
+    "ai_generated": true
+  },
+  {
+    "topic_id": 118,
+    "name": "飞书集成操作",
+    "summary": "通过飞书后台进行内容发布的操作方式",
     "parent_topic_id": null,
     "keywords": [],
     "memory_count": 0,

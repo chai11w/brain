@@ -238,6 +238,22 @@ class PersonalBrain:
             )
             return int(cursor.lastrowid)
 
+    def has_interaction_message(self, message_id: str | None) -> bool:
+        if not message_id:
+            return False
+        self.schema.initialize()
+        with self.schema.connect() as conn:
+            row = conn.execute(
+                """
+                SELECT 1
+                FROM interaction_logs
+                WHERE message_id = ?
+                LIMIT 1
+                """,
+                (message_id,),
+            ).fetchone()
+            return row is not None
+
     def list_interactions(self, limit: int = 20) -> list[dict[str, Any]]:
         self.schema.initialize()
         with self.schema.connect() as conn:
