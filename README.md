@@ -38,7 +38,8 @@ Implemented:
 
 Not implemented:
 
-- weekly reflective review automation
+- weekly Memory Compression review implementation
+- stable `学习` category for compact concept notes
 - frontend
 - knowledge graph visualization
 - Neo4j
@@ -126,10 +127,11 @@ errors, and old reply citation formats. It does not call AI, edit memories, or
 read or repair reports. The `reports/` directory is git-ignored because reports
 contain raw user text, extracted memories, replies, errors, and evidence.
 
-Reports also include an extra `小柴相关复盘分类` section. This is only an index
-over the full report, and it groups Xiaochai-related material into current
-defects, near-term fixes, future directions, and other related notes without
-removing or changing the full extraction details later in the report.
+Reports intentionally do not auto-classify Xiaochai-related product items.
+The report should stay close to audit evidence: raw input, extraction status,
+stored memories, interaction logs, and deterministic issue markers. When product
+interpretation is needed, review the report/database with Codex and maintain the
+manual backlog in `.agents/xiaochai_backlog.md`.
 
 Run the same extraction from a script:
 
@@ -148,6 +150,12 @@ scheduled at 10:00 to run the previous 24 hours. The Windows scheduled task
 installer is only a backup option and is not expected to be active by default.
 Both paths only call the report extraction command. They do not call AI, read
 reports, diagnose, edit data, or repair anything.
+
+Daily product interpretation is handled by Codex through the project skill
+`.agents/skills/xiaochai-daily-review-c/SKILL.md`. That review reads the report
+and related database rows, extracts Xiaochai improvement/problem/experience
+items, and proposes a small foundation-improvement plan when Xiaochai-related
+evidence exists.
 
 Run a quick V0 smoke test without writing new memories:
 
@@ -238,12 +246,18 @@ Modes:
 - `ask`: answer every text message from memory evidence.
 - `auto`: messages starting with `?` are answered; other text is remembered.
 
-Memory correction MVP:
+Feishu shortcut commands in `auto` mode:
 
-- Send `删除 42`, `作废 42`, `撤回 42`, or `归档 42` in Feishu to archive
-  that memory ID.
+- Send normal text to remember it.
+- Send `?question` or `？问题` to ask from memory evidence.
+- Send `#42` to show memory 42 with its raw input and extraction metadata.
+- Send `-42` to archive memory 42.
+- Send `!` to show shortcut help.
 - Archived memories no longer appear in semantic recall or Router manifests.
 - Raw messages and extraction audit records are retained for review/recovery.
+
+Shortcut commands intentionally use symbols instead of Chinese command words,
+so normal notes that start with words like `详情` or `删除` can still be stored.
 
 The bridge also writes `interaction_logs` so Codex can later review what the
 user sent, whether the bridge remembered or answered, what it replied, which
@@ -367,28 +381,36 @@ plus master-password-derived entropy. The database stores encrypted values only.
 - `项目地图.md`: Chinese project overview for the user
 - `ARCHITECTURE.md`: architecture principles
 - `.agents/project_memory.md`: project-scoped handoff memory for Codex
+- `.agents/xiaochai_backlog.md`: Xiaochai product backlog and decision table
+- `.agents/stabilization_log.md`: stabilization changes and verification status
+- `.agents/skills/xiaochai-daily-review-c/SKILL.md`: scoped daily report review workflow
 
 ## Next Best Step
 
 The next product step is not a new database or knowledge graph.
 
-The next useful step is a one-month stabilization pass while the user actually
-uses Xiaochai:
+The next useful step is to keep the stabilization loop running while designing
+two small foundation improvements from real report evidence:
 
 ```text
 daily 10:00 rolling 24h extraction report
 -> user asks Codex to inspect reports when needed
--> fix extraction, recall, answer formatting, deletion/archive, and startup issues
--> keep the foundation stable before adding larger product features
+-> use xiaochai-daily-review-c to extract Xiaochai issues/improvements
+-> update .agents/xiaochai_backlog.md and .agents/stabilization_log.md
+-> fix extraction, recall, answer formatting, archive/correction, and startup issues only when evidence shows a real failure
 ```
 
-After the foundation is stable, revisit weekly reflective review automation:
+Near-term design items:
 
-```text
-Codex reads Router + recent memories
--> updates Markdown topics
--> extracts insights
-```
+- Add a stable `学习` category if the current backlog boundary is accepted:
+  compact concept notes, definitions, distinctions, analogies, and "I learned X
+  means Y" records should be preserved for future review. Technical judgments
+  still belong in `技术思考`, process patterns in `工作流方法`, and direct Xiaochai
+  changes in `现有项目改进`.
+- Design a small weekly Memory Compression review before building automation:
+  group recent memories by broad category, find short-term memories at risk of
+  going stale, and propose durable summary memories for review before writing
+  anything back.
 
 Future product direction currently captured from user notes:
 
@@ -397,7 +419,7 @@ Future product direction currently captured from user notes:
   embeddings, Router, and interaction logs
 - keep Xiaochai replies and generated topics in Chinese by default
 - organize memories by broad category first, then dynamic topics
-- use weekly Codex review as a quality feedback loop
+- use weekly Memory Compression review as a quality feedback loop
 - add a memory lifecycle later: recent/frequent memories stay sharp, old
   low-value memories decay in recall weight, similar memories can merge into
   summaries, and outdated memories can become archived or superseded while raw

@@ -158,6 +158,12 @@ This category is not a folder taxonomy. It is a stable review layer that helps
 Codex and the user avoid scattered memories while keeping dynamic topics and
 semantic retrieval as the real intelligence layer.
 
+Near-term candidate: add `学习` as a broad category for compact concept notes,
+definitions, distinctions, analogies, and "I learned X means Y" records. This is
+not a replacement for dynamic topics. Technical judgments should remain
+`技术思考`, reusable process patterns should remain `工作流方法`, and direct
+Xiaochai/product changes should remain `现有项目改进`.
+
 ### memory_embeddings
 
 Stores semantic vectors for each atomic memory.
@@ -461,8 +467,11 @@ Current daily Markdown reports are extraction/audit snapshots generated from the
 database. They may include deterministic issue markers, but they must not become
 the source of truth and the automation must not modify data.
 
-Weekly Markdown review is a later reflective layer. It should be generated from
-the database and Router through AI synthesis, with evidence links preserved.
+Weekly Memory Compression review is a near-term reflective layer. It should be
+generated from the database and Router through AI synthesis, with evidence links
+preserved. Its purpose is not merely to display a Markdown digest, but to
+compress short-term or scattered memories into candidate durable long-term
+memories for review before anything is written back.
 
 ## Codex Role
 

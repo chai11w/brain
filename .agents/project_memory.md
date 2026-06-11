@@ -32,6 +32,12 @@ reviewer, not merely an executor.
   or premature for the current stage.
 - For project rules/status/future plans, update `.agents/project_memory.md`;
   do not ingest them into Xiaochai's personal memory database.
+- When Codex changes Xiaochai based on a daily report review, also update
+  `.agents/stabilization_log.md` with the problem, change, and later
+  verification method/status.
+- Keep project Markdown files maintained, not merely appended to. Remove,
+  compress, or archive stale details when a fix is verified and no longer useful
+  for future decisions.
 - Never write real API keys, Feishu secrets, passwords, tokens, or local private
   database contents into tracked files.
 
@@ -64,6 +70,9 @@ Implemented:
   `scripts/xiaochai_watchdog.ps1`
 - Daily extraction report CLI: `personal_brain/daily_report.py`
 - Codex App daily report automation at 10:00 for the previous 24 hours
+- Manual Xiaochai backlog review: `.agents/xiaochai_backlog.md`
+- Project Skill for scoped Xiaochai report review:
+  `.agents/skills/xiaochai-daily-review-c/SKILL.md`
 - wxauto WeChat bridge shell exists but is not the preferred channel
 
 Not implemented / deferred:
@@ -71,7 +80,8 @@ Not implemented / deferred:
 - Frontend
 - Neo4j / knowledge graph visualization / GraphRAG
 - Multi-database deployment
-- Weekly reflective Markdown review automation
+- Weekly Memory Compression review implementation
+- Stable `学习` category for compact concept notes
 - Full embedding-based semantic write-time dedupe
 - Read-time evidence dedupe
 
@@ -102,18 +112,31 @@ be active locally.
      the memory box, reports, Feishu, startup stability, retrieval, RAG, or
      embeddings as product feedback, preserve it as a project feedback memory.
 
-4. Daily report Xiaochai review section
+4. Daily report Xiaochai review section disabled
    - File: `personal_brain/daily_report.py`
-   - Adds `小柴相关复盘分类`.
-   - This is an extra deterministic index over the full report.
-   - It does not remove or change the original full extraction details.
-   - Categories: current defects, near-term fixes, future directions, other
-     Xiaochai-related notes.
+   - The previous deterministic `小柴相关复盘分类` section was removed because
+     it was too broad and could misclassify general AI notes as Xiaochai work.
+   - Daily reports now stay closer to audit evidence: issue markers, raw input,
+     stored memories, extraction runs, memory details, and interactions.
+   - Product interpretation should be done manually with Codex and recorded in
+     `.agents/xiaochai_backlog.md` when it affects future work.
 
-5. Documentation updates
-   - Files: `README.md`, `.agents/project_memory.md`
-   - README explains stale retry protection and the extra daily report section.
-   - Project memory was cleaned into this current-state handoff.
+5. Same-day todo recall
+   - Files: `personal_brain/semantic.py`, `personal_brain/answer.py`
+   - Xiaochai now boosts `临时待办` and task-like memories for questions such as
+     `今天要做什么`.
+   - The answer layer receives the current date and guidance for resolving
+     relative dates such as yesterday's `明天`.
+   - Verified locally: `python -B brain.py recall "今天要做什么" --limit 5`
+     ranks `临时待办` memories first; the local Feishu bridge was restarted.
+
+6. Documentation and review workflow updates
+   - Files: `README.md`, `.agents/project_memory.md`,
+     `.agents/stabilization_log.md`, `.agents/xiaochai_backlog.md`
+   - Project memory and stabilization/backlog docs track current behavior,
+     decisions, and future review items.
+   - Added project Skill `xiaochai-daily-review-c` for scoped report/database
+     reviews without broad project onboarding.
 
 Verification already run:
 
@@ -121,13 +144,27 @@ Verification already run:
 python brain.py daily-report --last-hours 24
 ```
 
-Latest verification report generated locally:
+Latest reviewed daily reports:
 
 ```text
-reports/last-24h-2026-06-06-1039.md
+reports/last-24h-2026-06-09-1015.md
+reports/last-24h-2026-06-10-1002.md
+reports/last-24h-2026-06-11-1001.md
 ```
 
-Also verified with small Python checks:
+Recent review conclusions:
+
+- 2026-06-10 report verifies the daily report no longer emits the automatic
+  `小柴相关复盘分类` section.
+- 2026-06-11 report shows raw `156`
+  (`memory+recall就是储存加调取的组合`) was ignored. This is useful evidence for
+  adding a stable `学习` category and preserving compact concept-definition
+  notes.
+- 2026-06-11 report also provides near-term evidence for a small weekly Memory
+  Compression review: weekly/monthly reports should compress short-term memory
+  into durable long-term memories, not merely display a Markdown digest.
+
+Earlier small Python checks:
 
 - Chinese near-duplicate normalization works.
 - Duplicate candidate matches an existing memory.
@@ -238,9 +275,9 @@ question
 - Deterministic near-duplicate filtering may miss paraphrases with different
   wording. If real duplicates still leak through, add embedding-based semantic
   dedupe before insertion.
-- Daily report Xiaochai classification is fixed-rule indexing. It is useful for
-  review, but not a replacement for Codex reading the full report when the user
-  asks for product interpretation.
+- Daily reports intentionally no longer auto-classify Xiaochai-related product
+  items. Codex should read the raw report/database and update
+  `.agents/xiaochai_backlog.md` when product interpretation matters.
 - Temporary trycloudflare URLs can expire or change. Fixed domain/Named Tunnel
   remains the real stability solution.
 - Existing files may contain mojibake from older Windows console output. When
@@ -253,6 +290,10 @@ question
 - `项目地图.md`: Chinese user-facing overview
 - `ARCHITECTURE.md`: architecture principles and review gates
 - `.agents/project_memory.md`: current project handoff memory for future Codex
+- `.agents/stabilization_log.md`: daily stabilization changes, known fix
+  outcomes, and later verification status
+- `.agents/xiaochai_backlog.md`: manually maintained product backlog and
+  decision table for Xiaochai-related memories
 
 ## Next Best Step
 
@@ -262,7 +303,9 @@ Continue the stabilization loop:
 use Xiaochai normally
 -> daily 10:00 rolling 24h report is generated
 -> user asks Codex to inspect reports when needed
--> fix extraction, recall, answer formatting, archive/correction, and startup issues
+-> use Skill xiaochai-daily-review-c for scoped report/database review
+-> update .agents/xiaochai_backlog.md when Xiaochai-related items are reclassified
+-> fix extraction, recall, answer formatting, archive/correction, and startup issues only when evidence shows a real failure
 -> avoid large product features until the foundation feels stable
 ```
 
@@ -270,6 +313,16 @@ Later, after the foundation is stable:
 
 - Add embedding-based write-time semantic dedupe if needed.
 - Add read-time evidence dedupe.
+- Verify same-day todo recall through Feishu real use; add lightweight
+  completion/expiry handling only if stale todos become a real problem.
+- Add a stable `学习` category if implementing the current backlog design:
+  use it for reusable short concept notes, definitions, distinctions, analogies,
+  and "I learned X means Y" records. Raw `156`
+  (`memory+recall就是储存加调取的组合`) should be remembered under this boundary,
+  while technical judgments stay in `技术思考`, process patterns stay in
+  `工作流方法`, and direct Xiaochai changes stay in `现有项目改进`.
+- Design one small weekly Memory Compression review before building automation:
+  group recent memories by broad category, identify short-term memories at risk
+  of going stale, and propose durable summary memories for review.
 - Add periodic storage-library quality review.
-- Revisit weekly reflective Markdown review automation.
 - Revisit Query Planning RAG and more capable Xiaochai robot behavior.

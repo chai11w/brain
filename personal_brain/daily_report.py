@@ -5,6 +5,7 @@ import re
 import sqlite3
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
+from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Any
 
@@ -202,8 +203,6 @@ def format_daily_report(
 
     lines.extend(["", "## 链路问题标记", ""])
     append_issue_markers(lines, build_issue_markers(data))
-    lines.extend(["", "## 小柴相关复盘分类", ""])
-    append_xiaochai_review(lines, build_xiaochai_review_items(data))
     lines.extend(["", "## 原文 -> 实际存入的记忆", ""])
     append_raw_to_memories(lines, data["raw_messages"], data["memories"])
     lines.extend(["", "## 原文详情", ""])
@@ -215,161 +214,6 @@ def format_daily_report(
     lines.extend(["", "## 交互详情", ""])
     append_interactions(lines, data["interactions"])
     return "\n".join(lines).rstrip()
-
-
-def append_xiaochai_review(lines: list[str], items: dict[str, list[dict[str, Any]]]) -> None:
-    sections = [
-        ("当前缺陷", "current_defects"),
-        ("近期修复", "near_term_fixes"),
-        ("未来方向", "future_directions"),
-        ("其他小柴相关", "other"),
-    ]
-    if not any(items[key] for _, key in sections):
-        lines.append("- none")
-        return
-    lines.extend(
-        [
-            "说明：本分区是对全量日报的额外索引，不替代后面的原文、提取详情、记忆详情和交互详情。",
-            "",
-        ]
-    )
-    for title, key in sections:
-        lines.extend([f"### {title}", ""])
-        rows = items[key]
-        if not rows:
-            lines.extend(["- none", ""])
-            continue
-        for item in rows:
-            lines.append(
-                f"- {item['source']} {item['id']} / {item['created_at']} / {item['status']}: {item['excerpt']}"
-            )
-        lines.append("")
-
-
-def build_xiaochai_review_items(data: dict[str, list[dict[str, Any]]]) -> dict[str, list[dict[str, Any]]]:
-    buckets: dict[str, list[dict[str, Any]]] = {
-        "current_defects": [],
-        "near_term_fixes": [],
-        "future_directions": [],
-        "other": [],
-    }
-    seen: set[str] = set()
-    candidates: list[dict[str, Any]] = []
-    for raw in data["raw_messages"]:
-        candidates.append(
-            {
-                "source": "raw_message",
-                "id": raw["id"],
-                "created_at": raw["created_at"],
-                "status": raw["processed_status"],
-                "text": str(raw["content"] or ""),
-            }
-        )
-    for interaction in data["interactions"]:
-        candidates.append(
-            {
-                "source": "interaction",
-                "id": interaction["id"],
-                "created_at": interaction["created_at"],
-                "status": f"{interaction['action']}/{interaction['status']}",
-                "text": str(interaction["user_text"] or ""),
-            }
-        )
-    for memory in data["memories"]:
-        candidates.append(
-            {
-                "source": "memory",
-                "id": memory["id"],
-                "created_at": memory["created_at"],
-                "status": memory["status"],
-                "text": " ".join(
-                    part
-                    for part in (
-                        str(memory["title"] or ""),
-                        str(memory["memory_category"] or ""),
-                        str(memory["content"] or ""),
-                    )
-                    if part
-                ),
-            }
-        )
-
-    for candidate in candidates:
-        text = candidate["text"]
-        if not is_xiaochai_related(text):
-            continue
-        fingerprint = normalize_for_duplicate_check(text)
-        if fingerprint in seen:
-            continue
-        seen.add(fingerprint)
-        bucket = classify_xiaochai_review_bucket(text)
-        buckets[bucket].append(
-            {
-                "source": candidate["source"],
-                "id": candidate["id"],
-                "created_at": candidate["created_at"],
-                "status": candidate["status"],
-                "excerpt": short_excerpt(text, 120),
-            }
-        )
-    return buckets
-
-
-def is_xiaochai_related(text: str) -> bool:
-    clean = str(text)
-    terms = (
-        "小柴",
-        "记忆箱",
-        "第二大脑",
-        "日报",
-        "提取",
-        "飞书",
-        "启动小柴",
-        "Cloudflare",
-        "cloudflared",
-        "trycloudflare",
-        "embedding",
-        "RAG",
-        "检索",
-        "向量",
-        "自动化",
-    )
-    return any(term in clean for term in terms)
-
-
-def classify_xiaochai_review_bucket(text: str) -> str:
-    clean = str(text)
-    if any(term in clean for term in ("失败", "不能用", "不在线", "失效", "挂", "报错", "没生成", "没有发送成功", "过期", "旧消息", "现存问题")):
-        return "current_defects"
-    if is_duplicate_storage_defect(clean):
-        return "current_defects"
-    if any(term in clean for term in ("未来", "方向", "第二个我", "数字分身", "机器人", "长期", "以后", "接入其他", "GraphRAG")):
-        return "future_directions"
-    if is_duplicate_storage_fix(clean):
-        return "near_term_fixes"
-    if any(term in clean for term in ("修", "优化", "改", "需要做", "下一步", "要不要", "需不需要", "是不是可以", "能不能", "可不可以")):
-        return "near_term_fixes"
-    return "other"
-
-
-def is_duplicate_storage_defect(text: str) -> bool:
-    direct_terms = (
-        "重复存",
-        "重复储",
-        "重复写入",
-        "重复入库",
-        "重复输入",
-        "重复记忆",
-        "相同的两个",
-        "相同内容",
-        "都会被储存",
-        "都会被存",
-    )
-    return any(term in text for term in direct_terms)
-
-
-def is_duplicate_storage_fix(text: str) -> bool:
-    return any(term in text for term in ("去重", "降重", "近重复"))
 
 
 def short_excerpt(text: str, limit: int) -> str:
@@ -445,7 +289,8 @@ def build_issue_markers(data: dict[str, list[dict[str, Any]]]) -> list[str]:
     for memory in data["memories"]:
         memories_by_raw.setdefault(int(memory["raw_message_id"]), []).append(memory)
 
-    for raw in data["raw_messages"]:
+    raw_rows = data["raw_messages"]
+    for index, raw in enumerate(raw_rows):
         raw_id = int(raw["id"])
         status = str(raw["processed_status"])
         content = str(raw["content"] or "")
@@ -453,8 +298,10 @@ def build_issue_markers(data: dict[str, list[dict[str, Any]]]) -> list[str]:
         if status == "failed":
             markers.append(f"raw_message {raw_id}: 原文处理失败")
         if status == "ignored":
-            markers.append(f"raw_message {raw_id}: 原文被忽略，未进入长期记忆")
-        if user_explicitly_asked_to_remember(content) and not stored:
+            later_rows = raw_rows[index + 1 :]
+            if should_mark_ignored_raw(content, later_rows, memories_by_raw):
+                markers.append(f"raw_message {raw_id}: 原文被忽略，未进入长期记忆")
+        if user_explicitly_asked_to_remember(content) and not stored and should_mark_ignored_raw(content, raw_rows[index + 1 :], memories_by_raw):
             markers.append(f"raw_message {raw_id}: 用户明确要求记住，但没有实际存入记忆")
 
     for run in data["extraction_runs"]:
@@ -497,6 +344,63 @@ def build_issue_markers(data: dict[str, list[dict[str, Any]]]) -> list[str]:
 
 def user_explicitly_asked_to_remember(text: str) -> bool:
     return any(token in text for token in ("记得", "要记", "记住", "帮我记"))
+
+
+def should_mark_ignored_raw(
+    content: str,
+    later_raw_rows: list[dict[str, Any]],
+    memories_by_raw: dict[int, list[dict[str, Any]]],
+) -> bool:
+    if is_low_signal_ignored_raw(content):
+        return False
+    if is_covered_by_later_stored_raw(content, later_raw_rows, memories_by_raw):
+        return False
+    return True
+
+
+def is_low_signal_ignored_raw(text: str) -> bool:
+    clean = re.sub(r"\s+", "", str(text or ""))
+    if not clean:
+        return True
+    if len(clean) <= 2 and re.fullmatch(r"[\d.。!！?？,，、]+", clean):
+        return True
+    return False
+
+
+def is_covered_by_later_stored_raw(
+    content: str,
+    later_raw_rows: list[dict[str, Any]],
+    memories_by_raw: dict[int, list[dict[str, Any]]],
+) -> bool:
+    current = normalize_raw_for_coverage(content)
+    if len(current) < 8:
+        return False
+    for later in later_raw_rows[:8]:
+        later_id = int(later["id"])
+        if not memories_by_raw.get(later_id):
+            continue
+        later_content = normalize_raw_for_coverage(str(later["content"] or ""))
+        if len(later_content) < 8:
+            continue
+        if current in later_content:
+            return True
+        longest = SequenceMatcher(None, current, later_content).find_longest_match(
+            0,
+            len(current),
+            0,
+            len(later_content),
+        )
+        if longest.size >= 12 and longest.size / max(1, len(current)) >= 0.62:
+            return True
+        similarity = SequenceMatcher(None, current, later_content).ratio()
+        if similarity >= 0.86:
+            return True
+    return False
+
+
+def normalize_raw_for_coverage(text: str) -> str:
+    clean = str(text or "").lower()
+    return "".join(char for char in clean if char.isalnum())
 
 
 def contains_markdown_noise(text: str) -> bool:

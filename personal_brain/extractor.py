@@ -13,7 +13,7 @@ from .llm import LLMClient
 from .schema import BrainSchema
 
 
-PROMPT_VERSION = "memory-extraction-v4"
+PROMPT_VERSION = "memory-extraction-v5"
 DUPLICATE_SIMILARITY_THRESHOLD = 0.92
 
 
@@ -98,6 +98,7 @@ class MemoryExtractor:
             raise RuntimeError(f"memory extraction failed: {exc}") from exc
 
         payload = preserve_xiaochai_product_feedback(content, payload)
+        payload = preserve_temporary_todo(content, payload)
         return self._persist_extraction(raw_message_id, content, payload)
 
     def _call_model(self, content: str) -> str:
@@ -108,6 +109,7 @@ class MemoryExtractor:
             "默认优先形成少量高密度记忆，而不是把一段完整想法切碎。"
             "只有当输入里包含彼此独立、后续会分别检索和更新的长期事实时，才拆成多条 atomic memories。"
             "使用规则、并列要点、同一愿景、同一项目决策、同一段反思，通常应合并成一条结构化记忆。"
+            "当用户只是记录事实、缺点、观察或体验时，只忠实保存事实本身，不要主动添加建议、解决方案、规避动作或产品 coaching。"
             "所有标题、主题、说明、原因必须使用中文，除非是 ChatGPT、Codex、GitHub、API key 这类专有名词。"
             "只输出 JSON，不要输出 Markdown，不要解释。"
         )
@@ -121,11 +123,13 @@ class MemoryExtractor:
                 "当输入是编号列表、使用规则、测试说明或同一主题下的多个并列要点时，优先抽取为一条结构化记忆。",
                 "只有当不同要点属于不同大类、不同时间计划、不同对象或后续需要独立作废/更新时，才拆分为多条记忆。",
                 "每条 atomic memory 应表达一个完整可复用判断；不要生成只改写半句话的低价值记忆。",
+                "不要把用户没有说过的建议写进记忆。例如用户只说某软件画线会被图片遮挡，就只记录这个缺陷，不要补充“使用时应避免画长直线”。",
                 "每条 atomic memory 必须选择一个 stable_memory_categories 中的大类。",
                 "topics 仍然由 AI 动态生成，但必须优先复用语义相近的中文主题名，不要为每条记忆凭空新造一个主题。",
                 "topic 是小方向，memory_category 是大方向；不要把二者混在一起。",
                 "只记 durable 的偏好、决定、想法、原则、计划、反思、自我认知、处事方式或产品方向。",
                 "临时命令、普通提问、能力询问、寒暄、过短且无上下文的吐槽，应 set should_remember=false。",
+                "明确的短期待办、提醒、面试/出行准备、带有时间边界的别忘事项，应 should_remember=true，并归入“临时待办”；不要把它们拔高成长期原则。",
                 "但如果用户的问题是在围绕小柴、小柴记忆箱、当前项目、记忆系统、日报、飞书接入、启动稳定性、去重、检索、RAG、embedding 等提出产品改进、缺陷、近期修复或未来方向，即使句式是问题，也应作为长期项目反馈记住。",
                 "判断问题式输入时，区分‘询问当前能力’和‘提出产品方向’：例如‘能不能让小柴日报单独分类缺陷/修复/未来方向’属于项目改进，应 should_remember=true。",
                 "如果用户是在记录系统改进方向，要优先归入“现有项目改进”。",
@@ -466,6 +470,80 @@ def preserve_xiaochai_product_feedback(content: str, payload: dict[str, Any]) ->
     return forced
 
 
+def preserve_temporary_todo(content: str, payload: dict[str, Any]) -> dict[str, Any]:
+    if bool(payload.get("should_remember", False)):
+        return payload
+    if not looks_like_temporary_todo(content):
+        return payload
+
+    clean = " ".join(content.strip().split())
+    forced = dict(payload)
+    forced["should_remember"] = True
+    forced["reason"] = (
+        str(payload.get("reason") or "").strip()
+        or "explicit short-term todo should be preserved as temporary todo"
+    )
+    forced["atomic_memories"] = [
+        {
+            "title": classify_temporary_todo_title(clean),
+            "content": f"临时待办：{clean}",
+            "memory_category": "临时待办",
+            "memory_type": "plan",
+            "importance": 0.55,
+            "confidence": 0.72,
+            "topics": [
+                {
+                    "name": "临时待办",
+                    "description": "有时间边界或短期执行要求的提醒事项",
+                    "confidence": 0.8,
+                    "reason": "用户表达了明确的短期待办或提醒",
+                }
+            ],
+            "entities": [],
+        }
+    ]
+    return forced
+
+
+def looks_like_temporary_todo(text: str) -> bool:
+    clean = text.strip()
+    if not clean:
+        return False
+    reminder_terms = ("别忘", "记得", "提醒", "待办", "要做", "准备", "打印", "联系")
+    time_terms = (
+        "今天",
+        "明天",
+        "后天",
+        "下周",
+        "周一",
+        "周二",
+        "周三",
+        "周四",
+        "周五",
+        "周六",
+        "周日",
+        "面试前",
+        "出发前",
+        "之前",
+        "截止",
+    )
+    if any(term in clean for term in reminder_terms) and any(term in clean for term in time_terms):
+        return True
+    return bool(re.search(r"\d{1,2}[月/-]\d{1,2}|周[一二三四五六日天]|星期[一二三四五六日天]", clean)) and any(
+        term in clean for term in reminder_terms
+    )
+
+
+def classify_temporary_todo_title(text: str) -> str:
+    if "面试" in text:
+        return "面试临时待办"
+    if "打印" in text:
+        return "打印临时待办"
+    if "联系" in text:
+        return "联系临时待办"
+    return "临时待办"
+
+
 def looks_like_xiaochai_product_feedback(text: str) -> bool:
     clean = text.strip()
     if not clean:
@@ -555,6 +633,7 @@ def clean_memory_text(text: str) -> str:
 def find_duplicate_memory(conn: sqlite3.Connection, item: dict[str, Any]) -> int | None:
     candidate_content = clean_memory_text(clean_required_text(item.get("content"), "memory content"))
     candidate_title = clean_optional_text(item.get("title")) or ""
+    candidate_category = normalize_memory_category(clean_optional_text(item.get("memory_category")))
     candidate_text = f"{candidate_title}\n{candidate_content}"
     candidate_key = normalize_for_near_duplicate(candidate_text)
     candidate_content_key = normalize_for_near_duplicate(candidate_content)
@@ -562,7 +641,7 @@ def find_duplicate_memory(conn: sqlite3.Connection, item: dict[str, Any]) -> int
         return None
     rows = conn.execute(
         """
-        SELECT id, title, content
+        SELECT id, title, content, memory_category
         FROM memories
         WHERE status = 'active'
         ORDER BY updated_at DESC, id DESC
@@ -587,6 +666,13 @@ def find_duplicate_memory(conn: sqlite3.Connection, item: dict[str, Any]) -> int
         similarity = SequenceMatcher(None, candidate_key, existing_key).ratio()
         if similarity >= DUPLICATE_SIMILARITY_THRESHOLD:
             return int(row["id"])
+        if is_same_xiaochai_feedback_intent(
+            candidate_text,
+            candidate_category,
+            existing_text,
+            str(row["memory_category"] or ""),
+        ):
+            return int(row["id"])
     return None
 
 
@@ -597,6 +683,50 @@ def normalize_for_near_duplicate(text: str) -> str:
     clean = clean.replace("这个记忆箱", "小柴")
     clean = clean.replace("记忆箱", "小柴")
     return clean[:500]
+
+
+def is_same_xiaochai_feedback_intent(
+    candidate_text: str,
+    candidate_category: str,
+    existing_text: str,
+    existing_category: str,
+) -> bool:
+    if candidate_category != existing_category:
+        return False
+    if candidate_category not in {"现有项目改进", "未来产品设想"}:
+        return False
+    combined = f"{candidate_text}\n{existing_text}"
+    if not any(term in combined for term in ("小柴", "记忆箱", "第二大脑")):
+        return False
+    candidate_terms = xiaochai_feedback_terms(candidate_text)
+    existing_terms = xiaochai_feedback_terms(existing_text)
+    if not candidate_terms or not existing_terms:
+        return False
+    overlap = candidate_terms & existing_terms
+    smaller = min(len(candidate_terms), len(existing_terms))
+    return len(overlap) >= 4 and len(overlap) / max(1, smaller) >= 0.66
+
+
+def xiaochai_feedback_terms(text: str) -> set[str]:
+    term_groups = {
+        "详情": ("详情", "详细", "完整", "完整内容", "详细视图"),
+        "原始输入": ("原始输入", "原文", "raw", "依据"),
+        "记忆内容": ("记忆内容", "内容", "摘要", "概要", "大概"),
+        "查看": ("查看", "打开", "调出", "显示"),
+        "编号": ("编号", "id", "记忆91", "memory"),
+        "追溯": ("追溯", "来源", "核对", "准确性"),
+        "去重": ("去重", "重复", "近重复", "降重"),
+        "衰减": ("衰减", "降权", "过期", "时间", "时效"),
+        "检索": ("检索", "召回", "问号", "唤醒"),
+        "入口": ("入口", "飞书", "命令", "快捷"),
+        "过度解读": ("过度", "建议", "发挥", "忠实"),
+    }
+    clean = text.lower()
+    found: set[str] = set()
+    for label, variants in term_groups.items():
+        if any(variant.lower() in clean for variant in variants):
+            found.add(label)
+    return found
 
 
 def short_text(text: str, limit: int) -> str:

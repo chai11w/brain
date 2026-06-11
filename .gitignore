@@ -7,6 +7,8 @@ data/*.sqlite3
 data/*.sqlite3-*
 data/*.sqlite3.bak*
 data/*.sqlite3-journal.bak*
+data/*.db
+data/*.db-*
 data/*.txt
 data/*.log
 data/pycache/

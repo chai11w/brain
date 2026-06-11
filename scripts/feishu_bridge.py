@@ -203,6 +203,21 @@ class FeishuBrainBridge:
             print(f"failed to reply {message_id}: {exc}", file=sys.stderr, flush=True)
 
     def _reply_for_text(self, text: str, sender: str) -> BridgeReply:
+        if is_help_command(text):
+            return BridgeReply(text=format_help_reply(self.options.ask_prefix), action="help")
+
+        detail_memory_id = extract_detail_memory_id(text)
+        if detail_memory_id is not None:
+            try:
+                detail = self.brain.memory_show(detail_memory_id)
+            except KeyError:
+                return BridgeReply(text=f"没有找到记忆 #{detail_memory_id}。", action="detail")
+            return BridgeReply(
+                text=format_memory_detail_reply(detail),
+                action="detail",
+                raw_message_id=detail.raw_message_id,
+            )
+
         archive_memory_id = extract_archive_memory_id(text)
         if archive_memory_id is not None:
             result = self.brain.archive_memory(archive_memory_id)
@@ -515,13 +530,81 @@ def extract_question(text: str, ask_prefix: str) -> str | None:
     return None
 
 
-def extract_archive_memory_id(text: str) -> int | None:
+def is_help_command(text: str) -> bool:
+    clean = text.strip().lower()
+    return clean in {"!", "！"}
+
+
+def extract_detail_memory_id(text: str) -> int | None:
     clean = text.strip()
-    match = re.fullmatch(r"(?:删除|作废|撤回|归档)\s*#?(\d+)", clean, flags=re.IGNORECASE)
+    match = re.fullmatch(r"#\s*(\d+)", clean)
     if not match:
         return None
     memory_id = int(match.group(1))
     return memory_id if memory_id > 0 else None
+
+
+def extract_archive_memory_id(text: str) -> int | None:
+    clean = text.strip()
+    match = re.fullmatch(r"-\s*(\d+)", clean)
+    if not match:
+        return None
+    memory_id = int(match.group(1))
+    return memory_id if memory_id > 0 else None
+
+
+def format_help_reply(ask_prefix: str) -> str:
+    question_prefix = "？" if ask_prefix == "?" else ask_prefix
+    return "\n".join(
+        [
+            "小柴快捷指令：",
+            "",
+            "普通发送：记住一条内容，AI 会判断是否值得长期记忆。",
+            f"{question_prefix}问题：从已有记忆里检索并回答，例如：{question_prefix}我之前怎么想小柴？",
+            "#91：查看某条记忆的原始输入和实际存入内容。",
+            "-91：作废某条记忆；原始输入和审计记录仍保留。",
+            "!：显示这份快捷指令。",
+        ]
+    )
+
+
+def format_memory_detail_reply(detail: MemoryDetail) -> str:
+    topics = "、".join(detail.summary.topics) if detail.summary.topics else "无"
+    entities = "、".join(detail.entities) if detail.entities else "无"
+    topic_reasons = detail.topic_reasons[:3]
+    lines = [
+        f"记忆 #{detail.summary.id}",
+        "",
+        "你输入的是：",
+        f"raw_message_id：{detail.raw_message_id}",
+        f"来源：{detail.raw_source} / {detail.raw_sender} / {detail.raw_created_at}",
+        detail.raw_content,
+        "",
+        "小柴存成的是：",
+        f"标题：{detail.summary.title or '无标题'}",
+        f"大类：{detail.summary.memory_category}",
+        f"类型：{detail.summary.memory_type}",
+        f"重要度/置信度：{detail.summary.importance:.2f}/{detail.summary.confidence:.2f}",
+        f"主题：{topics}",
+        f"实体：{entities}",
+        detail.summary.content,
+    ]
+    if topic_reasons:
+        lines.extend(["", "主题依据："])
+        lines.extend(f"- {reason}" for reason in topic_reasons)
+    lines.extend(
+        [
+            "",
+            "提取记录：",
+            f"extraction_run_id：{detail.extraction_run_id}",
+            f"模型：{detail.model_provider}/{detail.model_name}",
+            f"prompt_version：{detail.prompt_version}",
+            f"状态：{detail.extraction_status}",
+        ]
+    )
+    return "\n".join(
+        lines
+    )
 
 
 def format_remembered_reply(ack_message: str, details: list[MemoryDetail]) -> str:

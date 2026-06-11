@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
+from datetime import date
 from typing import Any
 
 from .extractor import parse_json_object
@@ -93,9 +94,12 @@ class AnswerEngine:
         prompt = {
             "task": "rerank_memory_evidence",
             "question": question,
+            "current_date": date.today().isoformat(),
             "rules": [
                 "Only judge the provided evidence.",
                 "Prefer evidence that directly answers the question.",
+                "For questions about today's tasks, prefer temporary todos, plans, reminders, and date-bound memories over product ideas about reminder features.",
+                "Resolve relative words such as 今天, 明天, 下周 from the evidence created_at when possible.",
                 "Set relevance between 0 and 1.",
                 "Return at most the requested number of evidence items.",
                 "Do not invent memory ids.",
@@ -166,8 +170,13 @@ class AnswerEngine:
         prompt = {
             "task": "answer_from_personal_memory_evidence",
             "question": question,
+            "current_date": date.today().isoformat(),
             "rules": [
                 "Answer only from the provided evidence.",
+                "For questions about today's tasks, answer with concrete todos first, not product-feature discussions.",
+                "Resolve relative words such as 今天, 明天, 下周 from the evidence created_at when possible.",
+                "If a memory was created yesterday and says 明天, treat it as today.",
+                "If an item is a product idea about supporting reminders, mention it only after concrete todos or omit it if concrete todos exist.",
                 "Write for a human reader, not like a search report.",
                 "Use natural concise Chinese unless the user asks otherwise.",
                 "Write like a clear Feishu chat reply, not a formal report.",
