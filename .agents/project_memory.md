@@ -70,6 +70,8 @@ Implemented:
   `scripts/xiaochai_watchdog.ps1`
 - Daily extraction report CLI: `personal_brain/daily_report.py`
 - Codex App daily report automation at 10:00 for the previous 24 hours
+- Read-only weekly Memory Compression review script:
+  `scripts/weekly_compression_review.py`
 - Manual Xiaochai backlog review: `.agents/xiaochai_backlog.md`
 - Project Skill for scoped Xiaochai report review:
   `.agents/skills/xiaochai-daily-review-c/SKILL.md`
@@ -80,7 +82,8 @@ Not implemented / deferred:
 - Frontend
 - Neo4j / knowledge graph visualization / GraphRAG
 - Multi-database deployment
-- Weekly Memory Compression review implementation
+- Formal `brain.py weekly-compression` command
+- Automatic weekly compression write/archive flow
 - Stable `学习` category for compact concept notes
 - Full embedding-based semantic write-time dedupe
 - Read-time evidence dedupe
@@ -138,10 +141,31 @@ be active locally.
    - Added project Skill `xiaochai-daily-review-c` for scoped report/database
      reviews without broad project onboarding.
 
+7. Read-only weekly Memory Compression review
+   - File: `scripts/weekly_compression_review.py`
+   - Reads active memories, ignored raw messages, topics, and interactions for a
+     selected window.
+   - Generates weekly compression conclusions, a Codex quick review index,
+     category overview, compression role diagnosis inside each broad category,
+     durable-value extraction from short-term or stage-specific memories,
+     upper-level summary candidates with evidence IDs and evidence excerpts,
+     real temporary todos, lifecycle-design notes, and ignored raw messages that
+     may deserve `学习` or technical records.
+   - Compression is lossless by default: reusable workflows, preferences,
+     principles, rules, and operational details remain atomic memories even when
+     a higher-level summary is accepted.
+   - Compression does not mean replacing many memories with one sentence. Its
+     main job is extracting reusable long-term value from short-term or
+     stage-specific memory carriers while preserving the original evidence.
+   - Do not compress directly by `memory_category`; categories are navigation
+     labels, while compression decisions depend on reuse value and lifecycle.
+   - Still does not write new memories or archive old memories automatically.
+
 Verification already run:
 
 ```powershell
 python brain.py daily-report --last-hours 24
+python -B scripts\weekly_compression_review.py --start-date 2026-06-04 --end-now
 ```
 
 Latest reviewed daily reports:
@@ -163,6 +187,11 @@ Recent review conclusions:
 - 2026-06-11 report also provides near-term evidence for a small weekly Memory
   Compression review: weekly/monthly reports should compress short-term memory
   into durable long-term memories, not merely display a Markdown digest.
+- First weekly review report generated locally:
+  `reports/weekly-compression-2026-06-04-to-2026-06-11.md`. It reports 126
+  active memories, 24 ignored raw messages, and 186 interactions for the first
+  window, highlights raw `156` as a likely `学习` candidate, and marks reusable
+  workflows such as memory `19` as irreplaceable atomic memories.
 
 Earlier small Python checks:
 
@@ -188,6 +217,7 @@ python brain.py embed-memories
 python brain.py recall "..."
 python brain.py ask "..."
 python brain.py daily-report --last-hours 24
+python -B scripts\weekly_compression_review.py --start-date 2026-06-04 --end-now
 python brain.py build-router
 ```
 
@@ -321,8 +351,9 @@ Later, after the foundation is stable:
   (`memory+recall就是储存加调取的组合`) should be remembered under this boundary,
   while technical judgments stay in `技术思考`, process patterns stay in
   `工作流方法`, and direct Xiaochai changes stay in `现有项目改进`.
-- Design one small weekly Memory Compression review before building automation:
-  group recent memories by broad category, identify short-term memories at risk
-  of going stale, and propose durable summary memories for review.
+- Review the generated weekly Memory Compression report with the user before
+  writing any candidate long-term memories. If the report quality holds up,
+  consider wiring `scripts/weekly_compression_review.py` into a formal
+  `brain.py weekly-compression` command; keep automatic write/archive deferred.
 - Add periodic storage-library quality review.
 - Revisit Query Planning RAG and more capable Xiaochai robot behavior.

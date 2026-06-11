@@ -34,11 +34,13 @@ Implemented:
 - Feishu interaction logs for answer/reply review
 - local daily Markdown extraction reports
 - Codex App daily report extraction automation
+- read-only weekly Memory Compression review report
 - wxauto WeChat bridge shell
 
 Not implemented:
 
-- weekly Memory Compression review implementation
+- formal `brain.py weekly-compression` command
+- automatic weekly compression write/archive flow
 - stable `学习` category for compact concept notes
 - frontend
 - knowledge graph visualization
@@ -138,6 +140,40 @@ Run the same extraction from a script:
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\run_daily_report.ps1
 ```
+
+Generate a read-only weekly Memory Compression review:
+
+```powershell
+python -B scripts\weekly_compression_review.py --start-date 2026-06-04 --end-now
+```
+
+This writes a local report under `reports/`. It reads active memories, ignored
+raw messages, topics, and interactions for the selected window, then outputs:
+
+- weekly compression conclusions
+- Codex quick review index for deciding what to inspect first
+- category overview
+- compression-role diagnosis inside each broad category
+- durable-value extraction from short-term or stage-specific memories
+- upper-level summary candidates with evidence IDs and evidence excerpts
+- irreplaceable atomic memories that must not be covered or archived by a summary
+- temporary-memory handling split into real todos versus lifecycle-design notes
+- ignored raw messages that may deserve `学习` or technical records
+
+It does not write new memories and does not archive old memories. Compression is
+lossless by default: reusable workflows, preferences, principles, rules, and
+operational details stay as atomic memories even when a higher-level summary is
+accepted. Review the generated candidates with Codex before changing the
+database.
+
+Compression does not mean replacing many memories with one sentence. Its primary
+job is to extract the reusable long-term value hidden inside short-term or
+stage-specific memories, while keeping the original evidence available.
+
+Do not compress directly by `memory_category`. The category is a navigation
+dimension only; the report also classifies each memory by compression role, such
+as long-term atomic memory, lifecycle/mechanism design, project-improvement
+candidate, future direction, learning/technical concept, or short-term todo.
 
 Backup only: install a Windows scheduled task for daily extraction at 10:00:
 
