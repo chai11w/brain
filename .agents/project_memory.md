@@ -70,7 +70,8 @@ Implemented:
 - Xiaochai launcher/watchdog: `scripts/start_xiaochai.ps1`,
   `scripts/xiaochai_watchdog.ps1`
 - Daily extraction report CLI: `personal_brain/daily_report.py`
-- Codex App daily report automation at 10:00 for the previous 24 hours
+- Codex App automation `小柴日报` runs weekly on Thursday at 10:30 for the
+  previous 168 hours
 - Read-only weekly Memory Compression review script:
   `scripts/weekly_compression_review.py`
 - Manual Xiaochai backlog review: `.agents/xiaochai_backlog.md`
@@ -344,7 +345,7 @@ Continue the stabilization loop:
 
 ```text
 use Xiaochai normally
--> daily 10:00 rolling 24h report is generated
+-> weekly Thursday 10:30 rolling 168h Xiaochai daily report is generated
 -> user asks Codex to inspect reports when needed
 -> use Skill xiaochai-daily-review-c for scoped report/database review
 -> update .agents/xiaochai_backlog.md when Xiaochai-related items are reclassified

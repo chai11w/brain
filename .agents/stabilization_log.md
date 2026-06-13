@@ -154,6 +154,13 @@ Maintenance rule:
 - Boundary: `学习` is for compact concepts, definitions, distinctions, analogies, and "X 就是 Y" learning notes. Technical judgments remain `技术思考`; workflows remain `工作流方法`; direct Xiaochai changes remain `现有项目改进`; user self-knowledge remains `自身认知更新`.
 - Verification later: send examples such as `memory+recall就是储存加调取的组合`, `长期记忆就是未来大概率会重复利用的信息`, and `今天晚上去吃烧烤`. Expected result: the first two become `学习`; the dinner fragment is ignored unless it has a real todo/time context.
 
+### Xiaochai Daily Report Automation Cadence
+
+- Status: `configured`
+- Problem: daily manual review has too little sample volume and can cause over-optimization; weekly Memory Compression Review already covers summarization, so the Xiaochai daily report should remain a quality-audit report instead of competing with weekly compression.
+- Change: updated the Codex App automation `小柴日报` to run weekly on Thursday at 10:30 for the previous 168 hours. The report keeps the daily-report format/name but uses a weekly window from the previous Thursday 10:30 to the current Thursday 10:30.
+- Boundary: Friday 10:30 remains reserved for Weekly Memory Compression Review. The Thursday Xiaochai daily report is for extraction/storage/interaction quality review, not compression or automatic fixes.
+
 ## Future Backlog From Xiaochai Memories
 
 These are intentionally stored as future direction notes, not immediate work.

@@ -33,7 +33,7 @@ Implemented:
 - Feishu bridge MVP
 - Feishu interaction logs for answer/reply review
 - local daily Markdown extraction reports
-- Codex App daily report extraction automation
+- Codex App weekly Xiaochai daily-report extraction automation
 - read-only weekly Memory Compression review report
 - stable `学习` category for compact concept notes
 - wxauto WeChat bridge shell
@@ -181,13 +181,15 @@ Backup only: install a Windows scheduled task for daily extraction at 10:00:
 powershell -ExecutionPolicy Bypass -File scripts\install_daily_report_task.ps1
 ```
 
-The active automation is the Codex App automation named `小柴每日报告提取`,
-scheduled at 10:00 to run the previous 24 hours. The Windows scheduled task
-installer is only a backup option and is not expected to be active by default.
-Both paths only call the report extraction command. They do not call AI, read
-reports, diagnose, edit data, or repair anything.
+The active automation is the Codex App automation named `小柴日报`, scheduled
+weekly on Thursday at 10:30 to run the previous 168 hours. This keeps the
+"daily report" as a quality-audit report format while avoiding daily review
+noise. The Windows scheduled task installer is only a backup option and is not
+expected to be active by default. Both paths only call the report extraction
+command. They do not call AI, read reports, diagnose, edit data, or repair
+anything.
 
-Daily product interpretation is handled by Codex through the project skill
+Product interpretation is handled by Codex through the project skill
 `.agents/skills/xiaochai-daily-review-c/SKILL.md`. That review reads the report
 and related database rows, extracts Xiaochai improvement/problem/experience
 items, and proposes a small foundation-improvement plan when Xiaochai-related
@@ -429,7 +431,7 @@ The next useful step is to keep the stabilization loop running while designing
 two small foundation improvements from real report evidence:
 
 ```text
-daily 10:00 rolling 24h extraction report
+weekly Thursday 10:30 rolling 168h Xiaochai daily report
 -> user asks Codex to inspect reports when needed
 -> use xiaochai-daily-review-c to extract Xiaochai issues/improvements
 -> update .agents/xiaochai_backlog.md and .agents/stabilization_log.md
