@@ -104,6 +104,23 @@ Do not read `README.md`, `ARCHITECTURE.md`, or broad project docs unless the use
    was not stored and the content was meaningful, treat it as a startup/offline
    watch item.
 
+   For Thursday weekly Xiaochai daily-report reviews, always include a fixed
+   four-part memory-quality audit. Use the same structure for other larger
+   report windows when useful:
+
+   - `Recall问题`
+   - `Duplicate问题`
+   - `Over-interpretation问题`
+   - `Category边界问题`
+
+   Each quality class must state:
+
+   - `是否发生`: yes/no/unclear, based on report/database evidence.
+   - `例子`: raw_message, memory_id, and/or interaction id. If none occurred,
+     write `无明确例子`.
+   - `处理判断`: choose one of `改prompt`, `改代码`, or `仅观察`, with a short
+     reason.
+
 5. Identify Xiaochai-related content manually.
    Do not classify something as Xiaochai-related only because it mentions broad technical words like RAG, agent, embedding, retrieval, prompt, or workflow. Check whether the text is actually about Xiaochai, the memory box, daily reports, Feishu entry, memory quality, recall, answer behavior, startup, or product direction.
 
@@ -194,6 +211,24 @@ Use this shape unless the user asks for a different format:
 原文 -> 记忆质量：
 1. raw xxx：……
 2. raw xxx：……
+
+固定四类质量审查：
+Recall问题：
+- 是否发生：是/否/不明确
+- 例子：memory_id/raw_message/interaction ……；没有则写“无明确例子”
+- 处理判断：改prompt / 改代码 / 仅观察；理由：……
+Duplicate问题：
+- 是否发生：……
+- 例子：……
+- 处理判断：……
+Over-interpretation问题：
+- 是否发生：……
+- 例子：……
+- 处理判断：……
+Category边界问题：
+- 是否发生：……
+- 例子：……
+- 处理判断：……
 
 小柴相关判断：
 - 最近要改：……

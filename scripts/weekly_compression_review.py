@@ -230,6 +230,8 @@ def format_review(
     append_compression_dimension_diagnosis(lines, by_category)
     lines.extend(["", "## 短期/阶段性记忆中的长期价值提取", ""])
     append_durable_value_extractions(lines, memories)
+    lines.extend(["", "## 建议动作 / 只读不执行", ""])
+    append_recommended_actions(lines, memories, by_category, end_at)
     lines.extend(["", "## 上层总结候选 / 不替代原子记忆", ""])
     append_summary_candidates(lines, by_category)
     lines.extend(["", "## 短期记忆处理建议", ""])
@@ -504,6 +506,151 @@ def has_reusable_signal(row: MemoryRow) -> bool:
             "记忆",
         )
     )
+
+
+def append_recommended_actions(
+    lines: list[str],
+    memories: list[MemoryRow],
+    by_category: dict[str, list[MemoryRow]],
+    end_at: datetime,
+) -> None:
+    actions = build_recommended_actions(memories, by_category, end_at)
+    lines.extend(
+        [
+            "原则：本节只输出人工审查建议，不写入 memories，不归档，不合并，不调整分类。",
+            "所有候选都需要用户/Codex 确认后，才允许另行执行。",
+            "",
+        ]
+    )
+    for label in ("保留", "合并候选", "归档候选", "分类调整候选", "长期总结候选"):
+        lines.extend([f"### {label}", ""])
+        items = actions.get(label, [])
+        if not items:
+            lines.extend(["- 暂无明确候选。", ""])
+            continue
+        for item in items:
+            lines.append(f"- {item}")
+        lines.append("")
+
+
+def build_recommended_actions(
+    memories: list[MemoryRow],
+    by_category: dict[str, list[MemoryRow]],
+    end_at: datetime,
+) -> dict[str, list[str]]:
+    actions: dict[str, list[str]] = {
+        "保留": [],
+        "合并候选": [],
+        "归档候选": [],
+        "分类调整候选": [],
+        "长期总结候选": [],
+    }
+
+    keep_rows = [
+        row
+        for row in memories
+        if compression_role(row) == "长期原子/应保留" or should_preserve_as_atomic(row)
+    ]
+    for row in sorted(keep_rows, key=lambda item: (-item.importance, item.id))[:8]:
+        actions["保留"].append(
+            f"memory {row.id}/raw {row.raw_message_id}：{row.title or short(row.content, 40)}；"
+            "原因：可复用规则、偏好、流程或操作细节，应继续作为原子证据保留。"
+        )
+
+    for group in find_merge_candidate_groups(memories)[:8]:
+        evidence = ", ".join(f"memory {row.id}/raw {row.raw_message_id}" for row in group)
+        title = group[0].title or short(group[0].content, 40)
+        actions["合并候选"].append(
+            f"{evidence}：{title}；原因：标题或内容高度接近，建议人工确认是否为重复或可由一个长期总结覆盖；不自动合并。"
+        )
+
+    for row in sorted(memories, key=lambda item: (parse_dt(item.created_at), item.id)):
+        if not (row.category == "临时待办" or looks_temporary(row)):
+            continue
+        status = temporary_status(row, end_at)
+        if not status.startswith("可能已过期"):
+            continue
+        actions["归档候选"].append(
+            f"memory {row.id}/raw {row.raw_message_id}：{row.title or short(row.content, 40)}；"
+            f"原因：{status}；建议用户确认完成/过期后再手动 archive。"
+        )
+        if len(actions["归档候选"]) >= 8:
+            break
+
+    for row in sorted(memories, key=lambda item: (-item.importance, item.id)):
+        adjustment = suggested_category_adjustment(row)
+        if not adjustment:
+            continue
+        target, reason = adjustment
+        actions["分类调整候选"].append(
+            f"memory {row.id}/raw {row.raw_message_id}：当前 `{row.category}` -> 候选 `{target}`；"
+            f"原因：{reason}；建议只记录为审查项，不自动改分类。"
+        )
+        if len(actions["分类调整候选"]) >= 8:
+            break
+
+    for candidate in build_summary_candidates(by_category)[:8]:
+        rows = candidate["rows"]
+        evidence = ", ".join(f"memory {row.id}/raw {row.raw_message_id}" for row in rows[:6])
+        actions["长期总结候选"].append(
+            f"{candidate['title']}：{evidence}；建议大类 `{candidate['category']}`；"
+            f"原因：{candidate['reason']}；只作为长期总结候选，不替代原子记忆。"
+        )
+
+    return actions
+
+
+def find_merge_candidate_groups(memories: list[MemoryRow]) -> list[list[MemoryRow]]:
+    groups: dict[str, list[MemoryRow]] = defaultdict(list)
+    for row in memories:
+        key = merge_candidate_key(row)
+        if not key:
+            continue
+        groups[key].append(row)
+    candidates = [rows for rows in groups.values() if len(rows) > 1]
+    for rows in candidates:
+        rows.sort(key=lambda item: item.id)
+    candidates.sort(key=lambda rows: (-len(rows), rows[0].id))
+    return candidates
+
+
+def merge_candidate_key(row: MemoryRow) -> str | None:
+    title_key = normalize_action_text(row.title)
+    if len(title_key) >= 8:
+        return f"title:{title_key}"
+    content_key = normalize_action_text(row.content)
+    if len(content_key) >= 40:
+        return f"content:{content_key[:80]}"
+    return None
+
+
+def suggested_category_adjustment(row: MemoryRow) -> tuple[str, str] | None:
+    text = f"{row.title}\n{row.content}\n{row.raw_content}"
+    project_adjustable = {"自身认知更新", "技术思考", "产品使用技巧", "工作流方法", "其他"}
+    if row.category in project_adjustable and looks_like_current_xiaochai_improvement(text):
+        return "现有项目改进", "内容在判断小柴当前机制、检索质量、日报、飞书或记忆行为的优化方向"
+    learning_adjustable = {"自身认知更新", "技术思考", "其他"}
+    if row.category in learning_adjustable and looks_like_learning_category_candidate(text):
+        return "学习", "内容更像概念定义、区别、类比或术语理解，而不是用户自我认知或项目决策"
+    return None
+
+
+def looks_like_current_xiaochai_improvement(text: str) -> bool:
+    subject_terms = ("小柴", "记忆箱", "日报", "飞书", "Memory Retrieval", "检索质量", "召回", "记忆系统")
+    signal_terms = ("优化", "改进", "应该", "优先", "体验", "质量", "问题", "机制", "提取", "分类", "重复")
+    return any(term in text for term in subject_terms) and any(term in text for term in signal_terms)
+
+
+def looks_like_learning_category_candidate(text: str) -> bool:
+    if any(term in text for term in ("小柴", "记忆箱", "飞书", "日报")):
+        return False
+    if any(term in text for term in ("应该", "优化", "改进", "优先级", "方案", "实现", "架构取舍")):
+        return False
+    return maybe_concept_note(text) and any(term in text for term in ("就是", "定义", "区别", "类似", "可以理解为", "本质"))
+
+
+def normalize_action_text(text: str) -> str:
+    return "".join(char for char in str(text).lower() if char.isalnum())[:120]
 
 
 def append_summary_candidates(lines: list[str], by_category: dict[str, list[MemoryRow]]) -> None:

@@ -155,16 +155,18 @@ raw messages, topics, and interactions for the selected window, then outputs:
 - category overview
 - compression-role diagnosis inside each broad category
 - durable-value extraction from short-term or stage-specific memories
+- read-only recommended actions: keep, merge candidate, archive candidate,
+  category-adjustment candidate, and long-term-summary candidate
 - upper-level summary candidates with evidence IDs and evidence excerpts
 - irreplaceable atomic memories that must not be covered or archived by a summary
 - temporary-memory handling split into real todos versus lifecycle-design notes
 - ignored raw messages that may deserve `学习` or technical records
 
-It does not write new memories and does not archive old memories. Compression is
-lossless by default: reusable workflows, preferences, principles, rules, and
-operational details stay as atomic memories even when a higher-level summary is
-accepted. Review the generated candidates with Codex before changing the
-database.
+It does not write new memories, archive old memories, merge memories, or adjust
+categories. Compression is lossless by default: reusable workflows, preferences,
+principles, rules, and operational details stay as atomic memories even when a
+higher-level summary is accepted. Review the generated candidates with Codex
+before changing the database.
 
 Compression does not mean replacing many memories with one sentence. Its primary
 job is to extract the reusable long-term value hidden inside short-term or
@@ -193,7 +195,9 @@ Product interpretation is handled by Codex through the project skill
 `.agents/skills/xiaochai-daily-review-c/SKILL.md`. That review reads the report
 and related database rows, extracts Xiaochai improvement/problem/experience
 items, and proposes a small foundation-improvement plan when Xiaochai-related
-evidence exists.
+evidence exists. Weekly Thursday reviews must also audit four quality classes:
+Recall issues, Duplicate issues, Over-interpretation issues, and Category
+boundary issues.
 
 Run a quick V0 smoke test without writing new memories:
 

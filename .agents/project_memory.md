@@ -152,6 +152,10 @@ be active locally.
      upper-level summary candidates with evidence IDs and evidence excerpts,
      real temporary todos, lifecycle-design notes, and ignored raw messages that
      may deserve `学习` or technical records.
+   - Also outputs `建议动作 / 只读不执行` with five review buckets:
+     `保留`, `合并候选`, `归档候选`, `分类调整候选`, and `长期总结候选`.
+     These are advice only; the script does not write memories, archive rows,
+     merge rows, or adjust categories.
    - Compression is lossless by default: reusable workflows, preferences,
      principles, rules, and operational details remain atomic memories even when
      a higher-level summary is accepted.
@@ -174,6 +178,15 @@ be active locally.
      `工作流方法`, direct Xiaochai changes stay in `现有项目改进`, and user
      self-knowledge stays in `自身认知更新`.
 
+9. Xiaochai daily review quality-audit structure
+   - File: `.agents/skills/xiaochai-daily-review-c/SKILL.md`
+   - Thursday weekly Xiaochai daily-report reviews must include fixed quality
+     checks for `Recall问题`, `Duplicate问题`, `Over-interpretation问题`, and
+     `Category边界问题`.
+   - Each class must state whether it occurred, cite evidence
+     (`memory_id`, `raw_message`, and/or `interaction`), and decide whether the
+     response is `改prompt`, `改代码`, or `仅观察`.
+
 Verification already run:
 
 ```powershell
@@ -181,6 +194,7 @@ python brain.py daily-report --last-hours 24
 python -B scripts\weekly_compression_review.py --start-date 2026-06-04 --end-now
 python -B -c "from personal_brain.extractor import looks_like_learning_note; print(looks_like_learning_note('memory+recall就是储存加调取的组合'))"
 python -B scripts\weekly_compression_review.py --start-date 2026-06-04 --end-date 2026-06-11 --output .tmp_tests
+python -B -c "import ast, pathlib; ast.parse(pathlib.Path('scripts/weekly_compression_review.py').read_text(encoding='utf-8'))"
 ```
 
 Latest reviewed daily reports:

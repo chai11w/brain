@@ -55,6 +55,7 @@ These are close to the current V0 foundation and can become code or prompt work 
   - `按大类概览`
   - `压缩维度诊断`
   - `短期/阶段性记忆中的长期价值提取`
+  - `建议动作 / 只读不执行`
   - `上层总结候选 / 不替代原子记忆`
   - candidate-level `不可替代的原子记忆`
   - `短期记忆处理建议`
@@ -73,6 +74,7 @@ These are close to the current V0 foundation and can become code or prompt work 
   - outputs `Codex 快速审查索引` so future Codex sessions can inspect the report without asking the user to read every item;
   - diagnoses compression roles inside each broad category, because `memory_category` is only a navigation dimension and not a compression unit;
   - extracts durable long-term value from short-term or stage-specific memory carriers;
+  - outputs read-only suggested actions: keep, merge candidate, archive candidate, category-adjustment candidate, and long-term-summary candidate;
   - proposes human-readable candidate durable memories with evidence IDs and readable evidence excerpts;
   - marks irreplaceable atomic memories that should not be covered or archived by a higher-level summary;
   - excludes `临时待办` and `未来产品设想` from automatic long-term summary suggestions;
@@ -100,6 +102,7 @@ These should not keep reappearing as open work unless new evidence shows failure
 - The daily report's automatic Xiaochai-related classification was disabled because it was too noisy. Related memories: `76`, `78`.
 - Daily report ignored-message noise was reduced for low-signal tests and later-covered partial inputs.
 - Daily report review is now handled through a scoped Codex skill/workflow instead of automatic product classification inside the generated report. Related memory: `141`.
+- Weekly Thursday Xiaochai daily-report review now has fixed quality checks for Recall, Duplicate, Over-interpretation, and Category-boundary issues; each check must cite evidence and decide whether to change prompt, change code, or only observe.
 - Offline/startup recovery is working well enough in recent real use: messages sent while Xiaochai was offline did not get re-identified unexpectedly after coming back online. Related memories: `45`, `71`, `123`, `128`.
 
 ## Do Not Change For Now

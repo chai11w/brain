@@ -161,6 +161,14 @@ Maintenance rule:
 - Change: updated the Codex App automation `小柴日报` to run weekly on Thursday at 10:30 for the previous 168 hours. The report keeps the daily-report format/name but uses a weekly window from the previous Thursday 10:30 to the current Thursday 10:30.
 - Boundary: Friday 10:30 remains reserved for Weekly Memory Compression Review. The Thursday Xiaochai daily report is for extraction/storage/interaction quality review, not compression or automatic fixes.
 
+### Quality Review Loop Output Structure
+
+- Status: `configured`
+- Problem: Xiaochai is entering an engineering-stability phase where quality problems matter more than new features. The main risks are recall failure, duplicate memories, over-interpretation, and category-boundary drift.
+- Change: updated `.agents/skills/xiaochai-daily-review-c/SKILL.md` so Thursday weekly Xiaochai daily-report reviews must include fixed checks for `Recall问题`, `Duplicate问题`, `Over-interpretation问题`, and `Category边界问题`, each with occurrence status, evidence IDs, and whether to change prompt, change code, or only observe.
+- Change: updated `scripts/weekly_compression_review.py` so weekly compression reports include `建议动作 / 只读不执行`, grouped into `保留`, `合并候选`, `归档候选`, `分类调整候选`, and `长期总结候选`.
+- Boundary: this is output-structure work only. It adds no database schema, no dashboard, no automatic write/archive/merge/category adjustment, and no new agent system.
+
 ## Future Backlog From Xiaochai Memories
 
 These are intentionally stored as future direction notes, not immediate work.
