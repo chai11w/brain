@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 import json
+from datetime import date
 from pathlib import Path
 from typing import Any
 
 from .answer import AnswerEngine, AnswerResult
 from .config import BrainConfig, load_config
+from .daily_report import DailyReportResult, DailyReportBuilder
 from .extractor import IngestResult, MemoryExtractor
+from .input_router import route_input
 from .llm import EmbeddingClient, LLMClient
+from .memory_ops import ArchiveMemoryResult, MemoryOperations
 from .memory_view import MemoryDetail, MemorySummary, MemoryView
 from .reviewer import MemoryReviewResult, MemoryReviewer
 from .router import MemoryRouterBuilder, RouterBuildResult
@@ -23,6 +27,7 @@ class PersonalBrain:
         self.chat_model = LLMClient(self.config.chat_model)
         self.embedding_model = EmbeddingClient(self.config.embedding_model)
         self.vault = SecureVault(self.schema)
+        self.memory_ops = MemoryOperations(self.schema)
         self.memory_view = MemoryView(self.schema)
         self.semantic_memory = SemanticMemory(
             schema=self.schema,
@@ -64,6 +69,7 @@ class PersonalBrain:
         sender: str = "me",
         rebuild_router: bool = True,
     ) -> IngestResult:
+        input_route = route_input(text).as_debug_dict()
         extractor = MemoryExtractor(
             schema=self.schema,
             chat_model=self.chat_model,
@@ -84,6 +90,7 @@ class PersonalBrain:
                 should_remember=result.should_remember,
                 router_rebuilt=True,
                 warning=warning,
+                input_route=input_route,
             )
         if warning != result.warning:
             return IngestResult(
@@ -95,8 +102,19 @@ class PersonalBrain:
                 should_remember=result.should_remember,
                 router_rebuilt=result.router_rebuilt,
                 warning=warning,
+                input_route=input_route,
             )
-        return result
+        return IngestResult(
+            raw_message_id=result.raw_message_id,
+            extraction_run_id=result.extraction_run_id,
+            memory_ids=result.memory_ids,
+            topic_ids=result.topic_ids,
+            entity_ids=result.entity_ids,
+            should_remember=result.should_remember,
+            router_rebuilt=result.router_rebuilt,
+            warning=result.warning,
+            input_route=input_route,
+        )
 
     def _embed_ingested_memories(self, memory_ids: list[int], warning: str | None) -> str | None:
         if not self.config.embedding_model.enabled:
@@ -171,6 +189,12 @@ class PersonalBrain:
     def memory_show(self, memory_id: int) -> MemoryDetail:
         return self.memory_view.show_memory(memory_id)
 
+    def archive_memory(self, memory_id: int, rebuild_router: bool = True) -> ArchiveMemoryResult:
+        result = self.memory_ops.archive_memory(memory_id)
+        if rebuild_router:
+            self.build_router()
+        return result
+
     def embed_missing_memories(self, limit: int = 100) -> EmbedMemoriesResult:
         return self.semantic_memory.embed_missing_memories(limit=limit)
 
@@ -228,6 +252,22 @@ class PersonalBrain:
             )
             return int(cursor.lastrowid)
 
+    def has_interaction_message(self, message_id: str | None) -> bool:
+        if not message_id:
+            return False
+        self.schema.initialize()
+        with self.schema.connect() as conn:
+            row = conn.execute(
+                """
+                SELECT 1
+                FROM interaction_logs
+                WHERE message_id = ?
+                LIMIT 1
+                """,
+                (message_id,),
+            ).fetchone()
+            return row is not None
+
     def list_interactions(self, limit: int = 20) -> list[dict[str, Any]]:
         self.schema.initialize()
         with self.schema.connect() as conn:
@@ -248,6 +288,14 @@ class PersonalBrain:
     def review_memories(self, limit: int = 80, raw_message_id: int | None = None) -> MemoryReviewResult:
         reviewer = MemoryReviewer(schema=self.schema, chat_model=self.chat_model)
         return reviewer.review(limit=limit, raw_message_id=raw_message_id)
+
+    def daily_report(self, report_date: date, output_dir: Path) -> DailyReportResult:
+        builder = DailyReportBuilder(schema=self.schema)
+        return builder.build(report_date=report_date, output_dir=output_dir)
+
+    def recent_report(self, hours: int, output_dir: Path) -> DailyReportResult:
+        builder = DailyReportBuilder(schema=self.schema)
+        return builder.build_recent_hours(hours=hours, output_dir=output_dir)
 
 
 def combine_warning(first: str | None, second: str | None) -> str | None:

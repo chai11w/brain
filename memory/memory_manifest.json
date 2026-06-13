@@ -1,5 +1,2073 @@
 [
   {
+    "memory_id": 155,
+    "raw_message_id": 167,
+    "title": "小柴记忆周报功能启动建议",
+    "summary": "用户建议小柴记忆系统可以开始陆续生成周报，因为已使用接近一周时间，具备启动周报功能的条件",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "周报功能",
+      "小柴记忆"
+    ],
+    "importance": 0.6,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-11 09:46:19",
+    "updated_at": "2026-06-11 09:46:19",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 167
+    }
+  },
+  {
+    "memory_id": 154,
+    "raw_message_id": 166,
+    "title": "周报月报的核心价值是短期记忆向长期记忆的压缩",
+    "summary": "小柴记忆箱的周报/月报（Memory Compression）功能，其核心价值不在于信息展示或阅读体验，而在于将即将丢失的短期记忆提炼、总结为有价值的长期记忆。这是该功能存在的根本意义——作为短期到长期的记忆转换桥梁。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆生命周期管理",
+      "Memory Compression"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-11 09:45:42",
+    "updated_at": "2026-06-11 09:45:42",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 166
+    }
+  },
+  {
+    "memory_id": 153,
+    "raw_message_id": 165,
+    "title": "小柴长短记忆区分原则",
+    "summary": "做小柴时需要明确区分长期记忆与短期记忆：长期记忆是指未来仍值得复用的记忆；短期记忆则是有明确时间界限、时效性强的分类。两者应有清晰的划分标准。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆分类体系"
+    ],
+    "importance": 0.8,
+    "confidence": 0.9,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-11 09:18:31",
+    "updated_at": "2026-06-11 09:18:31",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 165
+    }
+  },
+  {
+    "memory_id": 152,
+    "raw_message_id": 164,
+    "title": "小爱中转站驱动的 ChatGPT-Codex 协作架构",
+    "summary": "设想以「小爱中转站」为核心枢纽的未来产品架构： 1. 角色注入：小爱为 ChatGPT 和 Codex 分别注入各自的角色记忆 2. 职责分工： - ChatGPT：负责规划任务、验收执行结果、判断目标完成度 - Codex：负责具体代码执行和 Bug 修复 3. 消息流转：小爱在两者之间传递结构化消息，形成「规划→执行→验收→迭代」闭环 4. 出口控制：仅当 ChatGPT 判断目标基本完成后，才由小爱将用户可读的结果返回给用户 核心设计理念：用户只需输入目标，系统内部自动完成多智能体协作，对用户屏蔽内部交互细...",
+    "memory_category": "未来产品设想",
+    "topics": [
+      "多智能体协作架构",
+      "小爱中转站"
+    ],
+    "importance": 0.8,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-11 09:10:34",
+    "updated_at": "2026-06-11 09:10:34",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 164
+    }
+  },
+  {
+    "memory_id": 151,
+    "raw_message_id": 163,
+    "title": "中转站设计哲学：弱中介+强两端",
+    "summary": "认为中转站类产品不需要自身能力很强，核心价值在于让两侧的强模型/系统能清晰认知到各自的角色定位与分工边界。这种'轻量中介'的设计思路比强化中转站本身能力更有效。",
+    "memory_category": "技术思考",
+    "topics": [
+      "系统架构设计",
+      "产品定位策略"
+    ],
+    "importance": 0.6,
+    "confidence": 0.85,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-11 09:10:10",
+    "updated_at": "2026-06-11 09:10:10",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 163
+    }
+  },
+  {
+    "memory_id": 150,
+    "raw_message_id": 162,
+    "title": "中控项目需支持对话对象感知与差异化输出",
+    "summary": "中控项目中 Codex 和 Chat 需要知道当前对话对象是谁，并根据对话对象调整输出方式：当 Codex 与人类对话时，可给出操作指引（如在哪打开）；当 Codex 与 Chat 等 AI Agent 对话时，应将文件作为直接输出结果返回，以便对方程序化读取。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "多Agent协作",
+      "中控项目"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-11 09:09:48",
+    "updated_at": "2026-06-11 09:09:48",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 162
+    }
+  },
+  {
+    "memory_id": 149,
+    "raw_message_id": 161,
+    "title": "小柴中转站：ChatGPT 与 Codex 的协作架构",
+    "summary": "用户设想的未来产品方向是构建一个「小柴中转站」，作为 ChatGPT 和 Codex 之间的中间层。工作流程为：小柴通过 API 调用 ChatGPT 生成方案，再拿着方案去调用 Codex 执行。本质上小柴当前就在扮演这个「方案生成→执行分发」的中转角色，未来可将此模式固化为独立的中转站产品形态。",
+    "memory_category": "未来产品设想",
+    "topics": [
+      "小柴产品定位",
+      "AI Agent 协作架构"
+    ],
+    "importance": 0.8,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-11 09:09:27",
+    "updated_at": "2026-06-11 09:09:27",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 161
+    }
+  },
+  {
+    "memory_id": 148,
+    "raw_message_id": 160,
+    "title": "中控Agent多模型工作流架构设想",
+    "summary": "提出构建一个中控Agent的架构方向：由中控Agent统一调度和调用多个不同模型，各Agent分别承担具体任务，通过协作形成完整的工作流。这是一种将单一模型调用升级为多Agent协作的产品形态构想。",
+    "memory_category": "未来产品设想",
+    "topics": [
+      "中控Agent架构",
+      "多模型协作工作流"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-11 09:09:07",
+    "updated_at": "2026-06-11 09:09:07",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 160
+    }
+  },
+  {
+    "memory_id": 147,
+    "raw_message_id": 159,
+    "title": "多Agent协同工作流设计",
+    "summary": "设计了一个名为「work agent workflow」的多Agent协作机制：多个Agent共同执行同一命令，实现并行或协同任务处理。",
+    "memory_category": "工作流方法",
+    "topics": [
+      "多Agent协作",
+      "工作流设计"
+    ],
+    "importance": 0.6,
+    "confidence": 0.8,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-11 09:08:50",
+    "updated_at": "2026-06-11 09:08:50",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 159
+    }
+  },
+  {
+    "memory_id": 146,
+    "raw_message_id": 158,
+    "title": "多AI软件联动协作的构想",
+    "summary": "设想的软件联动模式：使用ChatGPT进行方案讨论与规划，同时调用Codex负责具体代码执行，最终实现从对话到执行的完整闭环。核心问题是探索如何在不同AI工具之间建立调用与数据传递机制。",
+    "memory_category": "未来产品设想",
+    "topics": [
+      "多软件联动",
+      "AI工作流自动化"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-11 09:08:33",
+    "updated_at": "2026-06-11 09:08:33",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 158
+    }
+  },
+  {
+    "memory_id": 145,
+    "raw_message_id": 157,
+    "title": "周总结功能需求：按大类展示记忆内容",
+    "summary": "计划为小柴开发周总结功能，核心需求是让用户能够清晰看到所有记忆大类（如现有项目改进、未来产品设想、生活感悟、自身认知更新等 stable_memory_categories），以及每个大类下存储的具体内容概览，便于回顾和了解系统记住了什么。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "周总结功能",
+      "记忆分类可视化"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-10 18:08:20",
+    "updated_at": "2026-06-10 18:08:20",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 157
+    }
+  },
+  {
+    "memory_id": 144,
+    "raw_message_id": 155,
+    "title": "记忆的核心价值是复用而非存储",
+    "summary": "认为记忆的价值不在于保存本身，而在于能否被有效复用。这一认知影响对记忆系统设计的优先级判断：检索效率、关联能力和场景触发比单纯的存储容量更重要。",
+    "memory_category": "自身认知更新",
+    "topics": [
+      "记忆系统哲学",
+      "知识复用"
+    ],
+    "importance": 0.8,
+    "confidence": 0.95,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-10 10:15:21",
+    "updated_at": "2026-06-10 10:15:21",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 155
+    }
+  },
+  {
+    "memory_id": 143,
+    "raw_message_id": 154,
+    "title": "小柴的核心定位：个人上下文管理",
+    "summary": "用户明确小柴解决的核心问题是「个人上下文容易丢失」。整理的目的不是为记忆而记忆，而是为了让agent在未来能够更好地检索和利用这些信息。这一定位将小柴与普通笔记工具区分开来——重点在于上下文的可检索性和agent可用性。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "小柴产品定位",
+      "个人上下文管理"
+    ],
+    "importance": 0.8,
+    "confidence": 0.9,
+    "memory_type": "reflection",
+    "ai_generated": true,
+    "created_at": "2026-06-10 10:08:27",
+    "updated_at": "2026-06-10 10:08:27",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 154
+    }
+  },
+  {
+    "memory_id": 142,
+    "raw_message_id": 153,
+    "title": "记忆的本质是未来可利用性",
+    "summary": "认为记忆的目的不在于存储信息本身，而在于未来能够利用到这些信息。由此引出一个开放性思考：记忆系统是否应该加入判断机制，自动区分哪些信息值得长期保存、哪些不需要记，以及这种筛选判断背后的原理应如何设计。",
+    "memory_category": "技术思考",
+    "topics": [
+      "记忆筛选机制",
+      "记忆系统设计哲学"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-10 10:06:38",
+    "updated_at": "2026-06-10 10:06:38",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 153
+    }
+  },
+  {
+    "memory_id": 141,
+    "raw_message_id": 150,
+    "title": "小柴日报改进流程SKILL化",
+    "summary": "在小柴记忆箱改进过程中，将每日日报的改进操作流程封装为可复执行的SKILLS，后续只需运行该SKILL即可自动完成每日的基体维护工作，实现了日常维护工作的标准化和自动化。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "小柴日报自动化",
+      "SKILLS封装"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "decision",
+    "ai_generated": true,
+    "created_at": "2026-06-09 11:01:13",
+    "updated_at": "2026-06-09 11:01:13",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 150
+    }
+  },
+  {
+    "memory_id": 140,
+    "raw_message_id": 149,
+    "title": "Harness：AI测评工具",
+    "summary": "Harness 是一款用于 AI 系统测评的工具，主要功能包括：评估 Prompt 质量、RAG（检索增强生成）效果测评、Agent 能力测评。类似于对 AI 组件进行标准化测试/打分的平台。",
+    "memory_category": "技术思考",
+    "topics": [
+      "AI测评工具"
+    ],
+    "importance": 0.6,
+    "confidence": 0.85,
+    "memory_type": "fact",
+    "ai_generated": true,
+    "created_at": "2026-06-09 09:41:57",
+    "updated_at": "2026-06-09 09:41:57",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 149
+    }
+  },
+  {
+    "memory_id": 139,
+    "raw_message_id": 147,
+    "title": "记忆分类应避免过度细分概念性学习内容",
+    "summary": "用户认为小柴记忆中概念性内容（如工作流相关概念）没有必要单独建类，这类学习性质的内容应统一归入「学习」大类即可。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆分类策略",
+      "学习记录归类"
+    ],
+    "importance": 0.6,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-09 08:59:50",
+    "updated_at": "2026-06-09 08:59:50",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 147
+    }
+  },
+  {
+    "memory_id": 138,
+    "raw_message_id": 146,
+    "title": "小柴六阶段优化路线图",
+    "summary": "根据日报反馈，小柴现阶段需按以下六个方向持续优化： 1. 提取质量：raw message → atomic memory 转换时保证内容干净、准确、避免机械拆分低密度碎片； 2. 结构化存储：确保每条记忆都携带 memory_category / topic / entity / time / source 等元数据，有明确归属位置； 3. Router（路由层）：用户提问后先判断检索范围——项目记忆、个人记忆、技术知识或最近事件； 4. Recall（召回层）：召回策略不能仅依赖语义相似度，需综合时间、类别、...",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆系统架构",
+      "小柴优化方向"
+    ],
+    "importance": 0.9,
+    "confidence": 0.95,
+    "memory_type": "plan",
+    "ai_generated": true,
+    "created_at": "2026-06-09 08:54:53",
+    "updated_at": "2026-06-09 08:54:53",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 146
+    }
+  },
+  {
+    "memory_id": 137,
+    "raw_message_id": 144,
+    "title": "小柴现阶段技术调试方向",
+    "summary": "小柴当前阶段的核心工作是持续优化存储与检索质量。具体方式是使用 Codex 调试 Zhipu 模型，通过改进 prompt 和夯实基础能力来提升效果。这种 Codex 调优 Zhipu 的模式本质上已构成多 agent 协作架构。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "多Agent协作",
+      "小柴技术架构",
+      "存储检索优化"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "fact",
+    "ai_generated": true,
+    "created_at": "2026-06-09 08:52:51",
+    "updated_at": "2026-06-09 08:52:51",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 144
+    }
+  },
+  {
+    "memory_id": 136,
+    "raw_message_id": 143,
+    "title": "Agent Workflow vs 普通Workflow的认知",
+    "summary": "普通Workflow通常是线性的、固定的步骤序列（例如找工作的流程：搜索→查看→投递→面试）。而Agent Workflow则是智能化的复杂网状结构，包含多个子工作流，需要通过Agent的判断能力来动态决定执行路径和分支走向。",
+    "memory_category": "技术思考",
+    "topics": [
+      "Agent工作流",
+      "工作流设计"
+    ],
+    "importance": 0.6,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-09 08:52:15",
+    "updated_at": "2026-06-09 08:52:15",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 143
+    }
+  },
+  {
+    "memory_id": 135,
+    "raw_message_id": 142,
+    "title": "工作流的定义",
+    "summary": "工作流（workflow）是为了完成某个特定目标，将多个流程串联起来的方式",
+    "memory_category": "工作流方法",
+    "topics": [
+      "工作流"
+    ],
+    "importance": 0.3,
+    "confidence": 0.9,
+    "memory_type": "fact",
+    "ai_generated": true,
+    "created_at": "2026-06-09 08:51:57",
+    "updated_at": "2026-06-09 08:51:57",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 142
+    }
+  },
+  {
+    "memory_id": 134,
+    "raw_message_id": 141,
+    "title": "小柴机器人技术路线与模型选型规划",
+    "summary": "当前阶段主要工作聚焦于底层优化；待进入小柴机器人发展阶段后，计划将现有的zhipu模型替换为ChatGPT这类更强的模型以提升能力上限。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "小柴机器人",
+      "模型选型策略"
+    ],
+    "importance": 0.75,
+    "confidence": 0.92,
+    "memory_type": "decision",
+    "ai_generated": true,
+    "created_at": "2026-06-09 08:51:40",
+    "updated_at": "2026-06-09 08:51:40",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 141
+    }
+  },
+  {
+    "memory_id": 133,
+    "raw_message_id": 140,
+    "title": "小柴产品发展路线图 V1→V5",
+    "summary": "小柴的产品发展分为五个阶段： • V1（当前）：基于 Embedding + RAG 的基础能力 • V2：引入 Memory Router 记忆路由层 • V3：构建 Skills System 技能系统 • V4：实现 Agent Workflow 工作流 • V5：成为真正的小柴 Agent",
+    "memory_category": "未来产品设想",
+    "topics": [
+      "产品架构演进",
+      "Agent发展方向"
+    ],
+    "importance": 0.9,
+    "confidence": 0.95,
+    "memory_type": "plan",
+    "ai_generated": true,
+    "created_at": "2026-06-09 08:51:20",
+    "updated_at": "2026-06-09 08:51:20",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 140
+    }
+  },
+  {
+    "memory_id": 132,
+    "raw_message_id": 139,
+    "title": "小柴机器人的自主能力闭环愿景",
+    "summary": "真正的小柴机器人应具备完整的自主能力闭环：能够根据目标自主制定规划、执行任务、进行反思并据此更新自身记忆，形成持续自我进化的能力。",
+    "memory_category": "未来产品设想",
+    "topics": [
+      "小柴机器人愿景"
+    ],
+    "importance": 0.85,
+    "confidence": 0.92,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-09 08:50:57",
+    "updated_at": "2026-06-09 08:50:57",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 139
+    }
+  },
+  {
+    "memory_id": 131,
+    "raw_message_id": 138,
+    "title": "选择Mac电脑的核心原因",
+    "summary": "选择Mac电脑主要基于三点考量：（1）大量AI相关工具和代码原生基于Mac环境开发；（2）Windows平台经常遇到环境配置和兼容性问题；（3）Mac芯片性能更强。",
+    "memory_category": "自身认知更新",
+    "topics": [
+      "开发设备选择",
+      "AI开发环境"
+    ],
+    "importance": 0.6,
+    "confidence": 0.9,
+    "memory_type": "decision",
+    "ai_generated": true,
+    "created_at": "2026-06-09 08:50:38",
+    "updated_at": "2026-06-09 08:50:38",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 138
+    }
+  },
+  {
+    "memory_id": 130,
+    "raw_message_id": 137,
+    "title": "关于急躁与持续成长的自我认知",
+    "summary": "认识到自己存在过于急于求成的问题。在AI时代，应学会像生物一样持续生长，将「持续学习、持续进步」作为核心原则，而非追求速成。",
+    "memory_category": "自身认知更新",
+    "topics": [
+      "个人成长心态",
+      "AI时代适应策略"
+    ],
+    "importance": 0.8,
+    "confidence": 0.9,
+    "memory_type": "reflection",
+    "ai_generated": true,
+    "created_at": "2026-06-09 08:50:12",
+    "updated_at": "2026-06-09 08:50:12",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 137
+    }
+  },
+  {
+    "memory_id": 129,
+    "raw_message_id": 136,
+    "title": "希望Codex改进时具备独立判断能力",
+    "summary": "用户自认没有技术背景，对产品的理解可能存在局限（'盲人摸象'），因此希望Codex在进行产品改进时不要只听从用户的直接建议，而应能够独立思考和判断更优的技术方案。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "产品迭代自主性",
+      "用户技术背景认知"
+    ],
+    "importance": 0.75,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-09 08:49:54",
+    "updated_at": "2026-06-09 08:49:54",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 136
+    }
+  },
+  {
+    "memory_id": 128,
+    "raw_message_id": 135,
+    "title": "小柴功能伪需求审视",
+    "summary": "用户对小柴现有功能是否存在伪需求产生反思： 1. 针对「晚上不在线」的改进方案存疑——若未来购置云端服务器实现24小时在线，此类改进可能沦为伪需求； 2. 提出需要对现有功能进行全面梳理，识别并清理潜在的伪需求，而非持续堆叠改进。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "产品功能取舍",
+      "服务可用性"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "reflection",
+    "ai_generated": true,
+    "created_at": "2026-06-08 11:03:58",
+    "updated_at": "2026-06-08 11:03:58",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 135
+    }
+  },
+  {
+    "memory_id": 127,
+    "raw_message_id": 134,
+    "title": "小柴记忆箱实时提醒功能需求",
+    "summary": "用户希望小柴记忆箱具备实时或定时提醒能力：能够记录带日期的任务（如「16号开始第二阶段开发」），并在对应日期到来时主动提醒用户，或当用户询问「今天要做什么」时能正确响应已记录的当日待办。用户表示需要实际测试验证此功能的可行性。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "实时提醒",
+      "日期触发"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-08 11:03:51",
+    "updated_at": "2026-06-08 11:03:51",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 134
+    }
+  },
+  {
+    "memory_id": 126,
+    "raw_message_id": 133,
+    "title": "验证 Codex 自动启动行为",
+    "summary": "明天需要验证：10点后 Codex 是否会自动启动；如果自动启动，记录的时间戳是10点之前的数据还是启动时刻之前的数据。",
+    "memory_category": "临时待办",
+    "topics": [
+      "Codex 启动机制验证"
+    ],
+    "importance": 0.6,
+    "confidence": 0.95,
+    "memory_type": "plan",
+    "ai_generated": true,
+    "created_at": "2026-06-08 11:03:38",
+    "updated_at": "2026-06-08 11:03:38",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 133
+    }
+  },
+  {
+    "memory_id": 125,
+    "raw_message_id": 132,
+    "title": "看重结果的性格与失败后的情绪反应",
+    "summary": "用户是一个很看重结果的人。对于重要的事情，如果最终结果失败，会感到伤心并在之后的一段时间内反复回想这件事。",
+    "memory_category": "自身认知更新",
+    "topics": [
+      "性格特质",
+      "情绪反应模式"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "reflection",
+    "ai_generated": true,
+    "created_at": "2026-06-08 11:03:31",
+    "updated_at": "2026-06-08 11:03:31",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 132
+    }
+  },
+  {
+    "memory_id": 124,
+    "raw_message_id": 131,
+    "title": "夜间刷视频时的碎片化记录场景",
+    "summary": "用户的记录高峰期集中在夜间，常见触发场景是刷视频时突然产生各类想法，希望能够不限主题地快速记录下来。这是一个高频、跨主题、即时性的记录需求。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "夜间记录场景",
+      "碎片化想法捕捉"
+    ],
+    "importance": 0.6,
+    "confidence": 0.85,
+    "memory_type": "fact",
+    "ai_generated": true,
+    "created_at": "2026-06-08 11:03:21",
+    "updated_at": "2026-06-08 11:03:21",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 131
+    }
+  },
+  {
+    "memory_id": 123,
+    "raw_message_id": 130,
+    "title": "离线期间记忆处理的方案思考",
+    "summary": "用户关注电脑关机导致小柴离线时的记忆处理问题，提出两种方案对比：1) 开机后自动接手离线期间存储的内容——需确认该功能是否存在以及数据是否会丢失；2) 离线期间仅作被动存储、开机后清空记忆由用户重新发送——用户认为此方案不够智能。核心诉求是希望离线期间的记忆能够被可靠保留并在上线后自动恢复处理。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "离线记忆处理",
+      "启动恢复机制"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-08 11:03:12",
+    "updated_at": "2026-06-08 11:03:12",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 130
+    }
+  },
+  {
+    "memory_id": 122,
+    "raw_message_id": 129,
+    "title": "对LOOI桌面机器人的购买意愿",
+    "summary": "LOOI是一款桌面形态的可交互机器人，用户认为其外观可爱，有未来购买的意向。",
+    "memory_category": "其他",
+    "topics": [
+      "LOOI机器人"
+    ],
+    "importance": 0.3,
+    "confidence": 0.9,
+    "memory_type": "preference",
+    "ai_generated": true,
+    "created_at": "2026-06-08 11:02:33",
+    "updated_at": "2026-06-08 11:02:33",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 129
+    }
+  },
+  {
+    "memory_id": 121,
+    "raw_message_id": 128,
+    "title": "学习助手支持指定主题搜索功能",
+    "summary": "用户希望学习助手增加指定主题搜索功能，能够根据用户指定的主题（如某个具体项目名称）主动搜索相关信息。例如用户正在做'小柴记忆箱'项目时，可以让助手自动搜索该主题相关的GitHub项目等资源；未来也应支持指定其他类型的项目或主题进行搜索。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "学习助手功能扩展",
+      "主题定向搜索"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-08 11:02:27",
+    "updated_at": "2026-06-08 11:02:27",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 128
+    }
+  },
+  {
+    "memory_id": 120,
+    "raw_message_id": 126,
+    "title": "短视频学习计划与知识记录方式",
+    "summary": "下一步计划直接学习短视频，并在学习过程中将学到的知识点实时记录到小柴记忆箱中。",
+    "memory_category": "临时待办",
+    "topics": [
+      "短视频学习",
+      "小柴记忆箱使用场景"
+    ],
+    "importance": 0.6,
+    "confidence": 0.9,
+    "memory_type": "plan",
+    "ai_generated": true,
+    "created_at": "2026-06-07 22:34:22",
+    "updated_at": "2026-06-07 22:34:22",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 126
+    }
+  },
+  {
+    "memory_id": 119,
+    "raw_message_id": 125,
+    "title": "短视频验证产品可行性",
+    "summary": "一人公司开发产品时，可通过发布短视频形式的产品介绍来测试市场反应，依据视频反馈数据和用户反馈判断是否值得继续投入开发。",
+    "memory_category": "工作流方法",
+    "topics": [
+      "产品验证",
+      "一人公司"
+    ],
+    "importance": 0.6,
+    "confidence": 0.9,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-07 22:32:57",
+    "updated_at": "2026-06-07 22:32:57",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 125
+    }
+  },
+  {
+    "memory_id": 118,
+    "raw_message_id": 124,
+    "title": "Codex Chrome插件功能认知",
+    "summary": "Codex的Chrome插件主要作用是网站爬虫。",
+    "memory_category": "产品使用技巧",
+    "topics": [
+      "Codex"
+    ],
+    "importance": 0.3,
+    "confidence": 0.9,
+    "memory_type": "fact",
+    "ai_generated": true,
+    "created_at": "2026-06-07 22:22:47",
+    "updated_at": "2026-06-07 22:22:47",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 124
+    }
+  },
+  {
+    "memory_id": 116,
+    "raw_message_id": 122,
+    "title": "小柴记忆提取需支持查看原始输入与完整内容",
+    "summary": "当前小柴的记忆提取功能仅显示概要信息，无法查看每条记忆对应的原始输入原文和完整记忆内容。用户希望增加按记忆编号（如记忆91）调出详细视图的能力，以便追溯记忆来源并核对提取准确性。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆提取与检索",
+      "记忆详情查看"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-07 09:48:55",
+    "updated_at": "2026-06-07 09:48:55",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 122
+    }
+  },
+  {
+    "memory_id": 114,
+    "raw_message_id": 120,
+    "title": "小柴应避免过度解读和主动建议",
+    "summary": "用户反馈小柴存在过度思考问题：当用户只是简单记录某事物的缺点（如享做笔记的不足）时，不希望AI进行额外解读或主动提供改进建议。用户期望的行为是忠实记录原始意图，而非替用户延伸发挥。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "小柴交互模式",
+      "记录偏好"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "preference",
+    "ai_generated": true,
+    "created_at": "2026-06-07 09:31:14",
+    "updated_at": "2026-06-07 09:31:14",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 120
+    }
+  },
+  {
+    "memory_id": 113,
+    "raw_message_id": 119,
+    "title": "享做笔记绘图层级缺陷",
+    "summary": "享做笔记存在绘图层级问题：在图片上方绘制长直线时，线条会穿透到图片下方并被图片遮挡。这是一个已知的渲染顺序bug，使用时需注意避免在图片区域画过长的直线。",
+    "memory_category": "产品使用技巧",
+    "topics": [
+      "享做笔记使用问题"
+    ],
+    "importance": 0.3,
+    "confidence": 0.9,
+    "memory_type": "fact",
+    "ai_generated": true,
+    "created_at": "2026-06-07 09:28:17",
+    "updated_at": "2026-06-07 09:28:17",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 119
+    }
+  },
+  {
+    "memory_id": 111,
+    "raw_message_id": 117,
+    "title": "小柴记录检查频率优化",
+    "summary": "考虑将小柴记录的检查频率从每天一次调整为每3天或每周一次，因为当前每日检查的样本量可能过少，需要评估更合理的检查周期以平衡数据量与及时性。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆系统检查机制"
+    ],
+    "importance": 0.6,
+    "confidence": 0.8,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-07 09:04:22",
+    "updated_at": "2026-06-07 09:04:22",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 117
+    }
+  },
+  {
+    "memory_id": 110,
+    "raw_message_id": 115,
+    "title": "小柴记忆箱改进的本质是Prompt优化而非模型微调",
+    "summary": "用户认为模型微调的核心是通过训练数据更新模型参数以改变能力；而小柴记忆箱的改进本质上是Prompt优化，通过优化提示词让模型生成效果更好，这一过程类似于RLHF（基于人类反馈的强化学习），即根据人类评价来调整软件方向，而非改变底层模型参数。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "Prompt优化",
+      "RLHF"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-06 19:06:36",
+    "updated_at": "2026-06-06 19:06:36",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 115
+    }
+  },
+  {
+    "memory_id": 109,
+    "raw_message_id": 113,
+    "title": "AI原生软件与传统软件的本质区别",
+    "summary": "传统软件的演进模式是「可以突变」——通过版本发布实现跳跃式升级；而AI原生软件（AInative software）的演进模式是「生长」——像生物体一样持续、渐进、有机地演化，没有明确的版本边界。",
+    "memory_category": "技术思考",
+    "topics": [
+      "AI原生软件",
+      "软件演进模式"
+    ],
+    "importance": 0.8,
+    "confidence": 0.9,
+    "memory_type": "reflection",
+    "ai_generated": true,
+    "created_at": "2026-06-06 18:05:57",
+    "updated_at": "2026-06-06 18:05:57",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 113
+    }
+  },
+  {
+    "memory_id": 108,
+    "raw_message_id": 112,
+    "title": "通过记忆箱驱动小柴发展的新工作流",
+    "summary": "用户发现已形成新的工作模式：主要通过记忆箱系统来推进小柴项目的发展，不再需要主动与Codex直接对话。用户认为这种'人→记忆箱→项目'的间接协作方式已经超越了传统Agent的直接交互范式，标志着工作流的重要演进。",
+    "memory_category": "工作流方法",
+    "topics": [
+      "小柴项目",
+      "记忆箱工作流"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "reflection",
+    "ai_generated": true,
+    "created_at": "2026-06-06 18:02:57",
+    "updated_at": "2026-06-06 18:02:57",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 112
+    }
+  },
+  {
+    "memory_id": 107,
+    "raw_message_id": 111,
+    "title": "短期记忆时间分界与截止时间的设计思考",
+    "summary": "用户正在思考小柴短期记忆的两个设计问题：（1）短期记忆是否需要有明确可见的时间分界线；（2）当前设定的截止时间是否应该向后推移以延长短期记忆的有效期。这两个问题涉及记忆系统的核心交互体验和信息留存策略。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆系统架构",
+      "短期记忆设计"
+    ],
+    "importance": 0.6,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-06 18:01:53",
+    "updated_at": "2026-06-06 18:01:53",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 111
+    }
+  },
+  {
+    "memory_id": 106,
+    "raw_message_id": 110,
+    "title": "认为小柴展现机器人特质是积极信号",
+    "summary": "用户观察到小柴已经开始呈现出机器人的特征/风格，并明确认为这是一个好的发展趋势。这表明用户认可或期待小柴朝向更具机器人属性的方向演进，而非过度拟人化。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "小柴产品定位"
+    ],
+    "importance": 0.6,
+    "confidence": 0.85,
+    "memory_type": "reflection",
+    "ai_generated": true,
+    "created_at": "2026-06-06 17:59:51",
+    "updated_at": "2026-06-06 17:59:51",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 110
+    }
+  },
+  {
+    "memory_id": 105,
+    "raw_message_id": 109,
+    "title": "问号作为检索与唤醒入口的产品设想",
+    "summary": "用户观察到并提议：小柴系统正在向「问号即检索」的方向演进——当用户以问号形式输入时（如「我是一个什么样的人？」），系统不应仅将其作为待存储内容，而应识别为查询意图，直接从已有记忆中检索并返回答案。这意味着问号可以将「储存入口」转换为「检索/唤醒入口」，使小柴具备更自然的对话式记忆调用能力。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "问号交互设计",
+      "记忆检索入口"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-06 17:54:53",
+    "updated_at": "2026-06-06 17:54:53",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 109
+    }
+  },
+  {
+    "memory_id": 104,
+    "raw_message_id": 108,
+    "title": "小柴作为'第二个我'的产品愿景",
+    "summary": "用户认为小柴的未来方向是成为一个'第二个我'式的数字存在：能够存在于电脑上，代表或辅助用户完成各类事务。这反映了用户对AI个人助手从工具向数字分身演进的期待。",
+    "memory_category": "未来产品设想",
+    "topics": [
+      "数字分身",
+      "产品愿景"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-06 17:52:44",
+    "updated_at": "2026-06-06 17:52:44",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 108
+    }
+  },
+  {
+    "memory_id": 103,
+    "raw_message_id": 107,
+    "title": "小柴应支持接入任意软件并记录用户交互行为",
+    "summary": "用户对小柴的产品定位设想：作为个人agent，不应仅限于接入其他agent，而应能够接入任何软件或应用平台（如抖音等）。核心场景示例：当用户在某软件中进行操作（如收藏内容）时，小柴可以自动感知并将该行为及对应内容进行记录存储。",
+    "memory_category": "未来产品设想",
+    "topics": [
+      "多平台软件接入",
+      "用户行为自动记录"
+    ],
+    "importance": 0.75,
+    "confidence": 0.88,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-06 17:52:14",
+    "updated_at": "2026-06-06 17:52:14",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 107
+    }
+  },
+  {
+    "memory_id": 102,
+    "raw_message_id": 106,
+    "title": "小柴未来愿景：向类人脑方向发展",
+    "summary": "用户认为让小柴像人类大脑一样发展是一个值得探索的未来方向。这意味着希望小柴具备类似人脑的成长性、自适应能力和认知演进机制，而非仅仅是静态的知识库或工具。",
+    "memory_category": "未来产品设想",
+    "topics": [
+      "小柴产品愿景",
+      "类脑AI架构"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-06 17:50:31",
+    "updated_at": "2026-06-06 17:50:31",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 106
+    }
+  },
+  {
+    "memory_id": 101,
+    "raw_message_id": 105,
+    "title": "小柴记忆分类与衰减机制设想",
+    "summary": "用户提出小柴的记忆大类可进一步归档为「短期记忆」和「长期记忆」两类： 1. 短期记忆：具有时效性，超过特定时间点后应自动去除或降权 2. 长期记忆：不设硬性过期时间，而是根据之前讨论过的重要性衰减模型来管理其生命周期 该设计旨在让记忆系统更智能地区分临时信息和持久知识。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆生命周期管理",
+      "短期/长期记忆分层"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-06 17:50:04",
+    "updated_at": "2026-06-06 17:50:04",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 105
+    }
+  },
+  {
+    "memory_id": 100,
+    "raw_message_id": 104,
+    "title": "临时代办过期自动剔除机制",
+    "summary": "用户提出考虑为临时代办设置过期时间，超过时间后由系统自动剔除/清理，以避免过期待办堆积占用记忆空间。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "临时代办管理"
+    ],
+    "importance": 0.6,
+    "confidence": 0.8,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-06 17:49:23",
+    "updated_at": "2026-06-06 17:49:23",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 104
+    }
+  },
+  {
+    "memory_id": 99,
+    "raw_message_id": 103,
+    "title": "杭州面试准备计划",
+    "summary": "需前往杭州参加面试，准备工作包括：打印简历、携带简历袋、于下周二主动联系面试官确认事宜",
+    "memory_category": "临时待办",
+    "topics": [
+      "面试准备",
+      "杭州行程"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "plan",
+    "ai_generated": true,
+    "created_at": "2026-06-06 17:48:59",
+    "updated_at": "2026-06-06 17:48:59",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 103
+    }
+  },
+  {
+    "memory_id": 98,
+    "raw_message_id": 100,
+    "title": "杭州面试前Skills技术准备",
+    "summary": "下周将前往杭州参加面试，计划在面试前重点研究Skills的文件结构形式及其可存储的数据类型，作为面试技术准备的一部分。",
+    "memory_category": "临时待办",
+    "topics": [
+      "面试准备",
+      "Skills技术学习"
+    ],
+    "importance": 0.65,
+    "confidence": 0.85,
+    "memory_type": "plan",
+    "ai_generated": true,
+    "created_at": "2026-06-06 17:47:42",
+    "updated_at": "2026-06-06 17:47:42",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 100
+    }
+  },
+  {
+    "memory_id": 97,
+    "raw_message_id": 99,
+    "title": "小柴底层框架升级的长期技术规划考量",
+    "summary": "用户关注小柴当前底层框架在未来向机器人形态和更大上下文窗口扩展时是否需要升级，并担心升级可能带来的推倒重来风险。这反映了对技术架构可扩展性和迁移成本的长期关注。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "技术架构演进",
+      "产品扩展方向"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-06 17:46:19",
+    "updated_at": "2026-06-06 17:46:19",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 99
+    }
+  },
+  {
+    "memory_id": 96,
+    "raw_message_id": 98,
+    "title": "RAG技术演进与重构思考",
+    "summary": "用户关注小柴项目中embedding拆解策略的长期可持续性，开始思考未来RAG技术的发展方向，并对是否需要推倒重来做技术重构持开放探讨态度。",
+    "memory_category": "技术思考",
+    "topics": [
+      "RAG技术演进",
+      "Embedding策略"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-06 17:44:33",
+    "updated_at": "2026-06-06 17:44:33",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 98
+    }
+  },
+  {
+    "memory_id": 95,
+    "raw_message_id": 97,
+    "title": "记忆衰减机制的实现思考",
+    "summary": "认为小柴的记忆衰减机制不应对所有记忆一视同仁地衰减；带有明确时间标记的记忆（如具体日期、'下一步'等时效性内容）应作为重点衰减对象；具体实现方式需依赖AI的判断能力来决定。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆衰减机制",
+      "时效性记忆处理"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-06 13:50:07",
+    "updated_at": "2026-06-06 13:50:07",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 97
+    }
+  },
+  {
+    "memory_id": 94,
+    "raw_message_id": 96,
+    "title": "时效性记忆检索后应自动降权",
+    "summary": "对于包含「下一步计划」等具有时间敏感性的记忆条目，在用户检索并使用过一次之后，系统应自动降低其存储重要级/权重。原因是这类信息具有明确的时效性——被调用后往往意味着该计划已进入执行阶段，若长期维持高优先级会导致后续检索时仍返回已过时的信息。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆衰减机制",
+      "存储优先级"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-06 13:47:28",
+    "updated_at": "2026-06-06 13:47:28",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 96
+    }
+  },
+  {
+    "memory_id": 93,
+    "raw_message_id": 95,
+    "title": "基于 GitHub 热门 Skills 项目的拆解学习法",
+    "summary": "计划使用 Codex 辅助从 GitHub 筛选并下载本周 star 上涨最快的 skills 类项目，通过拆解热门开源项目来学习和掌握新技术。",
+    "memory_category": "工作流方法",
+    "topics": [
+      "技术学习方法"
+    ],
+    "importance": 0.65,
+    "confidence": 0.92,
+    "memory_type": "plan",
+    "ai_generated": true,
+    "created_at": "2026-06-06 13:28:13",
+    "updated_at": "2026-06-06 13:28:13",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 95
+    }
+  },
+  {
+    "memory_id": 92,
+    "raw_message_id": 94,
+    "title": "学习他人技能的正确方式",
+    "summary": "面对优秀的技能或方法论时，不应直接照搬使用，而应深入理解其中蕴含的核心思想与原理，将其内化吸收后转化为适合自己的方式。",
+    "memory_category": "自身认知更新",
+    "topics": [
+      "学习方法论",
+      "知识内化"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-06 13:26:41",
+    "updated_at": "2026-06-06 13:26:41",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 94
+    }
+  },
+  {
+    "memory_id": 91,
+    "raw_message_id": 93,
+    "title": "对小柴记忆系统核心机制的可靠性顾虑",
+    "summary": "用户对记忆系统三个环节存在顾虑：1)「记录观察」功能可能产生副作用；2)去重机制存在误杀正常记忆的风险；3)兜底策略可能导致过多与小柴相关的内容被记入，需评估各机制的边界和容错性。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆系统可靠性",
+      "去重机制"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-06 10:50:00",
+    "updated_at": "2026-06-06 10:50:00",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 93
+    }
+  },
+  {
+    "memory_id": 89,
+    "raw_message_id": 88,
+    "title": "AI时代的创造力公式：人负责灵感，AI负责汗水",
+    "summary": "用户认为传统'天才=1%灵感+99%汗水'的公式在AI时代需要重新理解：AI可以承担99%的执行性'汗水'工作（如编码实现、内容生成、重复劳动等），而人类只需专注于那1%的核心灵感——即方向判断、创意构思、价值决策等AI难以替代的部分。这意味着人机协作的最优模式是：人做'想什么'，AI做'怎么做'。",
+    "memory_category": "自身认知更新",
+    "topics": [
+      "人机协作模式",
+      "创造力本质"
+    ],
+    "importance": 0.8,
+    "confidence": 0.9,
+    "memory_type": "reflection",
+    "ai_generated": true,
+    "created_at": "2026-06-06 09:14:25",
+    "updated_at": "2026-06-06 09:14:25",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 88
+    }
+  },
+  {
+    "memory_id": 85,
+    "raw_message_id": 84,
+    "title": "从Query Planning RAG到小柴机器人的产品演进构想",
+    "summary": "用户构想了基于embedding发展的技术演进路线：首先实现query planning RAG能力，对检索到的结果进行智能补充（而非仅做简单检索返回），以此为基础逐步演化出具备更强综合能力的'小柴机器人'产品形态。这反映了用户对AI系统从信息检索工具向深度理解与生成型智能体演进的思考方向。",
+    "memory_category": "未来产品设想",
+    "topics": [
+      "RAG技术演进",
+      "小柴机器人"
+    ],
+    "importance": 0.65,
+    "confidence": 0.8,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-05 22:49:41",
+    "updated_at": "2026-06-05 22:49:41",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 84
+    }
+  },
+  {
+    "memory_id": 84,
+    "raw_message_id": 83,
+    "title": "小柴记忆箱计划用高级RAG替代纯Embedding方案",
+    "summary": "对于'小柴记忆箱'项目，未来应采用更高级的RAG（检索增强生成）技术架构，取代当前仅依赖单纯embedding的记忆检索方式。这一方向旨在提升记忆检索的质量和准确性。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "小柴记忆箱",
+      "RAG技术架构"
+    ],
+    "importance": 0.8,
+    "confidence": 0.9,
+    "memory_type": "decision",
+    "ai_generated": true,
+    "created_at": "2026-06-05 22:47:12",
+    "updated_at": "2026-06-05 22:47:12",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 83
+    }
+  },
+  {
+    "memory_id": 83,
+    "raw_message_id": 82,
+    "title": "Embedding 与 RAG 的关系定位",
+    "summary": "Embedding 是 RAG（检索增强生成）技术的基础组件，二者属于包含关系而非排斥关系；RAG 架构以 Embedding 作为其检索环节的核心能力基础。",
+    "memory_category": "技术思考",
+    "topics": [
+      "RAG架构",
+      "Embedding"
+    ],
+    "importance": 0.6,
+    "confidence": 0.9,
+    "memory_type": "reflection",
+    "ai_generated": true,
+    "created_at": "2026-06-05 22:46:38",
+    "updated_at": "2026-06-05 22:46:38",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 82
+    }
+  },
+  {
+    "memory_id": 82,
+    "raw_message_id": 81,
+    "title": "检索基于Embedding相似度",
+    "summary": "用户理解并确认检索机制是通过embedding（向量嵌入）的相似度计算来实现的，即通过语义向量的距离匹配来查找相关内容。",
+    "memory_category": "技术思考",
+    "topics": [
+      "向量检索"
+    ],
+    "importance": 0.4,
+    "confidence": 0.9,
+    "memory_type": "fact",
+    "ai_generated": true,
+    "created_at": "2026-06-05 22:46:06",
+    "updated_at": "2026-06-05 22:46:06",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 81
+    }
+  },
+  {
+    "memory_id": 81,
+    "raw_message_id": 80,
+    "title": "小柴记忆箱完整工作流程",
+    "summary": "小柴记忆箱的现有工作模式包含以下环节： 1. 先保存原始输入 2. 判断内容是否适合转化为长期记忆 3. 对值得记忆的内容拆解为清晰的长期记忆条目 4. 为每条记忆打上标签：所属大类、主题、实体、重要性 5. 生成embedding向量用于语义检索 6. 面对提问时检索相关证据并生成回答",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆处理流水线",
+      "Embedding向量化"
+    ],
+    "importance": 0.8,
+    "confidence": 0.95,
+    "memory_type": "fact",
+    "ai_generated": true,
+    "created_at": "2026-06-05 22:42:51",
+    "updated_at": "2026-06-05 22:42:51",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 80
+    }
+  },
+  {
+    "memory_id": 80,
+    "raw_message_id": 79,
+    "title": "小柴记忆箱输入智能分类需求",
+    "summary": "用户希望小柴记忆箱在接收输入时能进行深度语义识别，自动判断内容所属的大类和小类（如stable_memory_categories中的分类），以实现更精准的记忆归类和后续检索。这反映了用户对产品智能化程度的期待。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "智能分类",
+      "记忆管理"
+    ],
+    "importance": 0.6,
+    "confidence": 0.8,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-05 22:35:12",
+    "updated_at": "2026-06-05 22:35:12",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 79
+    }
+  },
+  {
+    "memory_id": 79,
+    "raw_message_id": 77,
+    "title": "记忆分类层级扩展思考",
+    "summary": "用户提出疑问：当单个大类（memory_category）下的信息积累越来越多时，是否需要在该大类内部继续向下建立子分类或分支结构。这是一个关于记忆系统可扩展性和信息组织深度的开放性思考。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆系统架构",
+      "信息组织策略"
+    ],
+    "importance": 0.6,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-05 22:32:55",
+    "updated_at": "2026-06-05 22:32:55",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 77
+    }
+  },
+  {
+    "memory_id": 78,
+    "raw_message_id": 76,
+    "title": "Codex 记忆提取流程需增加小柴记忆箱识别环节",
+    "summary": "在 Codex 工作流的每日记忆提取流程中，除了执行常规提取任务外，还应增加一个专门针对「小柴记忆箱」相关内容的识别步骤。该识别环节的目的是收集与记忆箱相关的反馈和问题，以便后续针对性地推进产品改进。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "Codex工作流优化",
+      "记忆提取流程"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-05 22:32:12",
+    "updated_at": "2026-06-05 22:32:12",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 76
+    }
+  },
+  {
+    "memory_id": 77,
+    "raw_message_id": 75,
+    "title": "小柴记忆箱长期存储库改进方向",
+    "summary": "对于小柴记忆箱，短期应聚焦单个储存单元的检验；长期则需建立对整个储存库的系统性检验机制，包括：分类体系的有效性评估、潜在漏洞排查、检索适配性测试以及整体性能优化的可行性分析。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆系统优化",
+      "存储库治理"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-05 22:29:10",
+    "updated_at": "2026-06-05 22:29:10",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 75
+    }
+  },
+  {
+    "memory_id": 76,
+    "raw_message_id": 74,
+    "title": "Codex 存取检查应自动分类记忆内容",
+    "summary": "用户建议优化 Codex 的每日存取检查流程：在例行检查时，自动提取与「小柴记忆箱」相关的内容，并智能判断每条内容属于「现有项目改进」还是「未来产品设想」，实现记忆内容的自动归类分流。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "Codex 自动化工作流",
+      "记忆内容自动分类"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-05 22:19:53",
+    "updated_at": "2026-06-05 22:19:53",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 74
+    }
+  },
+  {
+    "memory_id": 75,
+    "raw_message_id": 73,
+    "title": "小柴记忆箱降重可在存取双阶段执行",
+    "summary": "对于小柴记忆箱的降重（去重/压缩）机制，除了在存储时处理外，也可以考虑在读取时进行。这意味着降重逻辑可以设计为支持存入和取出两个时机，而非仅限于单一入口。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "记忆去重策略"
+    ],
+    "importance": 0.6,
+    "confidence": 0.8,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-05 22:15:18",
+    "updated_at": "2026-06-05 22:15:18",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 73
+    }
+  },
+  {
+    "memory_id": 74,
+    "raw_message_id": 72,
+    "title": "ChatGPT订阅购买渠道与价格参考",
+    "summary": "可通过闲鱼平台购买ChatGPT订阅服务，当前参考价格：Plus会员约100元，Pro版本约300元。",
+    "memory_category": "产品使用技巧",
+    "topics": [
+      "ChatGPT订阅购买"
+    ],
+    "importance": 0.4,
+    "confidence": 0.9,
+    "memory_type": "fact",
+    "ai_generated": true,
+    "created_at": "2026-06-05 21:31:34",
+    "updated_at": "2026-06-05 21:31:34",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 72
+    }
+  },
+  {
+    "memory_id": 73,
+    "raw_message_id": 68,
+    "title": "小柴记忆箱缺少内容去重机制",
+    "summary": "小柴记忆箱当前无法识别重复输入的相同内容，导致完全一致的信息会被多次存储入库。需要在写入前增加去重判断逻辑，避免冗余数据积累。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "数据去重"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-05 19:00:23",
+    "updated_at": "2026-06-05 19:00:23",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 68
+    }
+  },
+  {
+    "memory_id": 71,
+    "raw_message_id": 66,
+    "title": "小柴记忆箱失败的补救操作流程",
+    "summary": "当「存当小柴记忆箱」操作失败时，处理步骤如下： 1. 点击启动小柴 2. 系统会自动弹出一段文本 3. 将该文本复制 4. 粘贴到飞书后台重新发布即可完成保存",
+    "memory_category": "产品使用技巧",
+    "topics": [
+      "飞书集成",
+      "小柴操作指南"
+    ],
+    "importance": 0.6,
+    "confidence": 0.9,
+    "memory_type": "fact",
+    "ai_generated": true,
+    "created_at": "2026-06-05 18:54:39",
+    "updated_at": "2026-06-05 18:54:39",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 66
+    }
+  },
+  {
+    "memory_id": 70,
+    "raw_message_id": 65,
+    "title": "对人类本质的认知：人即大脑操控的机器人",
+    "summary": "认为人本质上就是被大脑操控的机器人，这是一种对人类存在本质的简化式理解，将人的行为和意识归结为大脑机制的产物。",
+    "memory_category": "生活感悟",
+    "topics": [
+      "自我认知",
+      "哲学思考"
+    ],
+    "importance": 0.6,
+    "confidence": 0.8,
+    "memory_type": "reflection",
+    "ai_generated": true,
+    "created_at": "2026-06-05 16:40:17",
+    "updated_at": "2026-06-05 16:40:17",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 65
+    }
+  },
+  {
+    "memory_id": 69,
+    "raw_message_id": 64,
+    "title": "AI博主关注与学习规划",
+    "summary": "用户对关注的AI博主有明确的分层定位： **基础学习类：** - 秋芝 — 偏好其基础教学内容 **深入学习类（技术向）：** - 程序员阿江 — 技术博主，计划深入学习 - 舌战产品 — 技术博主，计划深入了解 **经验/技巧参考类：** - 数字生命 king — 以经验分享为主，技术深度一般 - 全栈斌少 — 专注技巧分享 **前沿资讯类：** - 阿朱星际漫步 — 用于了解前沿动态 **兴趣浏览类：** - 晓辉博士 — 水平很高，以聆听为主 **职业对标类：** - miss发行人 — 视为未来发展方向...",
+    "memory_category": "自身认知更新",
+    "topics": [
+      "AI学习资源",
+      "职业发展参考"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "preference",
+    "ai_generated": true,
+    "created_at": "2026-06-05 12:20:05",
+    "updated_at": "2026-06-05 12:20:05",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 64
+    }
+  },
+  {
+    "memory_id": 68,
+    "raw_message_id": 63,
+    "title": "远见与务实并重的行动原则",
+    "summary": "允许自己幻想未来、保持长远视野，但必须同时脚踏实地地明确下一步具体要做什么，将愿景落实到当下可执行的行动上。",
+    "memory_category": "自身认知更新",
+    "topics": [
+      "行动方法论"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-05 11:30:06",
+    "updated_at": "2026-06-05 11:30:06",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 63
+    }
+  },
+  {
+    "memory_id": 67,
+    "raw_message_id": 62,
+    "title": "以成长而非结果为导向",
+    "summary": "在做事和评价时，应优先关注个人成长与过程，而非单纯追求结果产出。这是一种长期主义的价值取向。",
+    "memory_category": "生活感悟",
+    "topics": [
+      "成长思维"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-05 11:13:39",
+    "updated_at": "2026-06-05 11:13:39",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 62
+    }
+  },
+  {
+    "memory_id": 66,
+    "raw_message_id": 61,
+    "title": "小柴记忆箱应支持Agent自动接入工作流提取信息",
+    "summary": "用户设想小柴记忆箱的场景：当用户进入新公司并记录日常工作内容时，希望Agent能直接接入工作流自动提取关键信息，而非依赖用户手动介绍。这样既能减少重复沟通成本，又能避免人工介绍时的信息遗漏。核心诉求是实现从被动记录到主动智能提取的升级。",
+    "memory_category": "未来产品设想",
+    "topics": [
+      "小柴记忆箱",
+      "Agent工作流自动化"
+    ],
+    "importance": 0.7,
+    "confidence": 0.85,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-05 11:02:01",
+    "updated_at": "2026-06-05 11:02:01",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 61
+    }
+  },
+  {
+    "memory_id": 60,
+    "raw_message_id": 55,
+    "title": "小柴记忆箱的核心定位与目标",
+    "summary": "小柴记忆箱的最终方向是作为一个个人知识资产管理系统，用于沉淀用户的记忆、经验与方法论。其核心价值在于实现这些知识的持续复用，从而辅助用户在未来做出更优的决策。",
+    "memory_category": "未来产品设想",
+    "topics": [
+      "个人知识管理",
+      "小柴记忆箱产品定位"
+    ],
+    "importance": 0.9,
+    "confidence": 0.95,
+    "memory_type": "decision",
+    "ai_generated": true,
+    "created_at": "2026-06-05 10:29:07",
+    "updated_at": "2026-06-05 10:29:07",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 55
+    }
+  },
+  {
+    "memory_id": 57,
+    "raw_message_id": 52,
+    "title": "项目推进的渐变原则",
+    "summary": "认为项目推进不是一个突变的过程，而是一个渐变的过程；秉持「慢慢来，比较快」的理念，强调稳扎稳打比急于求成更有效。",
+    "memory_category": "工作流方法",
+    "topics": [
+      "项目推进节奏"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-05 10:23:56",
+    "updated_at": "2026-06-05 10:23:56",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 52
+    }
+  },
+  {
+    "memory_id": 56,
+    "raw_message_id": 51,
+    "title": "AI辅助UI开发的三种工作流方案对比",
+    "summary": "用户梳理了三条UI开发路径及其特点： 1. Gemini生成初版UI → 交由Codex按统一风格完善代码细节 2. Image2输出效果图 → Stitch制作原型并导出HTML → Codex接手开发 3. 直接使用ui-ux-pro-max（操作最简单，成品视觉效果好）",
+    "memory_category": "工作流方法",
+    "topics": [
+      "UI开发工作流"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "idea",
+    "ai_generated": true,
+    "created_at": "2026-06-05 09:57:05",
+    "updated_at": "2026-06-05 09:57:05",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 51
+    }
+  },
+  {
+    "memory_id": 55,
+    "raw_message_id": 50,
+    "title": "Codex Product Design插件用于UI开发",
+    "summary": "在进行UI开发时，使用Codex内置的Product Design插件效果良好，该插件能较好地支持界面设计相关任务。",
+    "memory_category": "产品使用技巧",
+    "topics": [
+      "UI开发工具链",
+      "Codex使用经验"
+    ],
+    "importance": 0.6,
+    "confidence": 0.9,
+    "memory_type": "preference",
+    "ai_generated": true,
+    "created_at": "2026-06-05 09:56:20",
+    "updated_at": "2026-06-05 09:56:20",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 50
+    }
+  },
+  {
+    "memory_id": 54,
+    "raw_message_id": 47,
+    "title": "中转服务购买渠道",
+    "summary": "购买中转服务的网站是在 Wild 平台上购买的。",
+    "memory_category": "其他",
+    "topics": [
+      "中转服务"
+    ],
+    "importance": 0.6,
+    "confidence": 0.9,
+    "memory_type": "fact",
+    "ai_generated": true,
+    "created_at": "2026-06-05 00:04:43",
+    "updated_at": "2026-06-05 00:04:43",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 47
+    }
+  },
+  {
+    "memory_id": 53,
+    "raw_message_id": 45,
+    "title": "自研 Skills 的设计理念与定位",
+    "summary": "用户自主开发了一个 skills，核心目的是优化上下文管理能力。该 skills 的设计理念是将 agent 从「执行者」角色升级为「伙伴」角色，强调 agent 应具备更深层次的协作与理解能力，而非被动接受指令。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "Agent 角色定位",
+      "上下文优化"
+    ],
+    "importance": 0.75,
+    "confidence": 0.9,
+    "memory_type": "decision",
+    "ai_generated": true,
+    "created_at": "2026-06-05 00:00:13",
+    "updated_at": "2026-06-05 00:00:13",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 45
+    }
+  },
+  {
+    "memory_id": 52,
+    "raw_message_id": 43,
+    "title": "Project Skills 初始化项目提升 Agent 智能度",
+    "summary": "在初始化项目时主动调用 project skills，可以让 agent 表现得更聪明。这是一种有效的项目启动方式。",
+    "memory_category": "产品使用技巧",
+    "topics": [
+      "Agent 项目初始化"
+    ],
+    "importance": 0.6,
+    "confidence": 0.85,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-04 23:49:48",
+    "updated_at": "2026-06-04 23:49:48",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 43
+    }
+  },
+  {
+    "memory_id": 51,
+    "raw_message_id": 42,
+    "title": "INTP人格与思维习惯",
+    "summary": "用户的MBTI人格类型为INTP（内向、直觉、思考、感知），日常习惯于进行发散性思考和自由联想。",
+    "memory_category": "自身认知更新",
+    "topics": [
+      "MBTI人格类型",
+      "思维习惯"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "fact",
+    "ai_generated": true,
+    "created_at": "2026-06-04 23:45:58",
+    "updated_at": "2026-06-04 23:45:58",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 42
+    }
+  },
+  {
+    "memory_id": 45,
+    "raw_message_id": 35,
+    "title": "开机后需手动启动小柴记忆箱",
+    "summary": "电脑开启后需要通过一键启动功能打开小柴记忆箱，该工具需要在开机后手动启动才能持续使用。",
+    "memory_category": "产品使用技巧",
+    "topics": [
+      "小柴记忆箱",
+      "开机启动习惯"
+    ],
+    "importance": 0.4,
+    "confidence": 0.9,
+    "memory_type": "preference",
+    "ai_generated": true,
+    "created_at": "2026-06-04 23:23:33",
+    "updated_at": "2026-06-04 23:23:33",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 35
+    }
+  },
+  {
+    "memory_id": 44,
+    "raw_message_id": 34,
+    "title": "项目开发节奏原则",
+    "summary": "做项目不应一味追求速度，应在过程中适时停顿，通过深度使用产品来发现问题并迭代修正。",
+    "memory_category": "工作流方法",
+    "topics": [
+      "项目开发节奏",
+      "深度使用验证"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-04 23:17:42",
+    "updated_at": "2026-06-04 23:17:42",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 34
+    }
+  },
+  {
+    "memory_id": 43,
+    "raw_message_id": 33,
+    "title": "项目开发不图快，重深度使用后修正",
+    "summary": "做项目不应一味追求速度和进度，而应在过程中主动停顿，通过深度使用产品来发现问题，再基于真实体验进行修正和迭代。",
+    "memory_category": "工作流方法",
+    "topics": [
+      "产品开发节奏"
+    ],
+    "importance": 0.7,
+    "confidence": 0.9,
+    "memory_type": "principle",
+    "ai_generated": true,
+    "created_at": "2026-06-04 23:16:16",
+    "updated_at": "2026-06-04 23:16:16",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 33
+    }
+  },
+  {
+    "memory_id": 42,
+    "raw_message_id": 32,
+    "title": "V0试用期四项核心稳定目标",
+    "summary": "在半个月试用期间，小柴（V0）需优先保障四项核心稳定性指标：①记忆写入流程稳定可靠；②语义召回准确率达标；③所有回答必须附带证据来源；④飞书入口响应无明显卡顿。此四项为同一阶段的整体稳定目标，不可割裂对待。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "V0稳定性目标",
+      "记忆系统质量"
+    ],
+    "importance": 0.85,
+    "confidence": 0.95,
+    "memory_type": "plan",
+    "ai_generated": true,
+    "created_at": "2026-06-04 21:38:35",
+    "updated_at": "2026-06-04 21:38:35",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 32
+    }
+  },
+  {
+    "memory_id": 41,
+    "raw_message_id": 31,
+    "title": "V0地基测试的核心优先级",
+    "summary": "小柴在半个月试用期内，最重要的目标是稳定完成三项核心能力：记忆写入、语义召回和基于证据回答。在此期间不应优先投入前端界面或知识图谱功能的开发。",
+    "memory_category": "现有项目改进",
+    "topics": [
+      "V0地基测试",
+      "产品功能优先级"
+    ],
+    "importance": 0.8,
+    "confidence": 0.9,
+    "memory_type": "decision",
+    "ai_generated": true,
+    "created_at": "2026-06-04 21:28:03",
+    "updated_at": "2026-06-04 21:28:03",
+    "evidence": {
+      "sqlite_path": "data/personal_brain.sqlite3",
+      "sqlite_table": "raw_messages",
+      "record_id": 31
+    }
+  },
+  {
     "memory_id": 40,
     "raw_message_id": 30,
     "title": "小柴 AI 核心目标：从记忆检索到知识融通",

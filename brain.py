@@ -8,6 +8,7 @@ from pathlib import Path
 
 from personal_brain import PersonalBrain
 from personal_brain.answer import format_answer_result
+from personal_brain.daily_report import parse_report_date
 from personal_brain.memory_view import format_memory_detail, format_memory_summary
 from personal_brain.reviewer import format_memory_review
 from personal_brain.semantic import format_recall_result
@@ -28,8 +29,17 @@ def build_parser() -> argparse.ArgumentParser:
     memory_show_parser = subparsers.add_parser("memory-show", help="show one memory with raw evidence")
     memory_show_parser.add_argument("memory_id", type=int, help="memory id")
 
+    memory_archive_parser = subparsers.add_parser("memory-archive", help="archive one memory by id")
+    memory_archive_parser.add_argument("memory_id", type=int, help="memory id")
+
     interaction_list_parser = subparsers.add_parser("interaction-list", help="list recent Feishu/adapter interactions")
     interaction_list_parser.add_argument("--limit", type=int, default=20, help="max interactions to show")
+
+    daily_report_parser = subparsers.add_parser("daily-report", help="write a local Markdown audit report for Codex review")
+    daily_report_parser.add_argument("--date", default="today", help="today, yesterday, or YYYY-MM-DD")
+    daily_report_parser.add_argument("--last-hours", type=int, help="write a rolling report for the previous N hours")
+    daily_report_parser.add_argument("--output-dir", default="reports", help="directory for local Markdown reports")
+    daily_report_parser.add_argument("--print-path-only", action="store_true", help="only print the output path")
 
     review_parser = subparsers.add_parser("review-memories", help="dry-run AI review of memory quality")
     review_parser.add_argument("--limit", type=int, default=80, help="max memories to review")
@@ -118,6 +128,10 @@ def main(argv: list[str] | None = None) -> int:
         print(f"topics: {result.topic_ids}")
         print(f"entities: {result.entity_ids}")
         print(f"router_rebuilt: {result.router_rebuilt}")
+        if result.input_route:
+            print(f"input_type: {result.input_route['input_type']}")
+            print(f"trigger_reason: {result.input_route['trigger_reason']}")
+            print(f"original_input: {result.input_route['original_input']}")
         if result.warning:
             print(f"warning: {result.warning}")
         return 0
@@ -141,6 +155,17 @@ def main(argv: list[str] | None = None) -> int:
         print(format_memory_detail(brain.memory_show(args.memory_id)))
         return 0
 
+    if args.command == "memory-archive":
+        result = brain.archive_memory(args.memory_id)
+        title = result.title or short_text(result.content, 60)
+        print(f"archived memory #{result.memory_id}: {title}")
+        print(f"raw_message_id: {result.raw_message_id}")
+        print(f"previous_status: {result.previous_status}")
+        print(f"new_status: {result.new_status}")
+        print(f"embeddings_deleted: {result.embeddings_deleted}")
+        print("router_rebuilt: True")
+        return 0
+
     if args.command == "interaction-list":
         interactions = brain.list_interactions(limit=args.limit)
         if not interactions:
@@ -155,6 +180,30 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"  reply: {short_text(item['reply_text'], 220)}")
             if item["error"]:
                 print(f"  error: {item['error']}")
+        return 0
+
+    if args.command == "daily-report":
+        if args.last_hours is not None:
+            if args.last_hours <= 0:
+                print("warning: --last-hours must be positive")
+                return 1
+            result = brain.recent_report(hours=args.last_hours, output_dir=Path(args.output_dir))
+        else:
+            try:
+                report_date = parse_report_date(args.date)
+            except ValueError:
+                print("warning: --date must be today, yesterday, or YYYY-MM-DD")
+                return 1
+            result = brain.daily_report(report_date=report_date, output_dir=Path(args.output_dir))
+        if args.print_path_only:
+            print(result.output_path)
+            return 0
+        print(f"daily report: {result.output_path}")
+        print(f"date: {result.report_date.isoformat()}")
+        print(f"start_at: {result.start_at}")
+        print(f"end_at: {result.end_at}")
+        for key, value in result.counts.items():
+            print(f"{key}: {value}")
         return 0
 
     if args.command == "review-memories":

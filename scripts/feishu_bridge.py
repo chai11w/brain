@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import ssl
 import sys
 import threading
@@ -36,6 +37,7 @@ class FeishuOptions:
     app_id: str
     app_secret: str
     dry_run: bool
+    max_message_age_seconds: int
 
 
 @dataclass(frozen=True)
@@ -135,6 +137,25 @@ class FeishuBrainBridge:
         if not message_id or not text:
             return {"ok": True, "ignored": "non-text-or-missing-message"}
 
+        if self.brain.has_interaction_message(message_id):
+            print(f"ignored duplicate Feishu message_id={message_id}", flush=True)
+            return {"ok": True, "duplicate_message": message_id}
+
+        message_created_at = extract_message_created_at(payload, event, message)
+        if is_stale_message(message_created_at, self.options.max_message_age_seconds):
+            age_seconds = int(time.time() - message_created_at) if message_created_at else None
+            self._record_stale_interaction(
+                message_id=message_id,
+                text=text,
+                sender=sender,
+                age_seconds=age_seconds,
+            )
+            print(
+                f"ignored stale Feishu message_id={message_id} age_seconds={age_seconds}",
+                flush=True,
+            )
+            return {"ok": True, "ignored": "stale-message", "message_id": message_id}
+
         self._mark_working_async(message_id)
         thread = threading.Thread(
             target=self._process_and_reply,
@@ -182,6 +203,36 @@ class FeishuBrainBridge:
             print(f"failed to reply {message_id}: {exc}", file=sys.stderr, flush=True)
 
     def _reply_for_text(self, text: str, sender: str) -> BridgeReply:
+        if is_help_command(text):
+            return BridgeReply(text=format_help_reply(self.options.ask_prefix), action="help")
+
+        detail_memory_id = extract_detail_memory_id(text)
+        if detail_memory_id is not None:
+            try:
+                detail = self.brain.memory_show(detail_memory_id)
+            except KeyError:
+                return BridgeReply(text=f"没有找到记忆 #{detail_memory_id}。", action="detail")
+            return BridgeReply(
+                text=format_memory_detail_reply(detail),
+                action="detail",
+                raw_message_id=detail.raw_message_id,
+            )
+
+        archive_memory_id = extract_archive_memory_id(text)
+        if archive_memory_id is not None:
+            result = self.brain.archive_memory(archive_memory_id)
+            title = result.title or short_text(result.content, 48)
+            reply = (
+                f"已作废记忆 #{result.memory_id}：{title}\n"
+                f"这条记忆不会再进入语义召回或 Router，但原始证据仍保留。"
+            )
+            if result.previous_status == result.new_status:
+                reply = f"记忆 #{result.memory_id} 之前已经是作废状态。\n{reply}"
+            return BridgeReply(
+                text=reply,
+                action="archive",
+                raw_message_id=result.raw_message_id,
+            )
         if self.options.mode == "remember":
             return self._remember_text(text, sender)
         if self.options.mode == "ask":
@@ -264,6 +315,36 @@ class FeishuBrainBridge:
         except Exception as exc:
             print(f"failed to record interaction log {message_id}: {exc}", file=sys.stderr, flush=True)
 
+    def _record_stale_interaction(
+        self,
+        *,
+        message_id: str,
+        text: str,
+        sender: str,
+        age_seconds: int | None,
+    ) -> None:
+        if age_seconds is None:
+            note = "stale Feishu message ignored before processing; no reply sent"
+        else:
+            note = f"stale Feishu message ignored before processing; age_seconds={age_seconds}; no reply sent"
+        try:
+            self.brain.record_interaction(
+                message_id=message_id,
+                source="feishu",
+                sender=sender,
+                user_text=text,
+                mode=self.options.mode,
+                action="stale_ignored",
+                raw_message_id=None,
+                reply_text=note,
+                evidence=None,
+                status="succeeded",
+                error=None,
+                latency_ms=0,
+            )
+        except Exception as exc:
+            print(f"failed to record stale interaction log {message_id}: {exc}", file=sys.stderr, flush=True)
+
     def _valid_token(self, payload: dict[str, Any]) -> bool:
         expected = self.options.verification_token
         if not expected:
@@ -327,6 +408,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--app-secret-env", default="FEISHU_APP_SECRET")
     parser.add_argument("--verification-token-env", default="FEISHU_VERIFICATION_TOKEN")
     parser.add_argument("--dry-run", action="store_true", help="process events but do not call Feishu reply API")
+    parser.add_argument(
+        "--max-message-age-minutes",
+        type=int,
+        default=15,
+        help="ignore Feishu messages older than this many minutes; 0 disables stale-message filtering",
+    )
     return parser
 
 
@@ -349,6 +436,7 @@ def main(argv: list[str] | None = None) -> int:
         app_id=app_id,
         app_secret=app_secret,
         dry_run=args.dry_run,
+        max_message_age_seconds=max(0, args.max_message_age_minutes) * 60,
     )
     FeishuHandler.bridge = FeishuBrainBridge(brain=brain, client=client, options=options)
     server = ThreadingHTTPServer((args.host, args.port), FeishuHandler)
@@ -383,6 +471,53 @@ def extract_sender(event: dict[str, Any]) -> str:
     return "feishu"
 
 
+def extract_message_created_at(
+    payload: dict[str, Any],
+    event: dict[str, Any],
+    message: dict[str, Any],
+) -> float | None:
+    header = payload.get("header") or {}
+    candidates = [
+        message.get("create_time"),
+        message.get("update_time"),
+        event.get("create_time"),
+        header.get("create_time"),
+        header.get("event_create_time"),
+        header.get("timestamp"),
+    ]
+    for candidate in candidates:
+        timestamp = parse_feishu_timestamp(candidate)
+        if timestamp is not None:
+            return timestamp
+    return None
+
+
+def parse_feishu_timestamp(value: Any) -> float | None:
+    if value is None:
+        return None
+    if isinstance(value, str):
+        value = value.strip()
+        if not value:
+            return None
+    try:
+        timestamp = float(value)
+    except (TypeError, ValueError):
+        return None
+    if timestamp <= 0:
+        return None
+    if timestamp > 10_000_000_000_000:
+        return timestamp / 1_000_000
+    if timestamp > 10_000_000_000:
+        return timestamp / 1000
+    return timestamp
+
+
+def is_stale_message(created_at: float | None, max_age_seconds: int) -> bool:
+    if created_at is None or max_age_seconds <= 0:
+        return False
+    return time.time() - created_at > max_age_seconds
+
+
 def extract_question(text: str, ask_prefix: str) -> str | None:
     clean = text.strip()
     prefixes = [ask_prefix]
@@ -395,6 +530,83 @@ def extract_question(text: str, ask_prefix: str) -> str | None:
     return None
 
 
+def is_help_command(text: str) -> bool:
+    clean = text.strip().lower()
+    return clean in {"!", "！"}
+
+
+def extract_detail_memory_id(text: str) -> int | None:
+    clean = text.strip()
+    match = re.fullmatch(r"#\s*(\d+)", clean)
+    if not match:
+        return None
+    memory_id = int(match.group(1))
+    return memory_id if memory_id > 0 else None
+
+
+def extract_archive_memory_id(text: str) -> int | None:
+    clean = text.strip()
+    match = re.fullmatch(r"-\s*(\d+)", clean)
+    if not match:
+        return None
+    memory_id = int(match.group(1))
+    return memory_id if memory_id > 0 else None
+
+
+def format_help_reply(ask_prefix: str) -> str:
+    question_prefix = "？" if ask_prefix == "?" else ask_prefix
+    return "\n".join(
+        [
+            "小柴快捷指令：",
+            "",
+            "普通发送：记住一条内容，AI 会判断是否值得长期记忆。",
+            f"{question_prefix}问题：从已有记忆里检索并回答，例如：{question_prefix}我之前怎么想小柴？",
+            "#91：查看某条记忆的原始输入和实际存入内容。",
+            "-91：作废某条记忆；原始输入和审计记录仍保留。",
+            "!：显示这份快捷指令。",
+        ]
+    )
+
+
+def format_memory_detail_reply(detail: MemoryDetail) -> str:
+    topics = "、".join(detail.summary.topics) if detail.summary.topics else "无"
+    entities = "、".join(detail.entities) if detail.entities else "无"
+    topic_reasons = detail.topic_reasons[:3]
+    lines = [
+        f"记忆 #{detail.summary.id}",
+        "",
+        "你输入的是：",
+        f"raw_message_id：{detail.raw_message_id}",
+        f"来源：{detail.raw_source} / {detail.raw_sender} / {detail.raw_created_at}",
+        detail.raw_content,
+        "",
+        "小柴存成的是：",
+        f"标题：{detail.summary.title or '无标题'}",
+        f"大类：{detail.summary.memory_category}",
+        f"类型：{detail.summary.memory_type}",
+        f"重要度/置信度：{detail.summary.importance:.2f}/{detail.summary.confidence:.2f}",
+        f"主题：{topics}",
+        f"实体：{entities}",
+        detail.summary.content,
+    ]
+    if topic_reasons:
+        lines.extend(["", "主题依据："])
+        lines.extend(f"- {reason}" for reason in topic_reasons)
+    lines.extend(
+        [
+            "",
+            "提取记录：",
+            f"extraction_run_id：{detail.extraction_run_id}",
+            f"模型：{detail.model_provider}/{detail.model_name}",
+            f"prompt_version：{detail.prompt_version}",
+            f"状态：{detail.extraction_status}",
+        ]
+    )
+    return "\n".join(
+        lines
+    )
+
+
 def format_remembered_reply(ack_message: str, details: list[MemoryDetail]) -> str:
     lines = [ack_message or "小柴记住了。"]
     if len(details) >= 4:
@@ -404,12 +616,20 @@ def format_remembered_reply(ack_message: str, details: list[MemoryDetail]) -> st
         lines.extend(
             [
                 "",
-                f"{index}. 大类：{detail.summary.memory_category}",
+                f"{index}. 记忆ID：{detail.summary.id}",
+                f"   大类：{detail.summary.memory_category}",
                 f"   主题：{topics}",
                 f"   内容：{detail.summary.content}",
             ]
         )
     return "\n".join(lines)
+
+
+def short_text(text: str, limit: int) -> str:
+    clean = " ".join(str(text).split())
+    if len(clean) <= limit:
+        return clean
+    return clean[: limit - 1] + "..."
 
 
 def answer_evidence_payload(result: AnswerResult) -> list[dict[str, Any]]:

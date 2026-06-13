@@ -53,6 +53,8 @@ Implemented modules:
 - `personal_brain/semantic.py`: embeddings and semantic recall
 - `personal_brain/answer.py`: evidence-based answer generation
 - `personal_brain/router.py`: Memory Router
+- `personal_brain/memory_ops.py`: memory archive/lifecycle operations
+- `personal_brain/daily_report.py`: local extraction/audit Markdown reports
 - `personal_brain/vault.py`: encrypted secure vault
 - `scripts/feishu_bridge.py`: Feishu interaction channel
 - `scripts/wxauto_bridge.py`: WeChat shell
@@ -144,6 +146,7 @@ than keyword search.
 生活感悟
 产品使用技巧
 自身认知更新
+学习
 技术思考
 人际关系
 工作流方法
@@ -155,6 +158,12 @@ than keyword search.
 This category is not a folder taxonomy. It is a stable review layer that helps
 Codex and the user avoid scattered memories while keeping dynamic topics and
 semantic retrieval as the real intelligence layer.
+
+`学习` is the broad category for compact concept notes, definitions,
+distinctions, analogies, and "I learned X means Y" records. It is not a
+replacement for dynamic topics. Technical judgments remain `技术思考`, reusable
+process patterns remain `工作流方法`, and direct Xiaochai/product changes remain
+`现有项目改进`.
 
 ### memory_embeddings
 
@@ -455,8 +464,15 @@ memory_extraction_runs
 secure_items for encrypted secrets
 ```
 
-Weekly Markdown review should be generated from the database and Router through
-AI synthesis, with evidence links preserved.
+Current daily Markdown reports are extraction/audit snapshots generated from the
+database. They may include deterministic issue markers, but they must not become
+the source of truth and the automation must not modify data.
+
+Weekly Memory Compression review is a near-term reflective layer. It should be
+generated from the database and Router through AI synthesis, with evidence links
+preserved. Its purpose is not merely to display a Markdown digest, but to
+compress short-term or scattered memories into candidate durable long-term
+memories for review before anything is written back.
 
 ## Codex Role
 

@@ -5,6 +5,7 @@ import math
 import re
 import sqlite3
 from dataclasses import dataclass
+from datetime import datetime, timedelta
 
 from .config import EmbeddingModelConfig
 from .llm import EmbeddingClient
@@ -160,12 +161,14 @@ class SemanticMemory:
                         [
                             row["title"],
                             row["content"],
+                            row["memory_category"],
                             row["memory_type"],
                             row["raw_content"],
                             ", ".join(self._topics_for_memory(conn, int(row["id"]))),
                         ],
                     )
-                    score = min(1.0, semantic_score + lexical_boost)
+                    task_boost = same_day_todo_boost(clean_query, row)
+                    score = min(1.0, semantic_score + lexical_boost + task_boost)
                     scored.append((score, row))
             scored.sort(key=lambda item: item[0], reverse=True)
             results = [
@@ -287,6 +290,45 @@ def query_tokens(query: str) -> list[str]:
         match.group(0)
         for match in re.finditer(r"[a-z0-9_+\-.]{2,}|[\u4e00-\u9fff]{2,}", lowered)
     ]
+
+
+def same_day_todo_boost(query: str, row: sqlite3.Row) -> float:
+    if not is_todo_query(query):
+        return 0.0
+
+    text = "\n".join(
+        str(part or "")
+        for part in (
+            row["title"],
+            row["content"],
+            row["memory_category"],
+            row["memory_type"],
+            row["raw_content"],
+        )
+    )
+    boost = 0.0
+    if row["memory_category"] == "临时待办":
+        boost += 0.24
+    if any(term in text for term in ("待办", "要做", "计划", "下一步", "准备", "别忘", "验证", "联系", "面试")):
+        boost += 0.08
+    if "今天" in query and "今天" in text:
+        boost += 0.12
+    if "今天" in query and "明天" in text and is_created_yesterday(str(row["created_at"] or "")):
+        boost += 0.16
+    return min(boost, 0.40)
+
+
+def is_todo_query(query: str) -> bool:
+    clean = str(query or "")
+    return any(term in clean for term in ("今天", "今日", "当天", "待办", "要做什么", "做什么", "任务", "计划"))
+
+
+def is_created_yesterday(created_at: str) -> bool:
+    try:
+        created_date = datetime.strptime(created_at[:19], "%Y-%m-%d %H:%M:%S").date()
+    except ValueError:
+        return False
+    return created_date == (datetime.now().date() - timedelta(days=1))
 
 
 def format_recall_result(result: RecallResult) -> str:

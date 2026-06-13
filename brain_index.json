@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-06-04T20:37:44",
+  "updated_at": "2026-06-11T09:46:25",
   "product": "AI-native Personal Brain",
   "purpose": "Lightweight routing index for Codex and other AI callers.",
   "entrypoints": {
@@ -9,9 +9,10 @@
     "sqlite": "data/personal_brain.sqlite3"
   },
   "stats": {
-    "topics": 55,
-    "manifest_memories": 35,
+    "topics": 230,
+    "manifest_memories": 130,
     "memory_categories": [
+      "临时待办",
       "产品使用技巧",
       "信息安全",
       "其他",
@@ -19,6 +20,7 @@
       "技术思考",
       "未来产品设想",
       "现有项目改进",
+      "生活感悟",
       "自身认知更新"
     ]
   },

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
+from datetime import date
 from typing import Any
 
 from .extractor import parse_json_object
@@ -92,9 +94,12 @@ class AnswerEngine:
         prompt = {
             "task": "rerank_memory_evidence",
             "question": question,
+            "current_date": date.today().isoformat(),
             "rules": [
                 "Only judge the provided evidence.",
                 "Prefer evidence that directly answers the question.",
+                "For questions about today's tasks, prefer temporary todos, plans, reminders, and date-bound memories over product ideas about reminder features.",
+                "Resolve relative words such as 今天, 明天, 下周 from the evidence created_at when possible.",
                 "Set relevance between 0 and 1.",
                 "Return at most the requested number of evidence items.",
                 "Do not invent memory ids.",
@@ -165,12 +170,28 @@ class AnswerEngine:
         prompt = {
             "task": "answer_from_personal_memory_evidence",
             "question": question,
+            "current_date": date.today().isoformat(),
             "rules": [
                 "Answer only from the provided evidence.",
-                "Cite evidence with exact format: [memory_id=1, raw_message_id=2].",
+                "For questions about today's tasks, answer with concrete todos first, not product-feature discussions.",
+                "Resolve relative words such as 今天, 明天, 下周 from the evidence created_at when possible.",
+                "If a memory was created yesterday and says 明天, treat it as today.",
+                "If an item is a product idea about supporting reminders, mention it only after concrete todos or omit it if concrete todos exist.",
+                "Write for a human reader, not like a search report.",
+                "Use natural concise Chinese unless the user asks otherwise.",
+                "Write like a clear Feishu chat reply, not a formal report.",
+                "Default structure: one short opening sentence, then a flat numbered list, then one short judgment or suggestion if useful, then one final compact evidence line.",
+                "Do not use Markdown section headings such as ## or ###.",
+                "Do not use bold pseudo-headings such as **工具与方法论补充**.",
+                "Do not use bold, backticks, stars, decorative punctuation, or nested bullet lists.",
+                "Avoid phrases like 具体方法可归纳为以下几类, 开发环境与流程优化, 核心策略是; sound simple and direct.",
+                "Do not put memory_id/raw_message_id in headings.",
+                "Avoid bullet-heavy or deeply nested Markdown. Prefer short paragraphs or a simple numbered list.",
+                "If evidence explicitly separates multiple tools or methods, list them separately; do not merge distinct methods only to be concise.",
+                "Each numbered item should usually be no more than two short lines.",
+                "End with one compact evidence line using exact format: 依据：记忆1/原文2；记忆3/原文4",
                 "If evidence is thin, say what is uncertain.",
                 "Do not use outside knowledge.",
-                "Write in concise Chinese unless the user asks otherwise.",
             ],
             "evidence": [
                 {
@@ -187,7 +208,8 @@ class AnswerEngine:
                     "role": "system",
                     "content": (
                         "You answer questions using only provided Personal Brain evidence. "
-                        "Every claim must cite evidence as [memory_id=1, raw_message_id=2]."
+                        "Optimize for readable Chinese chat replies. Keep evidence traceable, "
+                        "but make citations compact and keep them only in the final evidence line."
                     ),
                 },
                 {"role": "user", "content": json.dumps(prompt, ensure_ascii=False)},
@@ -196,7 +218,7 @@ class AnswerEngine:
         )
         if not answer:
             raise RuntimeError("model returned empty answer")
-        return answer.strip()
+        return clean_answer_for_chat(answer.strip())
 
 
 def recall_to_payload(item: RecallResult) -> dict[str, Any]:
@@ -228,16 +250,32 @@ def format_answer_result(result: AnswerResult) -> str:
     lines = [result.answer]
     if result.warning:
         lines.extend(["", f"warning: {result.warning}"])
-    if result.evidence:
-        lines.extend(["", "evidence:"])
-        for item in result.evidence:
-            recall = item.recall
-            title = recall.title or short_text(recall.content, 60)
-            lines.append(
-                f"- memory_id={recall.memory_id} raw_message_id={recall.raw_message_id} "
-                f"relevance={item.relevance:.2f} title={title}"
-            )
     return "\n".join(lines)
+
+
+def clean_answer_for_chat(answer: str) -> str:
+    clean = answer.strip()
+    clean = re.sub(r"(?m)^\s{0,3}#{1,6}\s*", "", clean)
+    clean = re.sub(r"\*\*([^*\n]+)\*\*", r"\1", clean)
+    clean = re.sub(r"`([^`\n]+)`", r"\1", clean)
+    clean = clean.replace("**", "").replace("`", "")
+    clean = re.sub(
+        r"memory_id\s*=\s*(\d+)\s*/\s*raw_message_id\s*=\s*(\d+)",
+        r"记忆\1/原文\2",
+        clean,
+    )
+    clean = re.sub(
+        r"memory_id\s*=\s*(\d+)\s*[,，;；]\s*raw_message_id\s*=\s*(\d+)",
+        r"记忆\1/原文\2",
+        clean,
+    )
+    clean = clean.replace("证据：", "依据：").replace("证据:", "依据：")
+    clean = re.sub(r"依据：\s+", "依据：", clean)
+    clean = re.sub(r"(?m)^(\s*\d+[.、]\s*)\*+", r"\1", clean)
+    clean = re.sub(r"\*+([：:])", r"\1", clean)
+    clean = re.sub(r"[ \t]+\n", "\n", clean)
+    clean = re.sub(r"\n{3,}", "\n\n", clean)
+    return clean.strip()
 
 
 def short_text(text: str, limit: int) -> str:
@@ -250,8 +288,14 @@ def short_text(text: str, limit: int) -> str:
 def citation_contract_warning(answer: str, evidence: list[RerankedEvidence]) -> str | None:
     if not evidence:
         return None
-    has_memory_citation = any(f"memory_id={item.memory_id}" in answer for item in evidence)
-    has_raw_citation = any(f"raw_message_id={item.recall.raw_message_id}" in answer for item in evidence)
+    has_memory_citation = any(
+        f"memory_id={item.memory_id}" in answer or f"记忆{item.memory_id}" in answer
+        for item in evidence
+    )
+    has_raw_citation = any(
+        f"raw_message_id={item.recall.raw_message_id}" in answer or f"原文{item.recall.raw_message_id}" in answer
+        for item in evidence
+    )
     if has_memory_citation and has_raw_citation:
         return None
     return "answer did not fully satisfy citation contract"
