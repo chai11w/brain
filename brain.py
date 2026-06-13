@@ -128,6 +128,10 @@ def main(argv: list[str] | None = None) -> int:
         print(f"topics: {result.topic_ids}")
         print(f"entities: {result.entity_ids}")
         print(f"router_rebuilt: {result.router_rebuilt}")
+        if result.input_route:
+            print(f"input_type: {result.input_route['input_type']}")
+            print(f"trigger_reason: {result.input_route['trigger_reason']}")
+            print(f"original_input: {result.input_route['original_input']}")
         if result.warning:
             print(f"warning: {result.warning}")
         return 0

@@ -9,6 +9,7 @@ from .answer import AnswerEngine, AnswerResult
 from .config import BrainConfig, load_config
 from .daily_report import DailyReportResult, DailyReportBuilder
 from .extractor import IngestResult, MemoryExtractor
+from .input_router import route_input
 from .llm import EmbeddingClient, LLMClient
 from .memory_ops import ArchiveMemoryResult, MemoryOperations
 from .memory_view import MemoryDetail, MemorySummary, MemoryView
@@ -68,6 +69,7 @@ class PersonalBrain:
         sender: str = "me",
         rebuild_router: bool = True,
     ) -> IngestResult:
+        input_route = route_input(text).as_debug_dict()
         extractor = MemoryExtractor(
             schema=self.schema,
             chat_model=self.chat_model,
@@ -88,6 +90,7 @@ class PersonalBrain:
                 should_remember=result.should_remember,
                 router_rebuilt=True,
                 warning=warning,
+                input_route=input_route,
             )
         if warning != result.warning:
             return IngestResult(
@@ -99,8 +102,19 @@ class PersonalBrain:
                 should_remember=result.should_remember,
                 router_rebuilt=result.router_rebuilt,
                 warning=warning,
+                input_route=input_route,
             )
-        return result
+        return IngestResult(
+            raw_message_id=result.raw_message_id,
+            extraction_run_id=result.extraction_run_id,
+            memory_ids=result.memory_ids,
+            topic_ids=result.topic_ids,
+            entity_ids=result.entity_ids,
+            should_remember=result.should_remember,
+            router_rebuilt=result.router_rebuilt,
+            warning=result.warning,
+            input_route=input_route,
+        )
 
     def _embed_ingested_memories(self, memory_ids: list[int], warning: str | None) -> str | None:
         if not self.config.embedding_model.enabled:

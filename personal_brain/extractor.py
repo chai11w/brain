@@ -43,6 +43,7 @@ class IngestResult:
     should_remember: bool
     router_rebuilt: bool
     warning: str | None = None
+    input_route: dict[str, str] | None = None
 
 
 class MemoryExtractor:
