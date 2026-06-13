@@ -19,24 +19,6 @@ Maintenance rule:
 
 These are close to the current V0 foundation and can become code or prompt work after a small design check.
 
-### Learning Category For Concept Notes
-
-- Related memories: `139`, `142`, `144`
-- Related raw messages: `156`
-- Current reading: the user wants concept-learning notes, such as workflow concepts, grouped under a broad `学习` category instead of being over-split into project or technical categories.
-- New evidence: the 2026-06-11 daily report marked raw message `156` (`memory+recall就是储存加调取的组合`) as ignored. This is not a data-loss bug by itself, but it shows short concept notes may be filtered unless the user phrases them as clearly worth remembering.
-- Proposed boundary:
-  - Use `学习` for short concept notes, definitions, distinctions, analogies, and "I just learned X means Y" records whose main value is future understanding or review.
-  - Keep `技术思考` for technical judgments, architecture tradeoffs, implementation strategy, or "should we use/rebuild/change X" reasoning.
-  - Keep `工作流方法` for reusable process patterns or step-by-step ways of doing work, especially when the note describes how to act.
-  - Keep `现有项目改进` for notes that directly change Xiaochai, the current codebase, reports, Feishu, recall, categories, or memory behavior.
-  - Keep `自身认知更新` for the user's self-knowledge, learning style, emotional pattern, or personal decision principle.
-  - Ignore only fragments that are too context-free to reuse, such as a bare tool name, single word, test input, or an unfinished phrase with no relation or definition.
-- Raw `156` judgment: `memory+recall就是储存加调取的组合` should be remembered if `学习` exists, because it is a compact concept-definition note. It should become something like: `用户把 memory + recall 理解为“储存 + 调取”的组合，用来理解记忆系统的基础结构。`
-- Recommended next step: add `学习` as a stable broad category and update extraction rules so compact concept-definition notes are preserved when they express a reusable understanding.
-- Likely change type: code plus docs.
-- Do not rush: adding a new category changes future extraction behavior and may require reclassifying a few existing memories.
-
 ### Same-Day Todo Recall
 
 - Related memories: `94`, `95`, `100`, `101`, `107`, `120`, `127`
@@ -113,6 +95,7 @@ These should not keep reappearing as open work unless new evidence shows failure
 - Memory detail lookup by ID is implemented. Related memory: `116`.
 - Over-interpretation prompt guard is implemented: factual notes should be stored as facts, not expanded into advice. Related memory: `114`.
 - Short-term todo preservation is implemented as a lightweight `临时待办` category, though reminder lifecycle is not complete. Related memories: `120`, `127`.
+- Stable `学习` category is implemented for compact concept notes, definitions, distinctions, analogies, and "X 就是 Y" learning records. Raw `156` (`memory+recall就是储存加调取的组合`) should now be preserved as `学习`. Related memories: `139`, `142`, `144`.
 - Write-time near-duplicate filtering was strengthened, and a duplicate detail-view memory was archived. Related memories: `73`, `75`, `116`.
 - The daily report's automatic Xiaochai-related classification was disabled because it was too noisy. Related memories: `76`, `78`.
 - Daily report ignored-message noise was reduced for low-signal tests and later-covered partial inputs.
@@ -151,6 +134,6 @@ The next best work is not a big new feature. The current order should be:
 2. Review raw input versus stored memories manually with Codex when needed.
 3. Fix extraction/prompt/category mistakes only when they repeat or affect recall.
 4. Verify same-day todo recall through Feishu real use; only add completion/expiry handling if stale todos become a real problem.
-5. Decide whether to add a stable `学习` category; raw `156` is now evidence that short concept notes can be ignored.
-6. Start a small weekly Memory Compression review workflow if the next report review confirms the recent memory set is ready to summarize.
+5. Verify the new stable `学习` category through real learning notes and daily reports; raw `156` is the baseline example that should no longer be ignored.
+6. Continue the small weekly Memory Compression review workflow if the report structure stays useful after review.
 7. Revisit Router and read-time dedupe after more retrieval failures are observed.

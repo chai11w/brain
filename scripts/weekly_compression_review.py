@@ -366,7 +366,7 @@ def compression_role(row: MemoryRow) -> str:
         return "未来方向/不压成承诺"
     if row.category in {"工作流方法", "产品使用技巧", "信息安全"} and should_preserve_as_atomic(row):
         return "长期原子/应保留"
-    if row.category == "技术思考":
+    if row.category in {"学习", "技术思考"}:
         return "知识概念/学习候选"
     if row.category in {"自身认知更新", "生活感悟"}:
         return "长期自我认知/可复用"

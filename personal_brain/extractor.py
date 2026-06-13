@@ -13,7 +13,7 @@ from .llm import LLMClient
 from .schema import BrainSchema
 
 
-PROMPT_VERSION = "memory-extraction-v5"
+PROMPT_VERSION = "memory-extraction-v6"
 DUPLICATE_SIMILARITY_THRESHOLD = 0.92
 
 
@@ -23,6 +23,7 @@ MEMORY_CATEGORIES = [
     "生活感悟",
     "产品使用技巧",
     "自身认知更新",
+    "学习",
     "技术思考",
     "人际关系",
     "工作流方法",
@@ -98,6 +99,7 @@ class MemoryExtractor:
             raise RuntimeError(f"memory extraction failed: {exc}") from exc
 
         payload = preserve_xiaochai_product_feedback(content, payload)
+        payload = preserve_learning_note(content, payload)
         payload = preserve_temporary_todo(content, payload)
         return self._persist_extraction(raw_message_id, content, payload)
 
@@ -134,6 +136,10 @@ class MemoryExtractor:
                 "判断问题式输入时，区分‘询问当前能力’和‘提出产品方向’：例如‘能不能让小柴日报单独分类缺陷/修复/未来方向’属于项目改进，应 should_remember=true。",
                 "如果用户是在记录系统改进方向，要优先归入“现有项目改进”。",
                 "如果用户是在描述未来产品形态、第二个我、数字分身、接入其他软件，优先归入“未来产品设想”。",
+                "如果用户是在记录短概念、定义、区别、类比、术语理解，或类似“X 就是 Y”“X 指的是 Y”“X 可以理解为 Y”的学习笔记，且主要价值是以后理解/复习，应 should_remember=true，并归入“学习”。",
+                "例如“memory+recall就是储存加调取的组合”“长期记忆就是未来大概率会重复利用的信息”“harness 类似于测评”这类紧凑概念笔记，应保存为“学习”。",
+                "不要把概念学习误归入“自身认知更新”；只有描述用户性格、学习方式、情绪模式、个人原则时，才归入“自身认知更新”。",
+                "不要把普通概念学习误归入“技术思考”；只有技术判断、架构取舍、实现策略或是否改造某技术方案的推理，才归入“技术思考”。",
                 "如果用户只是在说某个工具名字，不要生成“用户知道某工具”这种低价值记忆。",
             ],
             "output_schema": {
@@ -505,6 +511,140 @@ def preserve_temporary_todo(content: str, payload: dict[str, Any]) -> dict[str, 
     return forced
 
 
+def preserve_learning_note(content: str, payload: dict[str, Any]) -> dict[str, Any]:
+    if bool(payload.get("should_remember", False)):
+        return payload
+    if not looks_like_learning_note(content):
+        return payload
+
+    clean = " ".join(content.strip().split())
+    forced = dict(payload)
+    forced["should_remember"] = True
+    forced["reason"] = (
+        str(payload.get("reason") or "").strip()
+        or "compact reusable concept note should be preserved as learning"
+    )
+    forced["atomic_memories"] = [
+        {
+            "title": classify_learning_note_title(clean),
+            "content": rewrite_learning_note_memory(clean),
+            "memory_category": "学习",
+            "memory_type": "fact",
+            "importance": 0.62,
+            "confidence": 0.72,
+            "topics": [
+                {
+                    "name": "概念学习",
+                    "description": "用户记录的短概念、定义、区别、类比或术语理解",
+                    "confidence": 0.78,
+                    "reason": "用户输入像可复习的概念学习笔记",
+                }
+            ],
+            "entities": extract_learning_note_entities(clean),
+        }
+    ]
+    return forced
+
+
+def looks_like_learning_note(text: str) -> bool:
+    clean = " ".join(text.strip().split())
+    if not clean:
+        return False
+    if len(clean) < 8 or len(clean) > 180:
+        return False
+    if looks_like_temporary_todo(clean) or looks_like_xiaochai_product_feedback(clean):
+        return False
+    project_terms = ("小柴", "记忆箱", "飞书", "日报", "当前项目")
+    if any(term in clean for term in project_terms):
+        return False
+    if re.fullmatch(r"[\W_0-9a-zA-Z]+", clean) and not any(ch in clean for ch in ("+", "=", "：", ":")):
+        return False
+
+    concept_patterns = (
+        "就是",
+        "指的是",
+        "定义",
+        "区别",
+        "类似于",
+        "相当于",
+        "可以理解为",
+        "核心是",
+        "本质是",
+        "意思是",
+        "等于",
+    )
+    if any(pattern in clean for pattern in concept_patterns):
+        return True
+
+    tech_concept_terms = (
+        "memory",
+        "recall",
+        "embedding",
+        "RAG",
+        "agent",
+        "prompt",
+        "workflow",
+        "harness",
+        "模型",
+        "微调",
+        "长期记忆",
+        "短期记忆",
+    )
+    return "+" in clean and any(term.lower() in clean.lower() for term in tech_concept_terms)
+
+
+def classify_learning_note_title(text: str) -> str:
+    subject = extract_learning_note_subject(text)
+    if subject:
+        return f"{subject}的学习理解"
+    return "学习概念记录"
+
+
+def rewrite_learning_note_memory(text: str) -> str:
+    subject, explanation = split_learning_note_definition(text)
+    if subject and explanation:
+        return f"用户将“{subject}”理解为“{explanation}”，用于后续学习和复习。"
+    return f"用户记录了一条学习概念：{text}"
+
+
+def extract_learning_note_entities(text: str) -> list[dict[str, Any]]:
+    subject = extract_learning_note_subject(text)
+    if not subject:
+        return []
+    if len(subject) > 40:
+        return []
+    return [
+        {
+            "name": subject,
+            "type": "concept",
+            "description": "用户记录的学习概念",
+            "confidence": 0.68,
+        }
+    ]
+
+
+def extract_learning_note_subject(text: str) -> str | None:
+    subject, _ = split_learning_note_definition(text)
+    if subject:
+        return subject
+    if "+" in text:
+        return text.split("，", 1)[0].split("。", 1)[0].strip()
+    return None
+
+
+def split_learning_note_definition(text: str) -> tuple[str | None, str | None]:
+    separators = ("就是", "指的是", "可以理解为", "相当于", "类似于", "意思是", "等于")
+    for sep in separators:
+        if sep not in text:
+            continue
+        left, right = text.split(sep, 1)
+        left = left.strip(" ：:，,。 ")
+        right = right.strip(" ：:，,。 ")
+        if left and right and len(left) <= 40:
+            return left, right
+    return None, None
+
+
 def looks_like_temporary_todo(text: str) -> bool:
     clean = text.strip()
     if not clean:
@@ -765,6 +905,11 @@ def normalize_memory_category(value: str | None) -> str:
         "使用技巧": "产品使用技巧",
         "自我认知": "自身认知更新",
         "认知更新": "自身认知更新",
+        "学习记录": "学习",
+        "学习笔记": "学习",
+        "知识学习": "学习",
+        "概念学习": "学习",
+        "知识概念": "学习",
         "技术判断": "技术思考",
         "技术策略": "技术思考",
         "工作流": "工作流方法",

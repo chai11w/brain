@@ -144,6 +144,16 @@ Maintenance rule:
 - Change: archived `memory 47` so semantic recall no longer returns the outdated `删除+id` command.
 - Current command memory should prefer the README and active behavior: normal text remembers, `?` asks, `#ID` shows detail, `-ID` archives, and `!` shows help.
 
+## 2026-06-13
+
+### Learning Category For Compact Concept Notes
+
+- Status: `watch`
+- Problem: recent learning notes increased, and the 2026-06-11 daily report showed raw `156` (`memory+recall就是储存加调取的组合`) was ignored. This suggested compact concept-definition notes could be lost unless the user phrased them as obviously durable.
+- Change: added stable `学习` to `MEMORY_CATEGORIES`, updated extraction prompt rules, normalized learning aliases, and added a deterministic fallback that preserves ignored-looking reusable concept notes as `学习`.
+- Boundary: `学习` is for compact concepts, definitions, distinctions, analogies, and "X 就是 Y" learning notes. Technical judgments remain `技术思考`; workflows remain `工作流方法`; direct Xiaochai changes remain `现有项目改进`; user self-knowledge remains `自身认知更新`.
+- Verification later: send examples such as `memory+recall就是储存加调取的组合`, `长期记忆就是未来大概率会重复利用的信息`, and `今天晚上去吃烧烤`. Expected result: the first two become `学习`; the dinner fragment is ignored unless it has a real todo/time context.
+
 ## Future Backlog From Xiaochai Memories
 
 These are intentionally stored as future direction notes, not immediate work.

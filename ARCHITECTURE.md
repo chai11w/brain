@@ -146,6 +146,7 @@ than keyword search.
 生活感悟
 产品使用技巧
 自身认知更新
+学习
 技术思考
 人际关系
 工作流方法
@@ -158,11 +159,11 @@ This category is not a folder taxonomy. It is a stable review layer that helps
 Codex and the user avoid scattered memories while keeping dynamic topics and
 semantic retrieval as the real intelligence layer.
 
-Near-term candidate: add `学习` as a broad category for compact concept notes,
-definitions, distinctions, analogies, and "I learned X means Y" records. This is
-not a replacement for dynamic topics. Technical judgments should remain
-`技术思考`, reusable process patterns should remain `工作流方法`, and direct
-Xiaochai/product changes should remain `现有项目改进`.
+`学习` is the broad category for compact concept notes, definitions,
+distinctions, analogies, and "I learned X means Y" records. It is not a
+replacement for dynamic topics. Technical judgments remain `技术思考`, reusable
+process patterns remain `工作流方法`, and direct Xiaochai/product changes remain
+`现有项目改进`.
 
 ### memory_embeddings
 

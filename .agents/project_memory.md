@@ -59,6 +59,7 @@ Implemented:
 - AI extraction audit: `memory_extraction_runs`
 - AI-rewritten atomic memories: `memories`
 - Dynamic topics/entities plus stable broad `memory_category`
+- Stable `学习` category for compact concept notes
 - Embedding storage and semantic recall: `personal_brain/semantic.py`
 - Evidence-constrained answering: `personal_brain/answer.py`
 - Memory Router outputs: `brain_index.json`, `memory/topics.json`,
@@ -84,7 +85,6 @@ Not implemented / deferred:
 - Multi-database deployment
 - Formal `brain.py weekly-compression` command
 - Automatic weekly compression write/archive flow
-- Stable `学习` category for compact concept notes
 - Full embedding-based semantic write-time dedupe
 - Read-time evidence dedupe
 
@@ -161,11 +161,25 @@ be active locally.
      labels, while compression decisions depend on reuse value and lifecycle.
    - Still does not write new memories or archive old memories automatically.
 
+8. Learning category for compact concept notes
+   - File: `personal_brain/extractor.py`
+   - Adds `学习` to the stable `memory_category` list.
+   - Extraction prompt now preserves compact concept notes, definitions,
+     distinctions, analogies, and "X 就是 Y" style learning records under
+     `学习`.
+   - Deterministic fallback preserves ignored-looking reusable concept notes
+     such as raw `156` (`memory+recall就是储存加调取的组合`) as `学习`.
+   - Boundary: technical judgments stay in `技术思考`, process patterns stay in
+     `工作流方法`, direct Xiaochai changes stay in `现有项目改进`, and user
+     self-knowledge stays in `自身认知更新`.
+
 Verification already run:
 
 ```powershell
 python brain.py daily-report --last-hours 24
 python -B scripts\weekly_compression_review.py --start-date 2026-06-04 --end-now
+python -B -c "from personal_brain.extractor import looks_like_learning_note; print(looks_like_learning_note('memory+recall就是储存加调取的组合'))"
+python -B scripts\weekly_compression_review.py --start-date 2026-06-04 --end-date 2026-06-11 --output .tmp_tests
 ```
 
 Latest reviewed daily reports:
@@ -180,10 +194,9 @@ Recent review conclusions:
 
 - 2026-06-10 report verifies the daily report no longer emits the automatic
   `小柴相关复盘分类` section.
-- 2026-06-11 report shows raw `156`
-  (`memory+recall就是储存加调取的组合`) was ignored. This is useful evidence for
-  adding a stable `学习` category and preserving compact concept-definition
-  notes.
+- 2026-06-11 report showed raw `156`
+  (`memory+recall就是储存加调取的组合`) was ignored. This became the evidence for
+  implementing the stable `学习` category and compact concept-note fallback.
 - 2026-06-11 report also provides near-term evidence for a small weekly Memory
   Compression review: weekly/monthly reports should compress short-term memory
   into durable long-term memories, not merely display a Markdown digest.
@@ -345,12 +358,10 @@ Later, after the foundation is stable:
 - Add read-time evidence dedupe.
 - Verify same-day todo recall through Feishu real use; add lightweight
   completion/expiry handling only if stale todos become a real problem.
-- Add a stable `学习` category if implementing the current backlog design:
-  use it for reusable short concept notes, definitions, distinctions, analogies,
-  and "I learned X means Y" records. Raw `156`
-  (`memory+recall就是储存加调取的组合`) should be remembered under this boundary,
-  while technical judgments stay in `技术思考`, process patterns stay in
-  `工作流方法`, and direct Xiaochai changes stay in `现有项目改进`.
+- Verify the stable `学习` category through future daily reports and real use:
+  compact concept notes should now be remembered under `学习`, while technical
+  judgments stay in `技术思考`, process patterns stay in `工作流方法`, and direct
+  Xiaochai changes stay in `现有项目改进`.
 - Review the generated weekly Memory Compression report with the user before
   writing any candidate long-term memories. If the report quality holds up,
   consider wiring `scripts/weekly_compression_review.py` into a formal

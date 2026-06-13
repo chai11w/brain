@@ -35,13 +35,13 @@ Implemented:
 - local daily Markdown extraction reports
 - Codex App daily report extraction automation
 - read-only weekly Memory Compression review report
+- stable `学习` category for compact concept notes
 - wxauto WeChat bridge shell
 
 Not implemented:
 
 - formal `brain.py weekly-compression` command
 - automatic weekly compression write/archive flow
-- stable `学习` category for compact concept notes
 - frontend
 - knowledge graph visualization
 - Neo4j
@@ -438,7 +438,7 @@ daily 10:00 rolling 24h extraction report
 
 Near-term design items:
 
-- Add a stable `学习` category if the current backlog boundary is accepted:
+- Verify the new stable `学习` category through daily reports and real use:
   compact concept notes, definitions, distinctions, analogies, and "I learned X
   means Y" records should be preserved for future review. Technical judgments
   still belong in `技术思考`, process patterns in `工作流方法`, and direct Xiaochai
